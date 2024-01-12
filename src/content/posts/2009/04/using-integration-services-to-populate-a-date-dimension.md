@@ -18,7 +18,7 @@ I prefer to fill my date tables by generating the correct stream of values from 
 
 I haven’t wrapped this in a pre-compiled component as it is so easy to do in script from. Also, I haven’t got around to generalizing the fiscal date offsets for different companies so they usually have to be custom coded.
 
-![Script Component Type](image_3.png)First drop a “Script Component” onto your Data Flow.
+![Script Component Type](./image_3.png)First drop a “Script Component” onto your Data Flow.
 
 Select “Source” as the Script Component Type and click OK.
 

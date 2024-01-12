@@ -1,5 +1,5 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+import SidebarLayout from "../layouts/SidebarLayout.astro";
 
 import { getCollection } from "astro:content";
 
@@ -9,12 +9,13 @@ const postYears = allPosts
 	.map(p => p.data.postDate.getFullYear())
 	.sort((x,y) => y - x)
 	.filter((v, i, s) => s.indexOf(v) === i);
-const pageTitle = "Home Page";
+
+const pageTitle = "Home";
 ---
 
-<BaseLayout pageTitle={pageTitle}>
+<SidebarLayout pageTitle={pageTitle}>
   <h1>{pageTitle}</h1>
   <ul>
 	{postYears.map(y => <BlogYear year={y}/>)}
   </ul>
-</BaseLayout>
+</SidebarLayout>

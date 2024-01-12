@@ -1,9 +1,9 @@
 ---
-import BaseLayout from "./BaseLayout.astro";
+import SidebarLayout from "./SidebarLayout.astro";
 const { frontmatter } = Astro.props;
 ---
 
-<BaseLayout pageTitle={frontmatter.title}>
+<SidebarLayout pageTitle={frontmatter.title}>
   <h1>{frontmatter.title}</h1>
   <p>{frontmatter.postDate.toDateString()}</p>
   <p><em>{frontmatter.description}</em></p>
@@ -19,4 +19,4 @@ const { frontmatter } = Astro.props;
     }
   </div>
   <slot />
-</BaseLayout>
+</SidebarLayout>

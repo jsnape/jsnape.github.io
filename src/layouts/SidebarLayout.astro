@@ -1,0 +1,26 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import RecentPosts from '../components/RecentPosts.astro';
+import ArchiveList from '../components/ArchiveList.astro';
+import CategoryList from '../components/CategoryList.astro';
+import TagList from '../components/TagList.astro';
+
+const { pageTitle } = Astro.props;
+---
+
+<BaseLayout pageTitle={pageTitle}>
+  <div class="m-2 grid gap-5 p-4 md:grid-cols-12">
+    <main class="p-4 md:col-span-9">
+      <h1 class="text-3xl">{pageTitle}</h1>
+      <slot />
+    </main>
+    <aside class="p-2 md:col-span-3 md:pt-0">
+        <RecentPosts />
+        <ArchiveList />
+        <CategoryList />
+        <TagList />
+    </aside>
+  </div>
+
+  <slot />
+</BaseLayout>

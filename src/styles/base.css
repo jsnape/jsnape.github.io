@@ -1,0 +1,11 @@
+/* The integration's default injected base.css file */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media screen and (max-width: 330px){
+    html{
+        width: 330px;
+        overflow: auto;
+    }
+  }
