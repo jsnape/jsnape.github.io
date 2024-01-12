@@ -1,5 +1,5 @@
 ---
-import BlogPost from "../components/BlogPost.astro";
+import BlogListItem from "./BlogListItem.astro";
 import { getCollection } from "astro:content";
 
 const { year } = Astro.props;
@@ -7,5 +7,5 @@ const posts = await getCollection("posts", ({data}) => data.postDate.getFullYear
 ---
 <h2>{year}</h2>
 {posts.map((p) =>
-    <BlogPost url={p.slug} title={p.data.title} /></span>  
+    <span><BlogListItem url={p.slug} title={p.data.title} /></span>  
 )}

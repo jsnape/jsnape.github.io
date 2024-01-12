@@ -1,9 +1,9 @@
 ---
+import { ITEMS_PER_PAGE } from '@/consts';
 import SidebarLayout from "../layouts/SidebarLayout.astro";
-
 import { getCollection } from "astro:content";
+import BlogPostArticle from "@components/BlogPostArticle.astro";
 
-import BlogYear from "@components/BlogYear.astro";
 const allPosts = await getCollection("posts");
 const postYears = allPosts
 	.map(p => p.data.postDate.getFullYear())
@@ -14,8 +14,9 @@ const pageTitle = "Home";
 ---
 
 <SidebarLayout pageTitle={pageTitle}>
-  <h1>{pageTitle}</h1>
-  <ul>
-	{postYears.map(y => <BlogYear year={y}/>)}
-  </ul>
+	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
+		{!allPosts.length && 'No posts found.'}
+		{allPosts.slice(0, ITEMS_PER_PAGE).map((post) => <BlogPostArticle post={post}/>)}
+		
+	</ul>
 </SidebarLayout>
