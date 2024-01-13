@@ -8,7 +8,7 @@ tags:
   - "domain-driven-design"
 ---
 
-[![Managing complexity graphic showing D...](images/300px-Maintaining_Model_Integrity.png "managing complexity graphic showing D...")](http://commons.wikipedia.org/wiki/File:Maintaining_Model_Integrity.png)My commute is around two and a half hours each way so I read a lot on the train. One of the subjects I’ve recently become interested in [Domain Driven Design](http://dddcommunity.org/learning-ddd/what_is_ddd/) or DDD. I’ve found it isn’t really a new topic for me but more like someone has documented many of the techniques I’ve always used.
+[![Managing complexity graphic showing D...](./300px-Maintaining_Model_Integrity.png "managing complexity graphic showing D...")](http://commons.wikipedia.org/wiki/File:Maintaining_Model_Integrity.png)My commute is around two and a half hours each way so I read a lot on the train. One of the subjects I’ve recently become interested in [Domain Driven Design](http://dddcommunity.org/learning-ddd/what_is_ddd/) or DDD. I’ve found it isn’t really a new topic for me but more like someone has documented many of the techniques I’ve always used.
 
 DDD discusses data warehouses primarily as an output or reporting function within a larger application. The book [Implementing Domain-Driven Design](http://www.amazon.co.uk/gp/product/0321834577/ref=as_li_ss_tl?ie=UTF8&camp=1634&creative=19450&creativeASIN=0321834577&linkCode=as2&tag=jamessnape-21) by Vaughn Vernon mentions reporting repeatedly as a by-product of DDD (particularly when used with [Event Sourcing](http://www.martinfowler.com/eaaDev/EventSourcing.html)) but not directly as a possible use case.
 

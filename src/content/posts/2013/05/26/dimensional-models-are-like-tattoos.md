@@ -7,7 +7,7 @@ tags:
   - "dimensional-model"
 ---
 
-[![tattoo work by Keith Killingsworth](images/300px-Tattoos.jpg "tattoo work by Keith Killingsworth")](http://commons.wikipedia.org/wiki/File:Tattoos.jpg)So in the comments on a recent post on [Risk Driven Architecture](http://snape.me/2013/04/27/risk-driven-architecture/#comments), [Jamie Thomson](http://sqlblog.com/blogs/jamie_thomson/) asked whether the problems associated with change can be mitigated by using views. I firmly believe that views can help but unfortunately not enough to save you from clients that connect directly with Analysis Services cubes.
+[![tattoo work by Keith Killingsworth](./300px-Tattoos.jpg "tattoo work by Keith Killingsworth")](http://commons.wikipedia.org/wiki/File:Tattoos.jpg)So in the comments on a recent post on [Risk Driven Architecture](http://snape.me/2013/04/27/risk-driven-architecture/#comments), [Jamie Thomson](http://sqlblog.com/blogs/jamie_thomson/) asked whether the problems associated with change can be mitigated by using views. I firmly believe that views can help but unfortunately not enough to save you from clients that connect directly with Analysis Services cubes.
 
 So it got me thinking about a similar mitigation for cubes. Unfortunately nothing came to mind apart from an analogy:
 
