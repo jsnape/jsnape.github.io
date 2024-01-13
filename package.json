@@ -5,17 +5,25 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
-    "astro": "latest",
-    "@astrojs/mdx": "latest"
+    "@astrojs/check": "^0.4.1",
+    "@astrojs/mdx": "^2.0.4",
+    "@astrojs/svelte": "^5.0.3",
+    "@astrojs/tailwind": "^5.1.0",
+    "astro": "^4.1.2",
+    "svelte": "^4.2.8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3"
   },
   "devDependencies": {
-    "@astrojs/tailwind": "latest",
-    "@tailwindcss/typography": "latest",
-    "tailwindcss": "latest"
+    "@tailwindcss/typography": "^0.5.10",
+    "daisyui": "^4.6.0"
   }
 }

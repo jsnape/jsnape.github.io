@@ -1,20 +1,21 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-
+import { ITEMS_PER_PAGE } from '@/consts';
+import SidebarLayout from "@/layouts/SidebarLayout.astro";
 import { getCollection } from "astro:content";
+import BlogPostArticle from "@components/BlogPostArticle.astro";
+import {excludeDrafts, sortBlogPosts} from "@/functions";
 
-import BlogYear from "@components/BlogYear.astro";
-const allPosts = await getCollection("posts");
-const postYears = allPosts
-	.map(p => p.data.postDate.getFullYear())
-	.sort((x,y) => y - x)
-	.filter((v, i, s) => s.indexOf(v) === i);
-const pageTitle = "Home Page";
+const posts = await
+	getCollection('posts', excludeDrafts)
+	.then(sortBlogPosts);
+
+const pageTitle = "Home";
 ---
 
-<BaseLayout pageTitle={pageTitle}>
-  <h1>{pageTitle}</h1>
-  <ul>
-	{postYears.map(y => <BlogYear year={y}/>)}
-  </ul>
-</BaseLayout>
+<SidebarLayout pageTitle={pageTitle}>
+	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
+		{!posts.length && 'No posts found.'}
+		{posts.slice(0, ITEMS_PER_PAGE).map((post) => <li><BlogPostArticle post={post}/></li>)}
+		
+	</ul>
+</SidebarLayout>
