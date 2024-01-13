@@ -2,22 +2,21 @@
 import Navigation from '../components/Navigation.astro';
 import ThemeIcon from './ThemeIcon.astro';
 ---
-<div class="min-w-[220px]">
-    <div class="container navbar mx-auto flex-col md:flex md:flex-row">
-        <div class="flex-col items-center">
-            <div class="avatar text-4xl">
-                James Snape
-                <div class="ml-1 w-10 rounded-full">
-                <img
-                    src="https://0.gravatar.com/avatar/02fea96f5230036b45dd2f7cc246ea88c679992e796997903ec5a7f3b7bff340?s=400&d=mm"
-                />
-                </div>
+
+<header class="container navbar mx-auto flex-col md:flex md:flex-row">
+    <div class="flex-col items-center">
+        <div class="avatar text-4xl">
+            James Snape
+            <div class="ml-1 w-10 rounded-full">
+            <img
+                src="https://0.gravatar.com/avatar/02fea96f5230036b45dd2f7cc246ea88c679992e796997903ec5a7f3b7bff340?s=400&d=mm"
+            />
             </div>
-            <p class="mt-2">DevOps - Solution Architecture</p>
         </div>
-        <div class="flex md:ml-auto">
-            <Navigation />
-            <ThemeIcon />            
-        </div>
+        <p class="mt-2">DevOps - Solution Architecture</p>
     </div>
-</div>
+    <div class="flex md:ml-auto">
+        <Navigation />
+        <ThemeIcon />            
+    </div>
+</header>
