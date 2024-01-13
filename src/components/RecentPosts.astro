@@ -1,8 +1,17 @@
+---
+import BlogListItem from "./BlogListItem.astro";
+import { RECENT_POSTS_COUNT } from '@/consts';
+import { getCollection } from "astro:content";
+import {excludeDrafts, sortBlogPosts} from "@/functions";
+
+const posts = await
+	getCollection('posts', excludeDrafts)
+	.then(sortBlogPosts);
+
+---
 <div class="space-x-6 my-5 uppercase">Recent Posts</div>
 <ul>
-  <li>Tracking hours worked on a scrum task is counterproductive</li>
-  <li>Interesting Links #4</li>
-  <li>Interesting Links #3</li>
-  <li>Taking on dependencies with Deeply</li>
-  <li>Interesting Links #2</li>
+  {posts.slice(0, RECENT_POSTS_COUNT).map((p) =>
+    <span><BlogListItem url={`/${p.slug}`} title={p.data.title} /></span>  
+)}
 </ul>
