@@ -34,7 +34,9 @@ There are four main targets listed which are Clean, SourceAnalysis, Compile and 
 
 So, this script is very simple; it just runs StyleCop over a set of source files, builds a Visual Studio solution and runs Xunit against a set of assemblies. Not much but it gives us a single command line action to build and test the solution as we add features:
 
-> C:\\ > msbuild draco.proj
+```dotnetcli
+PS> msbuild draco.proj
+```
 
 This is then setup as a single step in [TeamCity](http://www.jetbrains.com/teamcity/ "TeamCity"). Every check-in causes the build to run and tests to execute.
 

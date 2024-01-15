@@ -21,6 +21,6 @@ I’m using [SpecFlow](http://www.specflow.org) for acceptance tests since it is
 
 So thinking about this functionally we effectively want to write a function that transforms an enumerable of source referral records into an enumerable of referral facts; then pipe this iterator into a [SqlBulkCopy](http://msdn.microsoft.com/en-us/library/system.data.sqlclient.sqlbulkcopy.aspx) instance. Effectively this code needs to work:
 
-> referralrepository.BulkCopy(referrals.Select(x => mapper.Map(x)));
+`referralrepository.BulkCopy(referrals.Select(x => mapper.Map(x)));`
 
 This is a Linq transform with a mapping function applied to each item in the source list. In the next few posts I’m going to break it into bite size chunks to implement.

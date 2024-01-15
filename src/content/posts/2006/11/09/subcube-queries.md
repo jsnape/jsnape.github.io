@@ -21,18 +21,20 @@ The subcube string tells you which dimensions and attributes are involved. Each 
 
 Since the order of dimensions and attributes is not immediately obvious, it's better to write some code to print them out in the correct order. The following prints all the dimensions and attributes of the supplied measure group object in order:
 
+```csharp
 private static void PrintMeasureGroupDimensions(MeasureGroup mg) {
  for (int j = 0; j < mg.Dimensions.Count; ++j) { 
-   CubeDimension dim = mg.Dimensions\[j\].CubeDimension; 
+   CubeDimension dim = mg.Dimensions[j].CubeDimension; 
    Console.WriteLine("DIM:\\t{0} ({1})", dim.Name, dim.Attributes.Count); 
 
    for (int k = 0; k < dim.Attributes.Count; ++k) { 
-     CubeAttribute attr = dim.Attributes\[k\]; 
-     Console.WriteLine("ATT:\\t\\t{0}", attr.Attribute.Name); 
+     CubeAttribute attr = dim.Attributes[k]; 
+     Console.WriteLine("ATT:\t\t{0}", attr.Attribute.Name); 
    }
  }
 }
+```
 
 I've attached a piece of sample code that compiles into a console application to either print the entire set of dimensions for a measure group or, if you pass a subcube string, will just print those involved in the query. Execute with no args or '/h' to get some help.
 
-[SubcubeQueries.cs](http://sdrv.ms/1aw4EMg "Subcube Queries Sample Program")
+[SubcubeQueries.cs](https://gist.github.com/jsnape/29b53688cf6520feb5c511ce6d210d0b "Subcube Queries Sample Program")

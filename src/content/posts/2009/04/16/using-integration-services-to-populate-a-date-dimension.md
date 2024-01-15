@@ -37,9 +37,10 @@ Finally go back to the script part of the dialog and click the “Edit Script”
 In the resulting window, add your code to generate the date stream to the CreateNewOutputRows() function.  
 The general form is of:
 
+```csharp
 var output = this.DatesBuffer;  // Get the output buffer
 
-while (/\*loop though your dates\*?)
+while (/*loop though your dates*/)
 {
 
     output.AddRow();
@@ -50,9 +51,10 @@ while (/\*loop though your dates\*?)
     // Increment the date
     date = date.AddDays(1);
 }
+```
 
 The full script is in the attached sample package where I’ve also added a script destination that does nothing with the data. Attach a data viewer to see what output is generated.
 
 ![Generated output](./image_10.png)From here you can manipulate the data, and pipe it to your dimension table from within the pipeline.
 
-[DateSourceSample.zip (27.08 KB)](http://sdrv.ms/1cAOfCU "Date Source Sample Code")
+[DateSourceSample.dtsx](https://gist.github.com/jsnape/2419a66effc71cf9e7701e4fe5cc514e "Date Source Sample Code")

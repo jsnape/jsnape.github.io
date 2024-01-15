@@ -16,7 +16,7 @@ The previous couple of posts in this category haven’t exactly been exciting bu
 
 There are two main classes of business intelligence required – clinical and operational. The most important [user stories](http://en.wikipedia.org/wiki/User_story "User story") are listed in italic text below.
 
-# Clinical Requirements
+## Clinical Requirements
 
 Clinicians want to know how effective treatments are; patient outcomes; diagnosis statistics and critical incident analysis:
 
@@ -24,7 +24,7 @@ _As a doctor I want to see treatment counts by patient and outcome so that I can
 
 _As a doctor I want to see critical incident counts by patient and [mental health professional](http://en.wikipedia.org/wiki/Mental_health_professional "Mental health professional")._
 
-# Operational Requirements
+## Operational Requirements
 
 Operational business intelligence is primarily concerned with service costs, efficiency and capacity planning:
 
@@ -36,7 +36,7 @@ _As an operational manager I want to see the number of bed days available and us
 
 _As an operational manager I want to see complaints by patient and mental health professional so I can make sure the service has a good customer focus._
 
-# Other Requirements
+## Other Requirements
 
 Finally, there are also IT requirements which must be satisfied but since they are not value-add for patients and doctors I’ll look into them later.
 
