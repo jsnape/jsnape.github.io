@@ -1,0 +1,30 @@
+---
+import { ITEMS_PER_PAGE } from '@/consts';
+import SidebarLayout from "@/layouts/SidebarLayout.astro";
+import { getCollection } from "astro:content";
+import BlogPostArticle from "@components/BlogPostArticle.astro";
+import {excludeDrafts, sortBlogPosts} from "@/functions";
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  const years = [...new Set(posts.flatMap((p) => p.data.postDate.getFullYear()))];
+  return years.map(year => ({
+    params: { year: year },
+  }));  
+}
+
+const { year } = Astro.params;
+const posts = await getCollection('posts',
+    ({data}) => data.postDate.getFullYear() == year && excludeDrafts(data))
+  .then(sortBlogPosts);
+
+const pageTitle = "Annual Archives: " + year;
+---
+
+<SidebarLayout pageTitle={pageTitle}>
+	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
+		{!posts.length && 'No posts found.'}
+		{posts.slice(0, ITEMS_PER_PAGE).map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
+		
+	</ul>
+</SidebarLayout>

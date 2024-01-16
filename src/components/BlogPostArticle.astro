@@ -21,8 +21,7 @@ const { Content } = await post.render();
             <div>
                 {homepage &&          
                 <h2 class="text-2xl font-bold leading-8 tracking-tight">
-                    <Link href={`/${post.slug}`}
-                            class="text-gray-900 dark:text-gray-100">
+                    <Link href={`/${post.slug}`}>
                         {title}
                     </Link>
                 </h2>
@@ -32,19 +31,18 @@ const { Content } = await post.render();
             <div class="prose">
                 <Content />
             </div>
-            <div class="grid justify-items-stretch text-sm">
-                <div>
-                Posted in:&nbsp;
-                    <em>
-                        {categories.map(cat => (<a href={`/categories/${cat}`}>{cat}</a>))}
-                    </em>
-                    &nbsp; on &nbsp;<FormattedDate date={postDate}/>
-                </div>
-                <div>
-                    {tags.map(tag => (<a class="mr-2" href={`/tags/${tag}`}>#{tag}</a>))}
-                </div>
-            </div>
-
+            <div class="text-sm">
+                This entry was posted in
+                <em>
+                    {categories.map(cat => (
+                        <a href={`/category/${cat}`}>{cat}</a><span>&nbsp</span>
+                    ))}
+                </em>
+                and tagged {tags.map(tag => (
+                    <a href={`/tag/${tag}`}>#{tag}</a><span>&nbsp</span>
+                ))}
+                on <FormattedDate date={postDate}/>.
+            <div>
     </div>
     </div>
 </article>

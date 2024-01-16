@@ -1,28 +1,30 @@
+---
+import BlogListItem from "./BlogListItem.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("posts");
+
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+const dates = [...new Set(posts.flatMap((p) => {
+        const date = p.data.postDate;
+        const year = date.getFullYear();
+        const month = date.getMonth(); // no need to add 1 here, because getMonth() is zero-based
+        return new Date(year, month, 1).toISOString(); // returns a date object representing the first day of the month
+    }))].map(dateStr => new Date(dateStr));
+
+const months = dates.flatMap((d) => {
+    return {
+        year: d.getFullYear(),
+        month: d.getMonth() < 10 ? '0' + (1 + d.getMonth()) : (1 + d.getMonth()),
+        title: (monthNames[d.getMonth()] + " " + d.getFullYear())
+    }
+});    
+
+---
 <div class="space-x-6 my-5 uppercase">Archives</div>
 <ul>
-  <li>September 2014</li>
-  <li>July 2014</li>
-  <li>April 2014</li>
-  <li>February 2014</li>
-  <li>January 2014</li>
-  <li>October 2013</li>
-  <li>September 2013</li>
-  <li>July 2013</li>
-  <li>June 2013</li>
-  <li>May 2013</li>
-  <li>April 2013</li>
-  <li>March 2013</li>
-  <li>February 2010</li>
-  <li>June 2009</li>
-  <li>April 2009</li>
-  <li>March 2009</li>
-  <li>December 2008</li>
-  <li>June 2007</li>
-  <li>November 2006</li>
-  <li>February 2005</li>
-  <li>January 2005</li>
-  <li>September 2004</li>
-  <li>August 2004</li>
-  <li>July 2004</li>
-  <li>June 2004</li>
+{months.map((d) =>
+    <span><BlogListItem url={`/${d.year}/${d.month}`} title={d.title} /></span>  
+)}
 </ul>
