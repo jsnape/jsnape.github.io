@@ -24,8 +24,8 @@ export async function getStaticPaths() {
 
 const { year, month } = Astro.params;
 const posts = await getCollection('posts',
-    ({id, slug, body, collection, data}) => 
-    data.postDate.getFullYear() == year && (data.postDate.getMonth() + 1) == month && excludeDrafts(data))
+    (post) => 
+    post.data.postDate.getFullYear() == year && (post.data.postDate.getMonth() + 1) == month && excludeDrafts(post))
   .then(sortBlogPosts);
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

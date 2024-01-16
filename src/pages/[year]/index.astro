@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 
 const { year } = Astro.params;
 const posts = await getCollection('posts',
-    ({data}) => data.postDate.getFullYear() == year && excludeDrafts(data))
+    (post) => post.data.postDate.getFullYear() == year && excludeDrafts(post))
   .then(sortBlogPosts);
 
 const pageTitle = "Annual Archives: " + year;
