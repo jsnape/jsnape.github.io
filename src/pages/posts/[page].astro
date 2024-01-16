@@ -1,0 +1,35 @@
+---
+import { ITEMS_PER_PAGE } from '@/consts';
+import SidebarLayout from "@/layouts/SidebarLayout.astro";
+import { getCollection } from "astro:content";
+import BlogPostArticle from "@components/BlogPostArticle.astro";
+import {excludeDrafts, sortBlogPosts} from "@/functions";
+import Pagination from "@philnash/astro-pagination";
+
+export async function getStaticPaths({ paginate }) {
+  const posts = await 
+  	getCollection('posts', excludeDrafts)
+	.then(sortBlogPosts);
+
+  return paginate(posts, { pageSize: ITEMS_PER_PAGE });
+}
+
+type Props = {
+  page: Page<CollectionEntry<"posts">>;
+};
+
+const { page } = Astro.props;
+
+
+const pageTitle = "Posts";
+---
+
+<SidebarLayout pageTitle={pageTitle}>
+	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
+		{!page.data.length && 'No posts found.'}
+		{page.data.map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
+	</ul>
+	<div class="pagination items-center flex">
+	<Pagination page={page} urlPattern={"/posts/{}"} />
+	</div>
+</SidebarLayout>

@@ -9,3 +9,11 @@
         overflow: auto;
     }
   }
+
+.pagination ul {
+    display: inline-flex;
+}
+
+.pagination ul li {
+    margin-right: 20px;
+}
