@@ -3,7 +3,7 @@ import BlogListItem from "./BlogListItem.astro";
 import { getCollection } from "astro:content";
 
 // function to lookup a font size based on a count
-function lookupFontSize(count) {
+function lookupFontSize(count: number) {
   const sizes = ["0px", "7pt", "10pt", "12pt", "16pt", "18pt", "20pt", "22pt", "24pt"];
 
   if (count >= sizes.length) {
@@ -13,12 +13,16 @@ function lookupFontSize(count) {
   return sizes[count];
 }
 
-const { year } = Astro.props;
+type TagCount = {
+  tag: string;
+  count: number;
+}
+
 const posts = await getCollection("posts");
 // map into a list of tags with the count of each tag
 const tags = posts
   .flatMap((post) => post.data.tags)
-  .reduce((acc, tag) => {
+  .reduce((acc:TagCount[], tag) => {
     const existing = acc.find((t) => t.tag === tag);
     if (existing) {
       existing.count++;

@@ -2,15 +2,13 @@
 import BlogListItem from "./BlogListItem.astro";
 import { getCollection } from "astro:content";
 
-const { year } = Astro.props;
 const posts = await getCollection("posts");
-// flatmap posts.categories into a list of unique categories
 const categories = [...new Set(posts.flatMap((p) => p.data.categories))].sort();
 
 ---
 <div class="space-x-6 my-5 uppercase">Categories</div>
 <ul>
-{categories.map((cat) =>
+{categories.map((cat:string) =>
     <span><BlogListItem url={`/category/${cat}`} title={cat} /></span>  
 )}
 </ul>

@@ -14,5 +14,5 @@ const { entry } = Astro.props;
 
 ---
 <MarkdownPostLayout frontmatter={entry.data}>
-  <BlogPostArticle post={entry}/>
+  <BlogPostArticle post={entry} homepage={false}/>
 </MarkdownPostLayout>

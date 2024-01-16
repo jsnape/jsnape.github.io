@@ -24,11 +24,12 @@ export async function getStaticPaths() {
 
 const { year, month } = Astro.params;
 const posts = await getCollection('posts',
-    ({data}) => data.postDate.getFullYear() == year && (data.postDate.getMonth() + 1) == month && excludeDrafts(data))
+    ({id, slug, body, collection, data}) => 
+    data.postDate.getFullYear() == year && (data.postDate.getMonth() + 1) == month && excludeDrafts(data))
   .then(sortBlogPosts);
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const monthName = monthNames[parseInt(month) - 1]; // subtract 1 because array indices are zero-based
+const monthName = monthNames[parseInt(String(month)) - 1]; // convert month to string before passing it as an argument
 const pageTitle = "Monthly Archives: " + monthName + " " + year;
 ---
 

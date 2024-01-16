@@ -2,11 +2,13 @@
 import { ITEMS_PER_PAGE } from '@/consts';
 import SidebarLayout from "@/layouts/SidebarLayout.astro";
 import { getCollection } from "astro:content";
+import type { CollectionEntry } from 'astro:content';
 import BlogPostArticle from "@components/BlogPostArticle.astro";
 import {excludeDrafts, sortBlogPosts} from "@/functions";
 import Pagination from "@philnash/astro-pagination";
+import type { Page } from 'astro';
 
-export async function getStaticPaths({ paginate }) {
+export async function getStaticPaths({ paginate }: any) {
   const posts = await 
   	getCollection('posts', excludeDrafts)
 	.then(sortBlogPosts);
@@ -15,7 +17,7 @@ export async function getStaticPaths({ paginate }) {
 }
 
 type Props = {
-  page: Page<CollectionEntry<"posts">>;
+	page: Page<CollectionEntry<"posts">>;
 };
 
 const { page } = Astro.props;
