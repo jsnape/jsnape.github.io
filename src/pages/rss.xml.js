@@ -1,5 +1,8 @@
 import rss from '@astrojs/rss';
 import sanitizeHtml from 'sanitize-html';
+import MarkdownIt from 'markdown-it';
+const parser = new MarkdownIt();
+
 import { getCollection } from 'astro:content';
 import {excludeDrafts, sortBlogPosts} from "@/functions";
 
@@ -26,7 +29,9 @@ export async function GET(context) {
             pubDate: post.data.postDate,
             description: post.data.description,
             link: `/${post.slug}/`,
-            content: sanitizeHtml(post.body),
+            content: sanitizeHtml(parser.render(post.body), {
+              allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ])
+            }),
           })),
         // inject custom tags defined above as a string so that we have support
         // for the Atom feed standard and give RSS readers information about what
