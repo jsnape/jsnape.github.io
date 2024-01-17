@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import Search from '@/components/Search.svelte';
 import RecentPosts from '@/components/RecentPosts.astro';
 import ArchiveList from '@/components/ArchiveList.astro';
 import CategoryList from '@/components/CategoryList.astro';
@@ -15,6 +16,7 @@ const { pageTitle } = Astro.props;
       <slot />
     </main>
     <aside class="p-2 md:col-span-3 md:pt-0">
+        <Search client:load site={Astro.site?.hostname ?? ''}/>
         <RecentPosts />
         <ArchiveList />
         <CategoryList />
