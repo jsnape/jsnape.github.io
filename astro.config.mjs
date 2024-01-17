@@ -2,6 +2,8 @@ import { defineConfig } from 'astro/config';
 import tailwind from "@astrojs/tailwind";
 import svelte from "@astrojs/svelte";
 import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
+import robotsTxt from "astro-robots-txt";
 
 // https://astro.build/config
 export default defineConfig({
@@ -9,5 +11,5 @@ export default defineConfig({
   redirects: {
     '/posts': '/posts/1'
   },
-  integrations: [tailwind(), svelte(), mdx()]
+  integrations: [tailwind(), svelte(), mdx(), sitemap(), robotsTxt()]
 });
