@@ -9,7 +9,8 @@ import robotsTxt from "astro-robots-txt";
 export default defineConfig({
   site: 'https://jsnape.github.io',
   redirects: {
-    '/posts': '/posts/1'
+    '/posts': '/posts/1',
+    '/feed': '/rss.xml'
   },
   integrations: [tailwind(), svelte(), mdx(), sitemap(), robotsTxt()]
 });
