@@ -1,7 +1,8 @@
 ---
-import SidebarLayout from "@/layouts/SidebarLayout.astro";
+import NoSidebarLayout from "@/layouts/NoSidebarLayout.astro";
 import { getCollection } from "astro:content";
-import {sortExperience} from "@/functions";
+import ExperienceEntry from "@components/ExperienceEntry.astro";
+import { sortExperience } from "@/functions";
 
 const experience = await
 	getCollection('experience')
@@ -10,10 +11,11 @@ const experience = await
 const pageTitle = "Experience";
 ---
 
-<SidebarLayout pageTitle={pageTitle}>
-	<ul class="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
-		{!experience.length && 'No experience found.'}
-		{experience.map((role) => <li><div class="timeline-start">{role.data.title}</div></li>)}
-	</ul>
-</SidebarLayout>
-
+<NoSidebarLayout pageTitle={pageTitle}>
+	<div class="">
+		<ul class="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
+			{!experience.length && 'No experience found.'}
+			{experience.map((exp, index) => <li><ExperienceEntry experience={exp} index={index}/></li>)}
+		</ul>
+	</div>
+</NoSidebarLayout>

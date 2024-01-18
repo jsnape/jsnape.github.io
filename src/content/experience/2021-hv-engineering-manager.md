@@ -8,7 +8,7 @@ employmentType: "Full-time"
 companyName: "Hitachi Vantara"
 companyUrl: "https://www.hitachivantara.com/"
 companyLogo:
-    url: "https://cdn.icon-icons.com/icons2/2699/PNG/512/hitachi_logo_icon_168125.png"
+    src: "./hitachi-icon.png"
     alt: ""
 skills: 
   - "agile"

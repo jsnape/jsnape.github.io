@@ -21,8 +21,9 @@ const postsCollection = defineCollection({
 
 const experienceCollection = defineCollection({
     type: 'content',
-    schema: z.object({
+    schema:  ({image}) => z.object({
         title: z.string(),
+        role: z.string().optional(),
         startDate: z.date(),
         endDate: z.date().optional(),
         locationType: z.string().default("remote"),
@@ -31,7 +32,7 @@ const experienceCollection = defineCollection({
         companyName: z.string().optional(),
         companyUrl: z.string().optional(),
         companyLogo: z.object({
-            url: z.string(),
+            src: image(),
             alt: z.string()
         }).optional(),
         skills: z.array(z.string()).default([]),

@@ -1,0 +1,65 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+    experience: any;
+    index: number;
+}
+
+import Link from "@/components/Link.astro";
+
+const { experience, index  } = Astro.props;
+const { title, role, startDate, endDate, skills, technologies, companyLogo } = experience.data;
+const { Content } = await experience.render();
+
+//const formattedDate = `${startDate.getFullYear()}`;
+const roleLabel = role ? `(${role})` : '';
+const datePosition = (index % 2 === 0 ? 'timeline-end' : 'timeline-start') + " max-md:invisible ";
+const experiencePosition = index % 2 === 0 ? 'timeline-start' : 'timeline-end';
+const startFormatted = `${startDate.toLocaleString('default', { month: 'short' })} ${startDate.getFullYear()}`;
+const endFormatted = endDate ? `${endDate.toLocaleString('default', { month: 'short' })} ${endDate.getFullYear()}` : 'Present';
+const experienceSpan = `${startFormatted} - ${endFormatted}`;
+
+const currentEndDate = endDate ? endDate : new Date();
+const durationInYears = (currentEndDate - startDate) / 1000 / 60 / 60 / 24 / 365.25;
+const years = Math.floor(durationInYears);
+const months = Math.floor((durationInYears - years) * 12);
+
+const yearsFormatted = years > 1 ? `${years} years` : years > 0 ? `${years} year` : '';
+const monthsFormatted = months > 1 ? `${months} months` : months > 0 ? `${months} month` : '';
+const joiner = yearsFormatted.length > 0 && monthsFormatted.length > 0 ? ' and ' : '';
+const formattedDuration = `${yearsFormatted}${joiner}${monthsFormatted}`;
+
+---
+<li>
+    <hr/>
+    <div class={datePosition}>
+        <time class="text-lg">{formattedDuration}</time>
+    </div>
+    <div class={experiencePosition}>
+        <div class="mx-5 w-11/12">
+            <h2 class="text-xl">{title}&nbsp;{roleLabel}</h2>
+            <Link href={experience.data.companyUrl} title={experience.data.companyName}>
+                {experience.data.companyName}
+            </Link>
+            <div class="float-right">
+                <time class="text-sm">{experienceSpan}</time>
+            </div>
+        </div>
+        <div class="prose m-5 w-full">
+            <Content />
+        </div>
+        <div class="w-full">
+        {skills.length > 0 && 
+        <p class="text-sm">Skills: {skills.map((skill:string, i:number) => <span>{i > 0 ? ',' : ''}&nbsp{skill}</span>)}</p>
+        }
+        {technologies.length > 0 && 
+        <p class="text-sm">Technologies: {technologies.map((tech:string, i:number) => <span>{i > 0 ? ',' : ''}&nbsp{tech}</span>)}</p>
+        }
+        </div>
+    </div>
+    {companyLogo &&
+        <Image class="timeline-middle" src={companyLogo.src} alt={companyLogo?.alt}} width="40" />
+    }
+    <hr/>
+</li>
