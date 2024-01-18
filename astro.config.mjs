@@ -4,6 +4,7 @@ import svelte from "@astrojs/svelte";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import robotsTxt from "astro-robots-txt";
+import partytown from '@astrojs/partytown';
 
 // https://astro.build/config
 export default defineConfig({
@@ -13,5 +14,10 @@ export default defineConfig({
     '/feed': '/rss.xml',
     '/resume': '/experience/',
   },
-  integrations: [tailwind(), svelte(), mdx(), sitemap(), robotsTxt()]
+  integrations: [tailwind(), svelte(), mdx(), sitemap(), robotsTxt(),
+		partytown({
+			config: {
+			  forward: ["dataLayer.push"],
+			},
+		}),]
 });
