@@ -1,6 +1,9 @@
 ---
 title: "Tableau European Customer Conference 2013"
 postDate: 2013-06-13
+image:
+    src: "./viz.png"
+    alt: "Tableau Visualization"
 categories: 
   - "data-visualization"
 tags: 
@@ -11,7 +14,7 @@ tags:
   - "tableau-customer-conference"
 ---
 
-![](./viz.png)This week has been dominated by the [Tableau Customer Conference](http://conference.tableausoftware.com/eu/2013/). I was fortunate to get a ticket since it was sold out but one of our architects couldn’t go so I filled in. I’m glad I did.
+This week has been dominated by the [Tableau Customer Conference](http://conference.tableausoftware.com/eu/2013/). I was fortunate to get a ticket since it was sold out but one of our architects couldn’t go so I filled in. I’m glad I did.
 
 It’s been a while since I got to learn about a completely new technology so it is a refreshing change to be a bit of a novice. After a number of Microsoft conferences this one felt quite different too – less geeky with a more mixed crowd. It was interesting to be able to talk with non-technical types such as data analysts, business managers and statisticians.
 

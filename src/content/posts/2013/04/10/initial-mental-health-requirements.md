@@ -1,6 +1,9 @@
 ---
 title: "Initial Mental Health Requirements"
 postDate: 2013-04-10
+image:
+    src: "./Torbay_Hospital_-_geograph.org.uk_-_1416979.jpg"
+    alt: "Torbay Hospital In-patient wards and treatment centres for mental health patients on the west side of the complex. source https://commons.wikimedia.org/wiki/File:Torbay_Hospital_-_geograph.org.uk_-_1416979.jpg"
 categories: 
   - "sample-solution"
 tags: 
