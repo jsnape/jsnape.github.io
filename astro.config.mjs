@@ -8,7 +8,7 @@ import partytown from '@astrojs/partytown';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://jsnape.github.io',
+  site: 'https://snape.me',
   redirects: {
     '/posts': '/posts/1',
     '/feed': '/rss.xml',
