@@ -10,7 +10,8 @@ export default defineConfig({
   site: 'https://jsnape.github.io',
   redirects: {
     '/posts': '/posts/1',
-    '/feed': '/rss.xml'
+    '/feed': '/rss.xml',
+    '/resume': '/experience/',
   },
   integrations: [tailwind(), svelte(), mdx(), sitemap(), robotsTxt()]
 });

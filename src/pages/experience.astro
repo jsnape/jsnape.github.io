@@ -1,0 +1,19 @@
+---
+import SidebarLayout from "@/layouts/SidebarLayout.astro";
+import { getCollection } from "astro:content";
+import {sortExperience} from "@/functions";
+
+const experience = await
+	getCollection('experience')
+	.then(sortExperience);
+
+const pageTitle = "Experience";
+---
+
+<SidebarLayout pageTitle={pageTitle}>
+	<ul class="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
+		{!experience.length && 'No experience found.'}
+		{experience.map((role) => <li><div class="timeline-start">{role.data.title}</div></li>)}
+	</ul>
+</SidebarLayout>
+

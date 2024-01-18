@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+
 interface Props {
     post: any;
     homepage: boolean;
@@ -8,14 +10,14 @@ import FormattedDate from "@/components/FormattedDate.astro";
 import Link from "@/components/Link.astro";
 
 const { post, homepage } = Astro.props;
-const { title, description, postDate, tags, categories } = post.data;
+const { title, description, postDate, tags, categories, image } = post.data;
 const { Content } = await post.render();
 
 ---
 <article class="prose my-6">
-    <div class="xl:col-span-3">
-        {post.image &&
-            <img src={post.image?.url} alt={post.image?.alt} />
+    <div class="md:col-span-3">
+        {image &&
+            <Image src={image.src} alt={image?.alt} />
         }
         <div class="space-y-6">
             <div>

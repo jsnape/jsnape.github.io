@@ -1,6 +1,9 @@
 ---
 title: "Using an open source committer policy in the enterprise"
 postDate: 2014-02-11
+image:
+    src: "./southbourne-beach.jpg"
+    alt: "Southbourne Beach"
 categories: 
   - "agile"
 tags: 
@@ -8,7 +11,7 @@ tags:
   - "code-reviews"
 ---
 
-![Southbourne Beach](./12467521734_d2293e9855_z.jpg)How would you change your behaviour if the person reviewing your code had the final say on whether it makes it into the source repository?
+How would you change your behaviour if the person reviewing your code had the final say on whether it makes it into the source repository?
 
 I often see code reviews done in principle but not practice. The workflow goes something like this:
 

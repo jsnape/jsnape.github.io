@@ -16,6 +16,12 @@ export const sortBlogPosts = (posts: CollectionEntry<'posts'>[]): CollectionEntr
     })
 }
 
+export const sortExperience = (experience: CollectionEntry<'experience'>[]): CollectionEntry<'experience'>[] => {
+    return experience.sort((a, b) => {
+        return new Date(b.data.startDate).getTime() - new Date(a.data.startDate).getTime()
+    })
+}
+
 /**
  * Exclude draft posts from the collection. If the site is built in production mode, draft posts are excluded by default.
  *
