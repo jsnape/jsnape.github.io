@@ -7,6 +7,8 @@ import { getCollection } from 'astro:content';
 import {excludeDrafts, sortBlogPosts} from "@/functions";
 
 const SITE = import.meta.env.SITE;
+const YEAR = new Date().getFullYear();
+const LAST_BUILD_DATE = new Date().toUTCString();
 
 const customDataTags = [
     // enable Atom feed, as some RSS readers use that format
@@ -14,6 +16,14 @@ const customDataTags = [
     `<atom:link href="${SITE}/feed.xml" rel="self" type="application/rss+xml" />`,
     // enable language metadata
     `<language>en-us</language>`,
+  `<category>Software development</category>`,
+  `<copyright>${YEAR} James Snape. All rights reserved.</copyright>`,
+  `<image>
+    <url>https://snape.me/favicon.png</url>
+    <title>James Snape</title>
+    <link>https://snape.me/</link>
+    </image>`,
+    `<lastBuildDate>${LAST_BUILD_DATE}</lastBuildDate>`,
   ];
 
 export async function GET(context) {
@@ -24,6 +34,7 @@ export async function GET(context) {
         title: 'James Snape',
         description: 'Better software through architecture and devops',
         site: context.site,
+
         items: posts.map((post) => ({
             title: post.data.title,
             pubDate: post.data.postDate,
@@ -32,6 +43,7 @@ export async function GET(context) {
             content: sanitizeHtml(parser.render(post.body), {
               allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ])
             }),
+          categories: post.data.tags,
           })),
         // inject custom tags defined above as a string so that we have support
         // for the Atom feed standard and give RSS readers information about what
