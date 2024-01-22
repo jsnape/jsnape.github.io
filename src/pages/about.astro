@@ -1,9 +1,46 @@
 ---
-import { ITEMS_PER_PAGE } from '@/consts';
 import SidebarLayout from "@/layouts/SidebarLayout.astro";
+import { Image } from 'astro:assets';
+
+import meImage from '@/assets/me.jpg';
+import chefImage from '@/assets/chef-me.jpg';
 
 const pageTitle = "About Me";
 ---
 
 <SidebarLayout pageTitle={pageTitle}>
+  <div class="content prose">
+    <Image class="float-right m-3" src={meImage} alt="Image of James Snape." width="200" />
+    <p>
+      Hello and welcome to my blog! My name is James Snape and I'm a software
+      engineer with a passion for technology, software architecture and devops.
+      I created this blog to document my learnings and experiences in the field,
+      and to share them with you, my dear reader.
+    </p>
+
+    <p>
+      I currently live in Bournemouth, a beautiful coastal town in the south of
+      England. I've also lived in other parts of the UK, such as Cheshire and
+      London. When I'm not coding or blogging, I enjoy cooking, patisserie,
+      cocktails, and spending time with my dogs. I also like to build Lego
+      Technic models and take photos.
+    </p>
+
+    <p>
+      My blog covers various topics related to technology, such as programming
+      languages, frameworks, tools, best practices, design patterns, cloud
+      computing, and more. I write in a conversational and informal style, as if
+      I'm talking to you directly. I hope you find my posts useful and
+      interesting, and if you want to leave your feedback or questions, you can
+      mention me on Twitter @james_snape.
+    </p>
+    <Image class="float-left m-3" src={chefImage} alt="Image of James Snape cooking." width="200" />
+    <p>
+        <em>Besides my technical content, I also post photos or articles about other
+      things I find interesting, such as food, drinks, pets, travel, and more.
+      You can check them out in the categories section of my blog.</em>
+    </p>
+
+    <p>Thank you for visiting my blog and happy reading!</p>
+  </div>
 </SidebarLayout>
