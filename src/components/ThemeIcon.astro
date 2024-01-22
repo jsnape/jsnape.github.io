@@ -27,11 +27,8 @@
         return 'light';
     })();
   
-    if (theme === 'light') {
-        document.getElementById("themeToggle").checked = false;
-    } else {
-        document.getElementById("themeToggle").checked = true;
-    }
+    document.getElementById("themeToggle").checked =
+        (theme === 'light') ? false : true;
   
     window.localStorage.setItem('theme', theme);
   
@@ -40,6 +37,7 @@
       localStorage.setItem("theme", isDark ? "dark" : "light");
     }
   
-    document.getElementById("themeToggle").addEventListener("click", handleToggleClick);
+    document.getElementById("themeToggle")
+    .addEventListener("click", handleToggleClick);
 
 </script>
