@@ -3,6 +3,6 @@ import SidebarLayout from "./SidebarLayout.astro";
 const { frontmatter } = Astro.props;
 ---
 
-<SidebarLayout pageTitle={frontmatter.title}>
+<SidebarLayout pageTitle={frontmatter.title} robots="index,follow">
   <slot />
 </SidebarLayout>
