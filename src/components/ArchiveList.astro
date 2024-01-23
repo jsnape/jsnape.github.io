@@ -17,8 +17,11 @@ const months = dates.flatMap((d) => {
     return {
         year: d.getFullYear(),
         month: d.getMonth() < 10 ? '0' + (1 + d.getMonth()) : (1 + d.getMonth()),
-        title: (monthNames[d.getMonth()] + " " + d.getFullYear())
+        title: (monthNames[d.getMonth()] + " " + d.getFullYear()),
+        sortable: d.getFullYear() * 100 + d.getMonth()
     }
+}).sort((a, b) => {
+    return b.sortable - a.sortable;
 });    
 
 ---
