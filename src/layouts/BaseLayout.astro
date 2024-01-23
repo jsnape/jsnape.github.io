@@ -1,17 +1,73 @@
 ---
-import Header from '@/components/Header.astro';
-import Hero from '@/components/Hero.astro';
-import Footer from '@/components/Footer.astro';
-import '../styles/base.css';
+import Header from "@/components/Header.astro";
+import Hero from "@/components/Hero.astro";
+import Footer from "@/components/Footer.astro";
+import CookieConsent from "@/components/CookieConsent.svelte";
+
+import "../styles/base.css";
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 const { pageTitle, robots } = Astro.props;
 const robotsContent = !robots || robots.length === 0 ? "index, follow" : robots;
 ---
+
 <html lang="en">
   <head>
     <!-- Google tag (gtag.js) -->
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+
+      // global function so that it can be called from anywhere
+      // Updates consent for GA4 to granted if called
+      window.consentGranted = function () {
+        console.log("consent granted");
+        gtag("consent", "update", {
+          ad_storage: "granted",
+          analytics_storage: "granted",
+          functionality_storage: "granted",
+          personalization_storage: "granted",
+          security_storage: "granted",
+        });
+      };
+
+      // Returns value of a cookie named 'cookie-consent'
+      // Should be either "granted" or "denied"
+      window.getCookieConsent = function () {
+        try {
+          const consent = document.cookie.match(/cookie-consent=([^;]+)/)[1];
+          return consent;
+        } catch (error) {
+          return "unk";
+        }
+      };
+
+      if (window.getCookieConsent() == "granted") {
+        // If cookies already approved, set that
+        console.log("default set to granted");
+        gtag("consent", "default", {
+          ad_storage: "granted",
+          analytics_storage: "granted",
+          functionality_storage: "granted",
+          personalization_storage: "granted",
+          security_storage: "granted",
+        });
+      } else {
+        // default all to 'denied'.
+        console.log("default set to denied");
+        gtag("consent", "default", {
+          ad_storage: "denied",
+          analytics_storage: "denied",
+          functionality_storage: "denied",
+          personalization_storage: "denied",
+          security_storage: "denied",
+        });
+      }
+    </script>
+
     <!-- <script type="text/partytown" async src="https://www.googletagmanager.com/gtag/js?id=G-9XV00FHBVL"></script>
     <script type="text/partytown">
       window.dataLayer = window.dataLayer || [];
@@ -20,19 +76,29 @@ const robotsContent = !robots || robots.length === 0 ? "index, follow" : robots;
       gtag('config', 'G-9XV00FHBVL');
     </script> -->
     <!-- Google Tag Manager -->
-    <script type="text/partytown">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-PZLZ35H6');</script>
-      <!-- End Google Tag Manager -->    
+    <script is:inline>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-PZLZ35H6");
+    </script>
+    <!-- End Google Tag Manager -->
     <meta charset="utf-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="robots" content={robotsContent} />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="msvalidate.01" content="B1436B6E10C38B2B46FE997215481B16" />
-    <meta name="google-site-verification" content="ukmbve0y38c7dhv8s4T9pNS6fAwFXaLKraK57dVeCrc" />
+    <meta
+      name="google-site-verification"
+      content="ukmbve0y38c7dhv8s4T9pNS6fAwFXaLKraK57dVeCrc"
+    />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="canonical" href={canonicalURL} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -41,17 +107,32 @@ const robotsContent = !robots || robots.length === 0 ? "index, follow" : robots;
       href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap"
       rel="stylesheet"
     />
-    <link rel="alternate" type="application/rss+xml" title="James Snape &raquo; Feed" href="/rss.xml" />
-    <script src="https://kit.fontawesome.com/788d72bc6c.js" crossorigin="anonymous"></script>
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="James Snape » Feed"
+      href="/rss.xml"
+    />
+    <script
+      src="https://kit.fontawesome.com/788d72bc6c.js"
+      crossorigin="anonymous"></script>
     <title>{pageTitle}</title>
   </head>
   <body class="min-h-screen">
-<!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PZLZ35H6"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->    
-    <div class="flex flex-col min-h-screen mx-auto">    
-      <div class="sticky z-50 top-0 backdrop-filter backdrop-blur-xl bg-opacity-60">
+    <CookieConsent CookieConsent client:load />
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-PZLZ35H6"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"></iframe></noscript
+    >
+    <!-- End Google Tag Manager (noscript) -->
+    <div class="flex flex-col min-h-screen mx-auto">
+      <div
+        class="sticky z-50 top-0 backdrop-filter backdrop-blur-xl bg-opacity-60"
+      >
         <Header />
       </div>
       <div class="">
@@ -59,6 +140,6 @@ const robotsContent = !robots || robots.length === 0 ? "index, follow" : robots;
         <slot />
         <Footer />
       </div>
-    </div>        
+    </div>
   </body>
 </html>
