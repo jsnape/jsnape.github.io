@@ -1,0 +1,374 @@
+---
+title: "Converting code with GPT/Copilot"
+postDate: 2024-01-23
+description: >
+  Converting code between Javascript technologies isn't simple but GPT/Copilots can do a lot of the heavy lifting.
+image:
+  src: "./bournemouth-beach.jpg"
+  alt: "Bournemouth Beach"
+categories:
+  - "code"
+tags:
+  - "solidjs"
+  - "svelte"
+  - "typescript"
+---
+
+Its been nearly 10 years since I last posted an article on this site.
+Having children and other priorities pushed blogging lower down the priority stack.
+Plus the site used hosted on https://jamessnape.wordpress.com/ and getting embedded code to
+look good was an effort.
+
+My kids are older now and I'm interested in using this site to learn about new technologies;
+specifically [Astro](https://astro.build), [Svelte](https://svelte.dev/), and [Tailwind CSS](https://tailwindcss.com/).
+
+Once of the challenges I've had creating this new implementation is there are now a lot of privacy laws in place such as GDPR.
+Since I use Google Analytics I have to include a [Privacy Policy](/privacy/) and cookie consent pop-up [^1].
+
+As a guide I followed [Creating a Cookie Consent Banner for Google Tag Manager](https://webreaper.dev/posts/google-tag-manager-cookie-consent/)
+to add mine here. This example uses Solid JS for the implementation of the 
+consent functionality and its not familiar to me so I turned to Bing Copilot for help.
+
+First step is to ask a general question "_how to convert solidjs to svelte?_"
+
+> To convert SolidJS to Svelte, you can follow the steps below:
+> 
+> 1. First, install the latest version of Svelte by running the following command in your terminal:
+> `npm install svelte@latest`
+> 
+> 2. Next, create a new Svelte component file with the same name as your SolidJS component file.
+> For example, if your SolidJS component file is named `MyComponent.js`, create a new file named `MyComponent.svelte`.
+> 
+> 3. Copy the contents of your SolidJS component file into your new Svelte component file.
+> 
+> 4. Replace any SolidJS-specific syntax with equivalent Svelte syntax.
+> You can refer to the official Svelte documentation for more information on Svelte syntax.
+> 
+> 5. Finally, compile your Svelte component file into a JavaScript file that creates the DOM and CSS files that style it.
+> You can use SvelteKit, the official application framework from the Svelte team, to handle this process.
+> Run the following command in your terminal:
+> `npm run dev`
+> 
+> I hope this helps! Let me know if you have any other questions.
+
+This is a nice high level plan but the 4th point is a little light on detail so next question "_expand on point 4 please_".
+
+> Sure, I can explain more about point 4. Point 4 is about replacing any SolidJS-specific syntax with equivalent Svelte syntax.
+> This means that you need to change the way you write your component logic, state, props, events, and other features 
+> that are different between SolidJS and Svelte.
+>
+> Here are some examples of how to convert some common SolidJS syntax to Svelte syntax:
+> - **Component logic**: In SolidJS, you write your component logic inside a function that returns JSX.
+> In Svelte, you write your component logic inside a `<script>` tag that can export variables and functions to the template. For example:
+> ```typescript
+> // SolidJS
+> import { createSignal } from "solid-js";
+> 
+> function Counter() {
+>   const [count, setCount] = createSignal(0);
+> 
+>   function increment() {
+>       setCount(count() + 1);
+>   }
+> 
+>   return (
+>     <div>
+>       <p>Count: {count()}</p>
+>       <button onClick={increment}>+1</button>
+>     </div>
+>   );
+> }
+> ```
+> ### HTML
+> ```html
+> <!-- Svelte -->
+> <script>
+>   let count = 0;
+> 
+>   function increment() {
+>     count++;
+>   }
+> </script>
+> 
+> <div>
+>   <p>Count: {count}</p>
+>   <button on:click={increment}>+1</button>
+> </div>
+> ```
+> - **State**: In SolidJS, you use `createSignal` to create reactive state variables that are updated
+> by calling setter functions. In Svelte, you use `let` to declare reactive state variables that 
+> are updated by assigning new values. For example:
+> ```typescript
+> // SolidJS
+> import { createSignal } from "solid-js";
+> 
+> function App() {
+>   const [name, setName] = createSignal("World");
+> 
+>   function handleChange(e) {
+>     setName(e.target.value);
+>   }
+> 
+>   return (
+>     <div>
+>       <h1>Hello {name()}!</h1>
+>       <input type="text" value={name()} onInput={handleChange} />
+>     </div>
+>   );
+> }
+> ```
+> ### HTML
+> ```html
+> <!-- Svelte -->
+> <script>
+>   let name = "World";
+> 
+>   function handleChange(e) {
+>     name = e.target.value;
+>   }
+> </script>
+> 
+> <div>
+>   <h1>Hello {name}!</h1>
+>   <input type="text" bind:value={name} on:input={handleChange} />
+> </div>
+> ```
+> - **Props**: In SolidJS, you use props to access the properties passed to your component 
+> from the parent component. In Svelte, you use export to declare the properties that your
+> component expects from the parent component. For example:
+> ```typescript
+> // SolidJS
+> function Greeting(props) {
+>   return <p>Hello, {props.name}!</p>;
+> }
+> ```
+> ### HTML
+> ```html
+> <!-- Svelte -->
+> <script>
+>   export let name;
+> </script>
+> 
+> <p>Hello, {name}!</p>
+> ```
+> - **Events**: In SolidJS, you use `onClick`, `onInput`, `onChange`, and other event handlers
+> to listen to user interactions on your elements. In Svelte, you use `on:click`, `on:input`,
+> `on:change`, and other event listeners to listen to user interactions on your elements. For example:
+> ```typescript
+> // SolidJS
+> function Button(props) {
+>   return <button onClick={props.onClick}>{props.label}</button>;
+> }
+> ```
+> ### HTML
+> ```html
+> <!-- Svelte -->
+> <script>
+>   export let onClick;
+>   export let label;
+> </script>
+> 
+> <button on:click={onClick}>{label}</button>
+> ```
+> These are just some of the syntax differences between SolidJS and Svelte. You can find more 
+> information on Svelte syntax in the [official Svelte documentation]. 
+> I hope this helps! Let me know if you have any other questions.
+
+There is quite a lot of specific information in this response to I started to convert the code
+but didn't understand the following:
+
+```typescript
+createEffect(() => {
+    setIsMounted(true);
+    // get cookie approval after component is mounted
+    setCookies(getCookieConsent());
+  });
+```
+
+...so another question: "_Convert the following solidjs code to svelte: `plus the code above`_".
+The response is both accurate and uncannily expands the example to include the complete code.
+
+> To convert the following SolidJS code to Svelte, you can use the `onMount` lifecycle function
+> from Svelte, which runs after the component is first rendered to the DOM. For example:
+> ```typescript
+> // SolidJS
+> import { createEffect } from "solid-js";
+> 
+> function App() {
+>   const [isMounted, setIsMounted] = createSignal(false);
+>   const [cookies, setCookies] = createSignal(null);
+> 
+>   createEffect(() => {
+>     setIsMounted(true);
+>     // get cookie approval after component is mounted
+>     setCookies(getCookieConsent());
+>   });
+> 
+>   return (
+>     <div>
+>       <p>Is mounted: {isMounted() ? "Yes" : "No"}</p>
+>       <p>Cookies: {cookies()}</p>
+>     </div>
+>   );
+> }
+> ```
+> ### HTML
+> ```html
+> <!-- Svelte -->
+> <script>
+>   import { onMount } from "svelte";
+>   let isMounted = false;
+>   let cookies = null;
+> 
+>   onMount(() => {
+>     isMounted = true;
+>     // get cookie approval after component is mounted
+>     cookies = getCookieConsent();
+>   });
+> </script>
+> 
+> <div>
+>   <p>Is mounted: {isMounted ? "Yes" : "No"}</p>
+>   <p>Cookies: {cookies}</p>
+> </div>
+> ```
+> I hope this helps! Let me know if you have any other questions.
+
+This got me to the stage where I could convert the typescript part of of the code.
+Only the markup to go but some of it isn't plain HTML, specifically the `<Show>` element.
+So I asked "_What is the equivalent svelte construct to a solidjs `<Show>` element?_".
+
+The final response was all I needed.
+
+> The equivalent Svelte construct to a SolidJS `<Show>` element is the `{#if ...}` block.
+> The `<Show>` element in SolidJS is used to conditionally render a component based on a boolean expression.
+> The `{#if ...}` block in Svelte does the same thing, but with a different syntax.
+> For example:
+> ```typescript
+> // SolidJS
+> import { Show } from "solid-js/web";
+> 
+> function App() {
+>   const [show, setShow] = createSignal(true);
+> 
+>   function toggle() {
+>     setShow(!show());
+>   }
+> 
+>   return (
+>     <div>
+>       <button onClick={toggle}>Toggle</button>
+>       <Show when={show()}>
+>         <p>This is shown when show is true</p>
+>       </Show>
+>     </div>
+>   );
+> }
+> ```
+> ### HTML
+> ```html
+> <!-- Svelte -->
+> <script>
+>   let show = true;
+> 
+>   function toggle() {
+>     show = !show;
+>   }
+> </script>
+> 
+> <div>
+>   <button on:click={toggle}>Toggle</button>
+>   {#if show}
+>     <p>This is shown when show is true</p>
+>   {/if}
+> </div>
+> ```
+
+You can ask to convert the code in one go but I like being able to learn along the way.
+Also GPT to break a problem down usually results in a better response.
+
+## Final code
+
+The final code for the converted CookieConsent.svelte component looks like:
+
+```svelte
+<script lang="ts">
+    declare function consentGranted(): void;
+    declare function getCookieConsent(): string;
+
+    import { onMount } from "svelte";
+
+    let cookies = "unk";
+    let isMounted = false;
+    export let CookieConsent;
+
+    const handleAccept = () => {
+        cookies = "granted";
+
+        // accepted cookie lasts for a year
+        let d = new Date();
+        let oneYear = new Date(d.getFullYear() + 1, d.getMonth(), d.getDate());
+
+        document.cookie = "cookie-consent=granted; expires=" + oneYear + "; path=/";
+        
+        consentGranted();
+    };
+
+    const handleDecline = () => {
+        cookies = "denied";
+    
+        // declined cookie only lasts for the session
+        document.cookie = "cookie-consent=denied; path=/";
+    };
+
+  // this waits to load the cookie banner until the component is mounted
+  // so that there is not a component flash
+  onMount(() => {
+        isMounted = true;
+        // get cookie approval after component is mounted
+        cookies = getCookieConsent();
+    });
+
+</script>
+
+<!-- if there is no cookie for "cookie-consent", display the banner -->
+{#if isMounted}
+    <div
+    id="cookie-banner"
+    class={`${
+        cookies === "granted" || cookies === "denied" ? "hidden" : ""
+    } fixed bottom-0 right-0 z-50 m-2 max-w-screen-sm rounded-lg border-2 border-slate-300 bg-purple-50 text-slate-800 shadow-xl`}
+    >
+    <div class="p-4 text-center">
+        <p class="mb-4 text-sm sm:text-base">
+        We use cookies to analyze our website and make your experience even
+        better. To learn more, see our{" "}
+        <a
+            class="text-blue-600 underline hover:text-blue-700"
+            href="/privacy/"
+            target="_blank"
+        >
+            Privacy Policy.
+        </a>
+        </p>
+
+        <div class="mx-auto">
+        <button
+            class="rounded-md bg-blue-600 p-2 text-white transition hover:bg-blue-700"
+            on:click={handleAccept}
+        >
+            Accept
+        </button>
+        <button
+            class="ml-2 rounded-md bg-transparent p-2 text-slate-600 transition hover:bg-gray-200"
+            on:click={handleDecline}
+        >
+            Decline
+        </button>
+        </div>
+    </div>
+    </div>
+{/if}
+```
+
+[^1]: If you didn't see the popup then you may have an automatic blocker like Ghostery enabled.
