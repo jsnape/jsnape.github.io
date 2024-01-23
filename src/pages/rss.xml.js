@@ -4,7 +4,7 @@ import MarkdownIt from 'markdown-it';
 const parser = new MarkdownIt();
 
 import { getCollection } from 'astro:content';
-import {excludeDrafts, sortBlogPosts} from "@/functions";
+import {excludeInstagram, sortBlogPosts} from "@/functions";
 
 const SITE = import.meta.env.SITE;
 const YEAR = new Date().getFullYear();
@@ -27,7 +27,7 @@ const customDataTags = [
   ];
 
 export async function GET(context) {
-    const posts = await getCollection('posts', excludeDrafts)
+    const posts = await getCollection('posts', excludeInstagram)
 	    .then(sortBlogPosts);
 
     return rss({
