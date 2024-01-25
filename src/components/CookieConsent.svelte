@@ -6,7 +6,7 @@
 
     let cookies = "unk";
     let isMounted = false;
-    export let CookieConsent;
+    export let CookieConsent = "denied";
 
     const handleAccept = () => {
         cookies = "granted";
@@ -16,13 +16,13 @@
         let oneYear = new Date(d.getFullYear() + 1, d.getMonth(), d.getDate());
 
         document.cookie = "cookie-consent=granted; expires=" + oneYear + "; path=/";
-        
+        CookieConsent = "granted";
         consentGranted();
     };
 
     const handleDecline = () => {
         cookies = "denied";
-    
+        CookieConsent = "denied";
         // declined cookie only lasts for the session
         document.cookie = "cookie-consent=denied; path=/";
     };

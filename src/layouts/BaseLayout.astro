@@ -119,7 +119,7 @@ const robotsContent = !robots || robots.length === 0 ? "index, follow" : robots;
     <title>{pageTitle}</title>
   </head>
   <body class="min-h-screen">
-    <CookieConsent CookieConsent client:load />
+    <CookieConsent CookieConsent="false" client:load />
     <!-- Google Tag Manager (noscript) -->
     <noscript
       ><iframe

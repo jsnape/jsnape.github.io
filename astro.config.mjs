@@ -11,7 +11,6 @@ export default defineConfig({
   site: 'https://snape.me',
   redirects: {
     '/posts': '/posts/1',
-    '/feed': '/rss.xml',
     '/resume': '/experience/',
   },
   integrations: [tailwind(), svelte(), mdx(), sitemap(), robotsTxt(),

@@ -17,7 +17,7 @@ companyLogo:
 | 1990 | Maths | A-Level | B |
 | 1990 | Physics | A-Level | B |
 | 1990 | Chemistry | A-Level | A |
-| 1990 | Electronics | A-Level | * |
+| 1990 | Electronics | A?-Level | * |
 | 1989 | Maths | AS-Level | B |
 | 1988 | Chemistry | GCSE | A |
 | 1988 | Physics | GCSE | A |
