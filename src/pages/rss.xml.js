@@ -26,29 +26,26 @@ const customDataTags = [
     `<lastBuildDate>${LAST_BUILD_DATE}</lastBuildDate>`,
   ];
 
-function convertSrcToAbsoluteUri(imgSrc, site, postSlug) {
+function convertToAbsoluteUri(url, site, path) {
 
-  if (imgSrc.startsWith('http')) {
-    return imgSrc;
+  if (url.startsWith('http')) {
+    return url;
   }
 
-  // if postSlug ends with a slash, remove it
-  if (postSlug.endsWith('/')) {
-    postSlug = postSlug.slice(0, -1);
+  // if parentPath ends with a slash, remove it
+  if (path && path.endsWith('/')) {
+    path = path.slice(0, -1);
   }
 
-  // remove last part of the slug to get the path
-  const path = postSlug.substring(0, postSlug.lastIndexOf('/'));
-
-  // replace . in imgSrc with the full site url
-  const imgPath = imgSrc.replace('.', `${path}`);
+  // replace . in url with the full site url
+  const absoluteUrl = url.replace('.', `${path}`);
 
   // if imgPath starts with a /, remove it
-  if (imgPath.startsWith('/')) {
-    return `${site}${imgPath.substring(1)}`;
+  if (absoluteUrl.startsWith('/')) {
+    return `${site}${absoluteUrl.substring(1)}`;
   }
 
-  return `${site}${imgPath}`;
+  return `${site}${absoluteUrl}`;
 }
 
 // This is the main function that will be called by Astro to generate the RSS feed
@@ -82,7 +79,15 @@ export async function GET(context) {
                     },
                     text: `${attribs.alt}: embedded images not supported yet. Click to view the post online.`
                   };
-                }
+                },
+                'a': (tagName, attribs) => {
+                  return {
+                    tagName: 'a',
+                    attribs: {
+                      href: convertToAbsoluteUri(attribs.href, context.site, context.path),
+                    },
+                  };
+                },
               },
             }),
             categories: post.data.tags,
