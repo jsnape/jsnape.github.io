@@ -64,21 +64,23 @@ export async function GET(context) {
         items: posts.map((post) => ({
             title: post.data.title,
             pubDate: post.data.postDate,
-          description: post.data.description || post.data.title,
+            description: post.data.description || post.data.title,
             link: `/${post.slug}/`,
             content: sanitizeHtml(parser.render(post.body), {
-              allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+              allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'a']),
               allowedAttributes: {
-                img: ["src", "alt"]
+                img: ["src", "alt"],
+                a: ["href", "title"]
               },
               transformTags: {
                 'img': (tagName, attribs) => {
                   return {
-                    tagName: 'img',
+                    tagName: 'a',
                     attribs: {
-                      src: convertSrcToAbsoluteUri(attribs.src, context.site, post.slug),
-                      alt: attribs.alt,
-                    }
+                      href: `${context.site}${post.slug}}`,
+                      title: attribs.alt,
+                    },
+                    text: "Embedded image link to the post. Click to view the image."
                   };
                 }
               },
