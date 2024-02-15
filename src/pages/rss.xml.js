@@ -13,7 +13,7 @@ const LAST_BUILD_DATE = new Date().toUTCString();
 const customDataTags = [
     // enable Atom feed, as some RSS readers use that format
     // https://www.fpds.gov/wiki/index.php/FAADC_Atom_Feed_Specifications_V_1.0
-    `<atom:link href="${SITE}/feed.xml" rel="self" type="application/rss+xml" />`,
+  `<atom:link href="${SITE}/rss.xml" rel="self" type="application/rss+xml" />`,
     // enable language metadata
     `<language>en-us</language>`,
   `<category>Software development</category>`,
@@ -64,7 +64,7 @@ export async function GET(context) {
         items: posts.map((post) => ({
             title: post.data.title,
             pubDate: post.data.postDate,
-            description: post.data.description,
+          description: post.data.description || post.data.title,
             link: `/${post.slug}/`,
             content: sanitizeHtml(parser.render(post.body), {
               allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
