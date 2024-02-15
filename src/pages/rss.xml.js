@@ -80,7 +80,7 @@ export async function GET(context) {
                       href: `${context.site}${post.slug}`,
                       title: attribs.alt,
                     },
-                    text: "Embedded image link to the post. Click to view the image."
+                    text: `${attribs.alt}: embedded images not supported yet. Click to view the post online.`
                   };
                 }
               },
