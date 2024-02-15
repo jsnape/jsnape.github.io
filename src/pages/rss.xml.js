@@ -77,7 +77,7 @@ export async function GET(context) {
                   return {
                     tagName: 'a',
                     attribs: {
-                      href: `${context.site}${post.slug}}`,
+                      href: `${context.site}${post.slug}`,
                       title: attribs.alt,
                     },
                     text: "Embedded image link to the post. Click to view the image."
