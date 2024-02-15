@@ -26,8 +26,29 @@ const customDataTags = [
     `<lastBuildDate>${LAST_BUILD_DATE}</lastBuildDate>`,
   ];
 
-function convertToFullUri(relativeUri) {
-    return `${SITE}${relativeUri}`;
+function convertSrcToAbsoluteUri(imgSrc, site, postSlug) {
+
+  if (imgSrc.startsWith('http')) {
+    return imgSrc;
+  }
+
+  // if postSlug ends with a slash, remove it
+  if (postSlug.endsWith('/')) {
+    postSlug = postSlug.slice(0, -1);
+  }
+
+  // remove last part of the slug to get the path
+  const path = postSlug.substring(0, postSlug.lastIndexOf('/'));
+
+  // replace . in imgSrc with the full site url
+  const imgPath = imgSrc.replace('.', `${path}`);
+
+  // if imgPath starts with a /, remove it
+  if (imgPath.startsWith('/')) {
+    return `${site}${imgPath.substring(1)}`;
+  }
+
+  return `${site}${imgPath}`;
 }
 
 // This is the main function that will be called by Astro to generate the RSS feed
@@ -46,7 +67,21 @@ export async function GET(context) {
             description: post.data.description,
             link: `/${post.slug}/`,
             content: sanitizeHtml(parser.render(post.body), {
-              allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ])
+              allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+              allowedAttributes: {
+                img: ["src", "alt"]
+              },
+              transformTags: {
+                'img': (tagName, attribs) => {
+                  return {
+                    tagName: 'img',
+                    attribs: {
+                      src: convertSrcToAbsoluteUri(attribs.src, context.site, post.slug),
+                      alt: attribs.alt,
+                    }
+                  };
+                }
+              },
             }),
             categories: post.data.tags,
             // custom data for media. The url must be the full url (including https://)
@@ -55,7 +90,7 @@ export async function GET(context) {
             width="${post.data.image.src.width}"
             height="${post.data.image.src.height}"
             medium="image"
-            url="${context.site + post.data.image.src.src.replace('/@fs/E:/Dev/snape.me/src/content/posts/', '')}" />
+            url="${context.site + post.data.image.src.src}" />
             ` : '',            
           })),
         // inject custom tags defined above as a string so that we have support
