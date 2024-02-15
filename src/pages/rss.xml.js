@@ -26,6 +26,11 @@ const customDataTags = [
     `<lastBuildDate>${LAST_BUILD_DATE}</lastBuildDate>`,
   ];
 
+function convertToFullUri(relativeUri) {
+    return `${SITE}${relativeUri}`;
+}
+
+// This is the main function that will be called by Astro to generate the RSS feed
 export async function GET(context) {
     const posts = await getCollection('posts', excludeInstagram)
 	    .then(sortBlogPosts);
@@ -43,7 +48,15 @@ export async function GET(context) {
             content: sanitizeHtml(parser.render(post.body), {
               allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ])
             }),
-          categories: post.data.tags,
+            categories: post.data.tags,
+            // custom data for media. The url must be the full url (including https://)
+            customData: post.data.image != null ? `<media:content
+            type="image/${post.data.image.src.format == "jpg" ? "jpeg" : "png"}"
+            width="${post.data.image.src.width}"
+            height="${post.data.image.src.height}"
+            medium="image"
+            url="${context.site + post.data.image.src.src.replace('/@fs/E:/Dev/snape.me/src/content/posts/', '')}" />
+            ` : '',            
           })),
         // inject custom tags defined above as a string so that we have support
         // for the Atom feed standard and give RSS readers information about what
@@ -57,6 +70,8 @@ export async function GET(context) {
             atom: 'http://www.w3.org/2005/Atom',
             // the namespace that enables the <content:encoding> tag
             content: 'http://purl.org/rss/1.0/modules/content/',
+            // required for media:content tag
+            media: "http://search.yahoo.com/mrss/",
         },        
     });
 }
