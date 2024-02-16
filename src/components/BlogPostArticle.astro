@@ -13,6 +13,11 @@ const { post, homepage } = Astro.props;
 const { title, description, postDate, tags, categories, image } = post.data;
 const { Content } = await post.render();
 
+const SITE = encodeURIComponent(import.meta.env.SITE);
+const pageUrl = encodeURIComponent(`${import.meta.env.SITE}/${post.slug}`)
+const tagList = encodeURIComponent(tags.map((t:string) => (' #'+t.replace('-',''))).join(' '));
+const tweetUrl = `https://twitter.com/intent/tweet?original_referer=${SITE}&screen_name=jamessnape&text=${pageUrl}+${tagList}`;
+
 ---
 <article class="prose my-6">
     <div class="md:col-span-3">
@@ -43,7 +48,7 @@ const { Content } = await post.render();
                 and tagged {tags.map((tag:string) => (
                     <a href={`/tag/${tag}`}>#{tag}</a><span>&nbsp</span>
                 ))}
-                on <FormattedDate date={postDate}/>.
+                on <FormattedDate date={postDate}/>. Discuss this on <a class="btn btn-xs btn-primary" target="_blank" href={tweetUrl}>Twitter <i class="fa-brands fa-twitter"></i></a>
             <div>
     </div>
     </div>
