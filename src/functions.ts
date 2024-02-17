@@ -36,7 +36,7 @@ export const excludeInstagram = ({ data }: CollectionEntry<'posts'>): boolean =>
     return data.tags.includes('instagram') ? false : import.meta.env.PROD ? !(data.draft || false) : true;
 }
 
-export const convertToAbsoluteUri = (url: string, site: any, path: string = '') : string => {
+export const convertToAbsoluteUri = (url: string, site: any, path: any = '') : string => {
     if (url.startsWith('http')) {
         return url;
     }
