@@ -41,7 +41,7 @@ export const convertToAbsoluteUri = (url: string, site: string, path: string = '
         return url;
     }
 
-    if (site.endsWith('/')) {
+    if (site?.endsWith('/')) {
         site = site.slice(0, -1);
     }
 
