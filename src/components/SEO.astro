@@ -21,6 +21,7 @@ const imageSrc = convertToAbsoluteUri(ogImage.src, import.meta.env.SITE);
 
 {frontmatter?.description && <meta property='og:description' content={frontmatter.description.replace('\n', ' ')}/>}
 {frontmatter?.postDate && <meta property='article:published_time' content={frontmatter.postDate.toISOString()}/>}
+{frontmatter?.postDate && <meta name="publish_date" property="og:publish_date" content={frontmatter.postDate.toISOString()}/>}
 
 {frontmatter && <meta property='article:author' content='James Snape'/>}
 
