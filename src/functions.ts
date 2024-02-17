@@ -36,13 +36,21 @@ export const excludeInstagram = ({ data }: CollectionEntry<'posts'>): boolean =>
     return data.tags.includes('instagram') ? false : import.meta.env.PROD ? !(data.draft || false) : true;
 }
 
-export const convertToAbsoluteUri = (url: string, site: string, path: string = '') : string => {
+export const convertToAbsoluteUri = (url: string, site: any, path: string = '') : string => {
     if (url.startsWith('http')) {
         return url;
     }
 
-    if (site?.endsWith('/')) {
+    if (typeof site !== 'string') {
+        site = site.toString();
+    }
+
+    if (site.endsWith('/')) {
         site = site.slice(0, -1);
+    }
+
+    if (typeof path !== 'string') {
+        path = path.toString();
     }
 
     // if parentPath ends with a slash, remove it
