@@ -58,13 +58,15 @@ export const convertToAbsoluteUri = (url: string, site: any, path: any = '') : s
         path = path.slice(0, -1);
     }
 
-    // replace . in url with the full site url
-    const absoluteUrl = url.replace('.', `${path}`);
-
-    // if imgPath starts with a /, remove it
-    if (absoluteUrl.startsWith('/')) {
-        return `${site}/${absoluteUrl.substring(1)}`;
+    // replace . at start of url with the full site url
+    if (url.startsWith('.')) {
+        url = path + url.substring(1);
     }
 
-    return `${site}/${absoluteUrl}`;
+    // if url starts with a /, remove it
+    if (url.startsWith('/')) {
+        return `${site}/${url.substring(1)}`;
+    }
+
+    return `${site}/${url}`;
 }

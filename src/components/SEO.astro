@@ -8,7 +8,6 @@ const ogImage:ImageMetadata = frontmatter?.image?.src || heroImage
 const ogImageAlt = frontmatter?.image?.alt || 'A photo of a Bournemouth Pier at sunset'
 
 const imageSrc = convertToAbsoluteUri(ogImage.src, import.meta.env.SITE);
-
 ---
 <meta property='og:url' content={canonicalURL}/>
 <meta property='og:type' content={frontmatter ? 'article' : 'website'}/>

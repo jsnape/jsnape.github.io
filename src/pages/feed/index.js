@@ -8,6 +8,6 @@ const headers = {
 
 const redirectXml = `<redirect><newLocation>${SITE}/rss.xml</newLocation></redirect>`;
 
-export async function GET({ params, request }) {
+export async function GET() {
     return new Response(redirectXml, headers);
 }
