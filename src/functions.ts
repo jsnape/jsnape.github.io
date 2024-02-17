@@ -1,4 +1,4 @@
-import type {CollectionEntry} from "astro:content";
+import type { CollectionEntry } from "astro:content";
 
 /**
  * Filter blog posts by published date and order them.
@@ -28,10 +28,31 @@ export const sortExperience = (experience: CollectionEntry<'experience'>[]): Col
  * @param post Blog post
  * @returns True if the post is not a draft
  */
-export const excludeDrafts = ({data}: CollectionEntry<'posts'>): boolean => {
+export const excludeDrafts = ({ data }: CollectionEntry<'posts'>): boolean => {
     return import.meta.env.PROD ? !(data.draft || false) : true;
 }
 
-export const excludeInstagram = ({data}: CollectionEntry<'posts'>): boolean => {
+export const excludeInstagram = ({ data }: CollectionEntry<'posts'>): boolean => {
     return data.tags.includes('instagram') ? false : import.meta.env.PROD ? !(data.draft || false) : true;
+}
+
+export const convertToAbsoluteUri = (url: string, site: string, path: string = '') : string => {
+    if (url.startsWith('http')) {
+        return url;
+    }
+
+    // if parentPath ends with a slash, remove it
+    if (path && path.endsWith('/')) {
+        path = path.slice(0, -1);
+    }
+
+    // replace . in url with the full site url
+    const absoluteUrl = url.replace('.', `${path}`);
+
+    // if imgPath starts with a /, remove it
+    if (absoluteUrl.startsWith('/')) {
+        return `${site}${absoluteUrl.substring(1)}`;
+    }
+
+    return `${site}${absoluteUrl}`;
 }

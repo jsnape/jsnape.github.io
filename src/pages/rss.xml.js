@@ -4,7 +4,7 @@ import MarkdownIt from 'markdown-it';
 const parser = new MarkdownIt();
 
 import { getCollection } from 'astro:content';
-import { excludeInstagram, sortBlogPosts } from "@/functions";
+import { excludeInstagram, sortBlogPosts, convertToAbsoluteUri } from "@/functions";
 
 const SITE = import.meta.env.SITE;
 const YEAR = new Date().getFullYear();
@@ -25,28 +25,6 @@ const customDataTags = [
     </image>`,
   `<lastBuildDate>${LAST_BUILD_DATE}</lastBuildDate>`,
 ];
-
-function convertToAbsoluteUri(url, site, path) {
-
-  if (url.startsWith('http')) {
-    return url;
-  }
-
-  // if parentPath ends with a slash, remove it
-  if (path && path.endsWith('/')) {
-    path = path.slice(0, -1);
-  }
-
-  // replace . in url with the full site url
-  const absoluteUrl = url.replace('.', `${path}`);
-
-  // if imgPath starts with a /, remove it
-  if (absoluteUrl.startsWith('/')) {
-    return `${site}${absoluteUrl.substring(1)}`;
-  }
-
-  return `${site}${absoluteUrl}`;
-}
 
 function appendPermalink(html, link) {
 
