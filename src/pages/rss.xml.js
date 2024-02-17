@@ -60,6 +60,7 @@ export async function GET(context) {
         },
         transformTags: {
           'img': (tagName, attribs) => {
+            tagName;
             return {
               tagName: 'a',
               attribs: {
@@ -71,7 +72,7 @@ export async function GET(context) {
           },
           'a': (tagName, attribs) => {
             return {
-              tagName: 'a',
+              tagName: tagName,
               attribs: {
                 href: convertToAbsoluteUri(attribs.href, context.site, context.path),
               },

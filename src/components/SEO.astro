@@ -3,7 +3,7 @@ import heroImage from '@assets/cropped-pier-plate41.jpg';
 
 import { convertToAbsoluteUri } from "@/functions";
 
-const {pageTitle, canonicalURL, frontmatter} = Astro.props;
+const {canonicalURL, frontmatter} = Astro.props;
 const ogImage:ImageMetadata = frontmatter?.image?.src || heroImage
 const ogImageAlt = frontmatter?.image?.alt || 'A photo of a Bournemouth Pier at sunset'
 
@@ -25,7 +25,7 @@ const imageSrc = convertToAbsoluteUri(ogImage.src, import.meta.env.SITE);
 
 {frontmatter && <meta property='article:author' content='James Snape'/>}
 
-{frontmatter.categories[0] && <meta property='article:section' content={frontmatter.categories[0]}/>}
-{frontmatter.tags.map((tag:string) => <meta property='article:tag' content={tag}/>)}
+{frontmatter?.categories[0] && <meta property='article:section' content={frontmatter.categories[0]}/>}
+{frontmatter?.tags.map((tag:string) => <meta property='article:tag' content={tag}/>)}
 
 <meta name="og:country-name" content="UK"/>
