@@ -41,6 +41,10 @@ export const convertToAbsoluteUri = (url: string, site: string, path: string = '
         return url;
     }
 
+    if (site.endsWith('/')) {
+        site = site.slice(0, -1);
+    }
+
     // if parentPath ends with a slash, remove it
     if (path && path.endsWith('/')) {
         path = path.slice(0, -1);
@@ -51,8 +55,8 @@ export const convertToAbsoluteUri = (url: string, site: string, path: string = '
 
     // if imgPath starts with a /, remove it
     if (absoluteUrl.startsWith('/')) {
-        return `${site}${absoluteUrl.substring(1)}`;
+        return `${site}/${absoluteUrl.substring(1)}`;
     }
 
-    return `${site}${absoluteUrl}`;
+    return `${site}/${absoluteUrl}`;
 }
