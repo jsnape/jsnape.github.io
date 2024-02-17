@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import heroImage from '@assets/cropped-pier-plate41.jpg';
 
 import { convertToAbsoluteUri } from "@/functions";
@@ -22,4 +21,11 @@ const imageSrc = convertToAbsoluteUri(ogImage.src, import.meta.env.SITE);
 <meta property='og:image:alt' content={ogImageAlt}/>
 
 {frontmatter?.description && <meta property='og:description' content={frontmatter.description}/>}
-{frontmatter?.postDate && <meta property='article:published_time' content={frontmatter.postDate}/>}
+{frontmatter?.postDate && <meta property='article:published_time' content={frontmatter.postDate.toISOString()}/>}
+
+{frontmatter && <meta property='article:author' content='James Snape'/>}
+
+{frontmatter.categories[0] && <meta property='article:section' content={frontmatter.categories[0]}/>}
+{frontmatter.tags.map((tag:string) => <meta property='article:tag' content={tag}/>)}
+
+<meta name="og:country-name" content="UK"/>
