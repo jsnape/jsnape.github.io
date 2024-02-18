@@ -11,7 +11,7 @@ const imageSrc = convertToAbsoluteUri(ogImage.src, import.meta.env.SITE);
 ---
 <meta property='og:url' content={canonicalURL}/>
 <meta property='og:type' content={frontmatter ? 'article' : 'website'}/>
-<meta property='og:title' content={frontmatter?.title ? frontmatter.title + ' on snape.me' : 'Personal blog of James Snape (snape.me)'}/>
+<meta property='og:title' content={frontmatter?.title ? frontmatter.title : 'Personal blog of James Snape'}/>
 
 <meta property='og:image' content={imageSrc}/>
 <meta property='og:image:type' content={ogImage.format}/>
@@ -21,7 +21,7 @@ const imageSrc = convertToAbsoluteUri(ogImage.src, import.meta.env.SITE);
 
 {frontmatter?.description && <meta property='og:description' content={frontmatter.description.replace('\n', ' ')}/>}
 {frontmatter?.postDate && <meta property='article:published_time' content={frontmatter.postDate.toISOString()}/>}
-{frontmatter?.postDate && <meta name="publish_date" property="og:publish_date" content={frontmatter.postDate.toISOString()}/>}
+{frontmatter?.postDate && <meta property="og:publish_date" content={frontmatter.postDate.toISOString()}/>}
 
 {frontmatter && <meta property='article:author' content='James Snape'/>}
 
