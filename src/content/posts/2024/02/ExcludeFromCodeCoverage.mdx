@@ -1,0 +1,58 @@
+---
+title: "ExcludeFromCodeCoverage considered harmful"
+postDate: 2024-02-17
+description: >-
+  Metrics are only useful if they help you improve. Code coverage KPIs are most often circumvented.
+  Liberal use of the ExcludeFromCodeCoverage attribute is to be avoided.
+image:
+  src: "./luca-bravo-XJXWbfSo2f0-unsplash.jpg"
+  alt: "Code on a laptop screen with dark theme"
+categories:
+  - "code"
+tags:
+  - "metrics"
+  - "testing"
+  - "csharp"
+---
+## Abuse of the ExcludeFromCodeCoverage attribute
+I once worked on project that had a mandatory code coverage target. If your commit didn't maintain the overall coverage ratio of 75% then it was rejected. The reasoning came from good intentions; a high code coverage is good therefore we will create the mandate that is must be high. It had some unfortunate side effects though. The first unintended consequence is that developers only wrote enough tests to keep the value above the target instead of considering how they needed to test their code. The second consequence was the proliferation of `[ExcludeFromCodeCoverage]` attributes adoring all sorts of classes.
+
+The attribute was originally designed for generated code but more recently I've seen it be applied where the code that is hard to test or too simple to test. Ultimately this hides code from testing metrics. Your code coverage metric is no longer accurate nor useful.
+
+> Yeah, we are at 85% code coverage ignoring the code we excluded because it was hard to test.
+
+My immediate response to this is _"How come it isn't 100% then?"_
+
+I would much rather have a lower, but accurate, code coverage metric so I consider the use of this **attribute harmful on any code that isn't generated**.
+
+I wish code analysis tools like SonarCube or the Roslyn analyzers treated this attribute like [SuppressMessageAttribute](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.codeanalysis.suppressmessageattribute?view=net-8.0) - the [Justification property](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.codeanalysis.excludefromcodecoverageattribute.justification?view=net-8.0#system-diagnostics-codeanalysis-excludefromcodecoverageattribute-justification) should be filled out when applied. Better still, just fix the issue and avoid the need to use either of them.
+
+## Why should I test properties?
+
+The consensus on [Should you Unit Test simple properties?](https://stackoverflow.com/questions/18967697/should-you-unit-test-simple-properties) seems pretty much for testing and you can use the examples here to test yours. I prefer property based testing though because it can find edge cases you didn't think of. There is a great intro at [Property-Based Testing with C#](https://www.codit.eu/blog/property-based-testing-with-c/) using [FsCheck](https://fscheck.github.io/FsCheck/). Your code will effectively look like:
+
+```csharp
+[Property]
+public Property Set_Then_Get_Returns_Same(string exampleValue)
+{
+    var target = new ClassYouWantToTest();
+    target.PropertyToTest = exampleValue;
+    return (target.PropertyToTest == exampleValue).ToProperty();
+}
+```
+
+FsCheck will generate a bunch of random values to try this test with so these 4 lines of code are resulting in hundreds of unique tests for this property including, for this example: blank string, null value, very short, very long, non-printing, accent characters, etc.
+
+## Why should I test ... something else?
+
+I will come back and add more examples as I encounter them.
+
+## Summary
+
+- Code coverage metrics are only useful if they help improve the software quality.
+- Mandatory targets can lead to harmful practices such as excluding code from testing or writing superficial tests.
+- ExcludeFromCodeCoverage attributes should be treated in the same way as SuppressMessage - they hide warnings that should really be fixed.
+
+
+_Photo by [Luca Bravo](https://unsplash.com/@lucabravo?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) on [Unsplash](https://unsplash.com/photos/turned-on-gray-laptop-computer-XJXWbfSo2f0?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash)_
+  
