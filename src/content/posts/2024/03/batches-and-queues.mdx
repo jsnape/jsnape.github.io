@@ -1,5 +1,5 @@
 ---
-title: "The hidden effects of queue on cycle time"
+title: "The hidden effects of queuing on cycle time"
 postDate: 2024-03-02
 description: >-
   Queues are used to load balance work between teams but its easy to overlook a decrease in efficiency they bring.
@@ -17,11 +17,11 @@ Its fairly common knowledge that batching work causes inefficiencies. This is wh
 
 ## Traditional Batched delivery
 
-Imagine we have a fairly standard software delivery pipeline: specify, build, verify, release. I'm being purposefully vague here as the actual work doesn't matter. In a traditional waterfall style delivery you would generally work on the specify part first to create a big requirements document; chuck it over the wall to the next team to build; once they have done that the built code gets chucked at the next team to verify; and finally the finished product is released to live.
+Imagine we have a fairly standard software delivery pipeline: specify, build, verify, and release. I'm being purposefully vague here as the actual work doesn't matter. In a traditional waterfall style delivery you would generally work on the specify part first to create a big requirements document; chuck it over the wall to the next team to build; once they have done that the built code gets chucked at the next team to verify; and finally the finished product is released to live.
 
 It not that obvious but the requirements document, the built code and the release package are queues. They contain a batch of work for the next stage.
 
-Lets visualize this by creating an ideal delivery pipeline. Imagine we have 10 work items; all exactly the same size; so they all take exactly one day to complete at every stage. (I know this isn't the case in reality but reality only makes things worse.) The delivery plan as work flows through the process is shown below:
+Lets visualize this by creating an ideal delivery pipeline. Imagine we have 10 work items; all exactly the same size; so they all take exactly one day to complete at every stage. (I know this isn't the case in reality but that would only makes things worse.) The delivery plan as work flows through the process is shown below:
 
 | Day   | Backlog | Specify |      | Build |      | Verify |      | Release | Done |
 | ----- | ------- | ------- | ---- | ----- | ---- | ------ | ---- | ------- | ---- |
@@ -181,7 +181,7 @@ Whilst we could release every day like the very best DevOps practitioners lets a
 | 15    |         |         |       |        |         | 10   |
 | Total |         | 10      | 10    | 10     | 55      |  1   |
 
-The stats for this configuration are interesting - for the first time the active time has gone up because we are asking the release time to do 4 more releases. Similarly, the calendar time remains the same because we still limited by the time it takes to get the last work items released but there is far less waiting and the overall cycle time has dropped to just 7.5 days.
+The stats for this configuration are interesting - for the first time the active time has gone up because we are asking the release team to do 4 more releases. Similarly, the calendar time remains the same because we are still limited by the time it takes to get the last work items released but there is far less waiting and the overall cycle time has dropped to just 7.5 days.
 
 |               | Days |
 | ------------- | ---- |
