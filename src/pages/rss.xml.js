@@ -34,7 +34,7 @@ function appendPermalink(html, link) {
     html = `<p><a href="${link}">Embedded images not supported yet. Click to view the post online.</a></p>${html}`;
   }
 
-  return `${html}<p><a href="${link}">Originally posted at ${link}</a></p>`;
+  return `${html}<p>Originally posted at <a href="${link}">${link}</a></p>`;
 }
 
 // This is the main function that will be called by Astro to generate the RSS feed

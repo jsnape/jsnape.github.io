@@ -1,0 +1,205 @@
+---
+title: "The hidden effects of queue on cycle time"
+postDate: 2024-03-02
+description: >-
+  Queues are used to load balance work between teams but its easy to overlook decrease in efficiency they bring.
+image:
+  src: "./david-clode-rIt3Q7CGPtQ-unsplash.jpg"
+  alt: "\"Queue for Coffee\". You know they serve good coffee when you see this. A line of people queuing for coffee at a street vendor. Rusty's Market, Cairns Australia."
+categories:
+  - "agile"
+tags:
+  - "metrics"
+  - "lean"
+  - "devops"
+---
+Its fairly common knowledge that batching work causes inefficiencies. This is why a core technique for lean software delivery is map your value stream and then limit the amount of work in progress. I wanted to see just how much efficiency can be gained by removing queues so started to map this with an idea example.
+
+## Traditional Batched delivery
+
+Imagine we have a fairly standard software delivery pipeline: specify, build, verify, release. I'm being purposefully vague here as the actual work doesn't matter. In a traditional waterfall style delivery you would generally work on the specify part first to create a big requirements document; chuck it over the wall to the next team to build; once they have done that the built code gets chucked at the next team to verify; and finally the finished product is released to live.
+
+It not that obvious but the requirements document, the built code and the release package are queues. They contain a batch of work for the next stage.
+
+Lets visualize this by creating an ideal delivery pipeline. Imagine we have 10 work items; all exactly the same size; so they all take exactly one day to complete at every stage. (I know this isn't the case in reality but reality only makes things worse.) The delivery plan as work flows through the process is shown below:
+
+| Day   | Backlog | Specify |      | Build |      | Verify |      | Release | Done |
+| ----- | ------- | ------- | ---- | ----- | ---- | ------ | ---- | ------- | ---- |
+|       | Waiting | Doing   | Done | Doing | Done | Doing  | Done | Doing   | Done |
+| 1     | 10      |         |      |       |      |        |      |         |      |
+| 2     | 9       | 1       |      |       |      |        |      |         |      |
+| 3     | 8       | 1       | 1    |       |      |        |      |         |      |
+| 4     | 7       | 1       | 2    |       |      |        |      |         |      |
+| 5     | 6       | 1       | 3    |       |      |        |      |         |      |
+| 6     | 5       | 1       | 4    |       |      |        |      |         |      |
+| 7     | 4       | 1       | 5    |       |      |        |      |         |      |
+| 8     | 3       | 1       | 6    |       |      |        |      |         |      |
+| 9     | 2       | 1       | 7    |       |      |        |      |         |      |
+| 10    | 1       | 1       | 8    |       |      |        |      |         |      |
+| 11    |         | 1       | 9    |       |      |        |      |         |      |
+| 12    |         |         | 10   |       |      |        |      |         |      |
+| 13    |         |         | 9    | 1     |      |        |      |         |      |
+| 14    |         |         | 8    | 1     | 1    |        |      |         |      |
+| 15    |         |         | 7    | 1     | 2    |        |      |         |      |
+| 16    |         |         | 6    | 1     | 3    |        |      |         |      |
+| 17    |         |         | 5    | 1     | 4    |        |      |         |      |
+| 18    |         |         | 4    | 1     | 5    |        |      |         |      |
+| 19    |         |         | 3    | 1     | 6    |        |      |         |      |
+| 20    |         |         | 2    | 1     | 7    |        |      |         |      |
+| 21    |         |         | 1    | 1     | 8    |        |      |         |      |
+| 22    |         |         |      | 1     | 9    |        |      |         |      |
+| 23    |         |         |      |       | 10   |        |      |         |      |
+| 24    |         |         |      |       | 9    | 1      |      |         |      |
+| 25    |         |         |      |       | 8    | 1      | 1    |         |      |
+| 26    |         |         |      |       | 7    | 1      | 2    |         |      |
+| 27    |         |         |      |       | 6    | 1      | 3    |         |      |
+| 28    |         |         |      |       | 5    | 1      | 4    |         |      |
+| 29    |         |         |      |       | 4    | 1      | 5    |         |      |
+| 30    |         |         |      |       | 3    | 1      | 6    |         |      |
+| 31    |         |         |      |       | 2    | 1      | 7    |         |      |
+| 32    |         |         |      |       | 1    | 1      | 8    |         |      |
+| 33    |         |         |      |       |      | 1      | 9    |         |      |
+| 34    |         |         |      |       |      |        | 10   |         |      |
+| 35    |         |         |      |       |      |        |      | 10      |      |
+| 36    |         |         |      |       |      |        |      |         | 10   |
+| Total |         | 10      | 100  | 10    | 100  | 10     | 55   | 1       |      |
+
+Each step in the above process has an active 'Doing' column and a waiting 'Done' queue. Since the output queue for one stage is the input queue for the next I leave the work items in the done queue until they can actively be worked on. This helps calculate the active time and waiting time metric for each process.
+
+Since the release stage doesn't involve processing items at the individual level you can see the whole package is released in one go.
+
+If we add up the values in the columns and work out the active and waiting times and also calculate the [average cycle time](https://www.isixsigma.com/dictionary/cycle-time/) for this configuration we have a maximum work in progress of 10 and timings:
+
+|               | Days |
+| ------------- | ---- |
+| Cycle Time    | 29.5 |
+| Active Time   | 31   |
+| Waiting Time  | 255  |
+| Total Time    | 286  |
+| Calendar Time | 36   |
+
+So what if we don't batch the work into a document?
+
+## Limiting WIP by Sequencing
+
+This time the only thing we will change is to pass work to the next queue as soon as we have completed it. Everything else stays the same.
+
+| Day   | Backlog | Specify |      | Build |      | Verify |      | Release | Done |
+| ----  | ------- | ------- | ---- | ----- | ---- | ------ | ---- | ------- | ---- |
+|       | Waiting | Doing   | Done | Doing | Done | Doing  | Done | Doing   | Done |
+| 1     | 10      |         |      |       |      |        |      |         |      |
+| 2     | 9       | 1       |      |       |      |        |      |         |      |
+| 3     | 8       | 1       | 1    |       |      |        |      |         |      |
+| 4     | 7       | 1       | 1    | 1     |      |        |      |         |      |
+| 5     | 6       | 1       | 1    | 1     | 1    |        |      |         |      |
+| 6     | 5       | 1       | 1    | 1     | 1    | 1      |      |         |      |
+| 7     | 4       | 1       | 1    | 1     | 1    | 1      | 1    |         |      |
+| 8     | 3       | 1       | 1    | 1     | 1    | 1      | 2    |         |      |
+| 9     | 2       | 1       | 1    | 1     | 1    | 1      | 3    |         |      |
+| 10    | 1       | 1       | 1    | 1     | 1    | 1      | 4    |         |      |
+| 11    |         | 1       | 1    | 1     | 1    | 1      | 5    |         |      |
+| 12    |         |         | 1    | 1     | 1    | 1      | 6    |         |      |
+| 13    |         |         |      | 1     | 1    | 1      | 7    |         |      |
+| 14    |         |         |      |       | 1    | 1      | 8    |         |      |
+| 15    |         |         |      |       |      | 1      | 9    |         |      |
+| 16    |         |         |      |       |      |        | 10   |         |      |
+| 17    |         |         |      |       |      |        |      | 10      |      |
+| 18    |         |         |      |       |      |        |      |         | 10   |
+| Total |         | 10      | 10   | 10    | 10   | 10     | 55   | 1       |      |
+
+Immediately we can see the whole thing is far shorter. Calculating the metrics for a WIP of 1 we have:
+
+|               | Days |
+| ------------- | ---- |
+| Cycle Time    | 11.5 |
+| Active Time   | 31   |
+| Waiting Time  | 75   |
+| Total Time    | 106  |
+| Calendar Time | 18   |
+
+Note the active time is still 31 - its the same amount of effort as before but the whole thing is done in half the time because we removed 100 days of waiting time! Consequently the average cycle time has dropped by over half too. Remember nothing else changed apart from removing the batch.
+
+I could stop here but this is a good point to look at further optimization.
+
+## Remove the Queues
+
+The next simplest optimization is to remove the queues between stages. This is harder in the real world due to uneven work size and arrival rate but we can look at the theoretical flow.
+
+| Day   | Backlog | Specify | Build | Verify | Release | Done |
+| ----- | ------- | ------- | ----- | ------ | ------- | ---- |
+|       | Waiting | Doing   | Doing | Doing  | Doing   | Done |
+| 1     | 10      |         |       |        |         |      |
+| 2     | 9       | 1       |       |        |         |      |
+| 3     | 8       | 1       | 1     |        |         |      |
+| 4     | 7       | 1       | 1     | 1      |         |      |
+| 5     | 6       | 1       | 1     | 1      | 1       |      |
+| 6     | 5       | 1       | 1     | 1      | 2       |      |
+| 7     | 4       | 1       | 1     | 1      | 3       |      |
+| 8     | 3       | 1       | 1     | 1      | 4       |      |
+| 9     | 2       | 1       | 1     | 1      | 5       |      |
+| 10    | 1       | 1       | 1     | 1      | 6       |      |
+| 11    |         | 1       | 1     | 1      | 7       |      |
+| 12    |         |         | 1     | 1      | 8       |      |
+| 13    |         |         |       | 1      | 9       |      |
+| 14    |         |         |       |        | 10      |      |
+| 15    |         |         |       |        |         | 10   |
+| Total |         | 10      | 10    | 10     | 55      |  1   |
+
+The stats are better still - active time is still 31 days but there is only waiting at the end of the process because the release time still need to deliver a bunch of work into live in one go. Cycle time is only 9 days.
+
+|               | Days |
+| ------------- | ---- |
+| Cycle Time    | 9    |
+| Active Time   | 31   |
+| Waiting Time  | 55   |
+| Total Time    | 86   |
+| Calendar Time | 15   |
+
+As this point the only optimization left is to ask if the release team can increase their deployment frequency. It could be possible since items are queuing at release.
+
+## Increase Release frequency
+
+Whilst we could release every day like the very best DevOps practitioners lets assume there is a limit in the release process which means every other day is the best possible.
+
+| Day   | Backlog | Specify | Build | Verify | Release | Done |
+| ----- | ------- | ------- | ----- | ------ | ------- | ---- |
+|       | Waiting | Doing   | Doing | Doing  | Doing   | Done |
+| 1     | 10      |         |       |        |         |      |
+| 2     | 9       | 1       |       |        |         |      |
+| 3     | 8       | 1       | 1     |        |         |      |
+| 4     | 7       | 1       | 1     | 1      |         |      |
+| 5     | 6       | 1       | 1     | 1      | 1       |      |
+| 6     | 5       | 1       | 1     | 1      | 2       |      |
+| 7     | 4       | 1       | 1     | 1      | 1       |  2   |
+| 8     | 3       | 1       | 1     | 1      | 2       |      |
+| 9     | 2       | 1       | 1     | 1      | 1       |  4   |
+| 10    | 1       | 1       | 1     | 1      | 2       |      |
+| 11    |         | 1       | 1     | 1      | 1       |  6   |
+| 12    |         |         | 1     | 1      | 2       |      |
+| 13    |         |         |       | 1      | 1       |  8   |
+| 14    |         |         |       |        | 2       |      |
+| 15    |         |         |       |        |         | 10   |
+| Total |         | 10      | 10    | 10     | 55      |  1   |
+
+The stats for this configuration are interesting - for the first time the active time has gone up because we are asking the release time to do 4 more releases. Similarly, the calendar time remains the same because we still limited by the time it takes to get the last work items released but there is far less waiting and the overall cycle time has dropped to just 7.5 days.
+
+|               | Days |
+| ------------- | ---- |
+| Cycle Time    | 7.5  |
+| Active Time   | 35   |
+| Waiting Time  | 15   |
+| Total Time    | 50   |
+| Calendar Time | 15   |
+
+## Summary
+
+This simple exercise demonstrates how hidden waiting time delays deliveries and smaller batch sizes can rectify that. In reality you will need some queuing between stages to balance out demand in this configuration. Look out for hidden queues:
+
+- Documents handed from one team to another - the entire document is a batch.
+- Pipelined iterations in scrum teams - where the requirements are written in the sprint before dev and the testing in the sprint after; the iteration backlog becomes the batch.
+- Done states between Doing states
+- Approval steps
+
+If you practice Scrum then aim to complete work in a sprint (specify, develop, and verify) or you are leaving waiting time on the table.
+
+_Photo by [David Clode](https://unsplash.com/@davidclode?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) on [Unsplash](https://unsplash.com/photos/a-group-of-people-standing-outside-of-a-store-rIt3Q7CGPtQ?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash)_
