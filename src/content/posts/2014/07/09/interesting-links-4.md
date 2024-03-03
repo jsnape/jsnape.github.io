@@ -1,6 +1,9 @@
 ---
 title: "Interesting Links #4"
 postDate: 2014-07-09
+image:
+  src: "./2329142089_f4e4822f9d_k.jpg"
+  alt: "Photo of Bournemouth Library taken on an angle in an architectural style."
 categories: 
   - "reference"
 tags: 

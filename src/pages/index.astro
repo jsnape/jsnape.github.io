@@ -1,21 +1,44 @@
 ---
-import { ITEMS_PER_PAGE } from '@/consts';
 import SidebarLayout from "@/layouts/SidebarLayout.astro";
 import { getCollection } from "astro:content";
-import BlogPostArticle from "@components/BlogPostArticle.astro";
-import {excludeDrafts, sortBlogPosts} from "@/functions";
+import BlogPostCard from "@/components/BlogPostCard.astro";
+import { excludeDrafts, sortBlogPosts } from "@/functions";
+import { Image } from "astro:assets";
+import defaultImage from '@/assets/bournemouth-river-stour.jpg';
 
-const posts = await
-	getCollection('posts', excludeDrafts)
-	.then(sortBlogPosts);
+const posts = await getCollection("posts", excludeDrafts).then(sortBlogPosts);
 
-const pageTitle = "Home";
+const pageTitle = "Recent Posts";
 ---
 
 <SidebarLayout pageTitle={pageTitle}>
-	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
-		{!posts.length && 'No posts found.'}
-		{posts.slice(0, ITEMS_PER_PAGE).map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
-		
-	</ul>
+  <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-9 md:gap-y-11 lg:gap-y-16 lg:gap-x-8">
+    {!posts.length && "No posts found."}
+    {
+      posts.slice(0, 10).map((post) => (
+          <BlogPostCard post={post} />
+      ))
+    }
+	<div></div>
+	<div>
+		<a href="/posts/1" class="flex h-52">
+			<Image
+			  class="w-full h-full object-cover rounded overflow-hidden"
+			  width={400}
+			  height={200}
+			  src={defaultImage}
+			  alt="Bournemouth River Stour"
+			/>
+		  </a>		
+		  <div class="flex items-center justify-between">
+			&nbsp;
+		  </div>		  
+		<a href="/posts/1" class="group-hover:underline">
+			<h2
+			  class="font-heading text-xl leading-snug line-clamp-3">
+			  More posts >>>
+			</h2>
+		  </a>
+	</div>
+  </div>
 </SidebarLayout>

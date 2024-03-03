@@ -1,0 +1,40 @@
+---
+import { Image } from "astro:assets";
+import FormattedDate from "@/components/FormattedDate.astro";
+
+const { post } = Astro.props;
+const { title, description, postDate, tags, categories, image } = post.data;
+
+import defaultImage from '@/assets/bournemouth-river-stour.jpg';
+const cardImage = image?.src ?? defaultImage;
+---
+<article class="group space-y-4">
+  <a href={`/${post.slug}`} class="flex h-52">
+    <Image
+      class="w-full h-full object-cover rounded overflow-hidden"
+      width={400}
+      height={200}
+      src={cardImage}
+      alt={image?.alt ?? "Cover image"}
+    />
+  </a>
+  <div class="flex items-center justify-between">
+    {categories.map((cat:string) => (
+        <a href={`/category/${cat}`}>{cat}</a><span>&nbsp</span>
+    ))}
+    <span class="font-medium text-muted-foreground" >
+        <FormattedDate date={postDate}/>
+    </span>
+  </div>
+  <div>
+    <a href={`/${post.slug}`} class="group-hover:underline">
+      <h2
+        class="font-heading text-xl leading-snug line-clamp-3">
+        {post.data.title}
+      </h2>
+    </a>
+    <p class="text-sm mt-2">
+        {post.data.description}
+      </p>
+  </div>
+</article>

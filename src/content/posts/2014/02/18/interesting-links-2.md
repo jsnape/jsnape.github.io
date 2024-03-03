@@ -1,6 +1,9 @@
 ---
 title: "Interesting Links #2"
 postDate: 2014-02-18
+image:
+  src: "./3754023323_e9776e6bc1_k.jpg"
+  alt: "Photo of a kidney shaped swimming pool in Santorini at dusk."
 categories: 
   - "reference"
 tags: 

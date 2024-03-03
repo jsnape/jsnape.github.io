@@ -1,6 +1,9 @@
 ---
 title: "Taking on dependencies with Deeply"
 postDate: 2014-04-16
+image:
+  src: "./1508970498_f58062eaeb_k.jpg"
+  alt: "Photo of a scuba diver swimming away from the camera at 30m depth. Blue hues throughout the photo due to light filtering at depth."
 categories: 
   - "data-warehousing"
 tags: 

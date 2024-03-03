@@ -1,6 +1,9 @@
 ---
 title: "Tracking hours worked on a scrum task is counterproductive"
 postDate: 2014-09-06
+image:
+  src: "./jason-goodman-Oalh2MojUuk-unsplash.jpg"
+  alt: "Woman placing sticky notes on wall."
 categories: 
   - "agile"
 tags: 
@@ -28,3 +31,5 @@ This second point can be good or bad depending on management and team culture -Â
 Obviously you want the first response.
 
 Finally, overshooting sprints is something to be avoided but often there are additional constraints on time logging that cause you to miss estimate future sprints as well. I know of many organisations where team members are required to log a fixed number of hours a day; no more, no less. You can imagine the havoc this causes - if you work 5 or 15 hours during one day on a task but have to log 8 then you create an inaccurate data set from which to base future sprint planning on.
+
+_Photo by [Jason Goodman](https://unsplash.com/@jasongoodman_youxventures) on [Unsplash](https://unsplash.com/photos/woman-placing-sticky-notes-on-wall-Oalh2MojUuk)_

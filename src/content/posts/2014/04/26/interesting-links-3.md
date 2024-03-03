@@ -1,6 +1,9 @@
 ---
 title: "Interesting Links #3"
 postDate: 2014-04-26
+image:
+  src: "./3681491215_184165293b_k.jpg"
+  alt: "Photo of the old IMAX cinema on Bournemouth seafront."
 categories: 
   - "reference"
 tags: 
