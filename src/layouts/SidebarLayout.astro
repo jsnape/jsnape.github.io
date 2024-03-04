@@ -5,6 +5,7 @@ import RecentPosts from '@/components/RecentPosts.astro';
 import ArchiveList from '@/components/ArchiveList.astro';
 import CategoryList from '@/components/CategoryList.astro';
 import TagList from '@/components/TagList.astro';
+import { HOME_PAGE_TITLE } from "@/consts";
 
 const { pageTitle, robots, frontmatter } = Astro.props;
 ---
@@ -17,7 +18,7 @@ const { pageTitle, robots, frontmatter } = Astro.props;
     </main>
     <aside class="p-2 md:col-span-3 md:pt-0">
         <Search client:load site={Astro.site?.hostname ?? ''}/>
-        <RecentPosts />
+        { pageTitle != HOME_PAGE_TITLE ? <RecentPosts /> : "" }
         <ArchiveList />
         <CategoryList />
         <TagList />
