@@ -3,7 +3,7 @@ import { Image } from "astro:assets";
 import FormattedDate from "@/components/FormattedDate.astro";
 
 const { post } = Astro.props;
-const { title, description, postDate, tags, categories, image } = post.data;
+const { title, description, postDate, categories, image } = post.data;
 
 import defaultImage from '@/assets/bournemouth-river-stour.jpg';
 const cardImage = image?.src ?? defaultImage;
@@ -30,11 +30,11 @@ const cardImage = image?.src ?? defaultImage;
     <a href={`/${post.slug}`} class="group-hover:underline">
       <h2
         class="font-heading text-xl leading-snug line-clamp-3">
-        {post.data.title}
+        {title}
       </h2>
     </a>
     <p class="text-sm mt-2">
-        {post.data.description}
+        {description}
       </p>
   </div>
 </article>
