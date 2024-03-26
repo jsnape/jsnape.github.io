@@ -22,7 +22,7 @@
     "@philnash/astro-pagination": "^0.4.0",
     "astro": "^4.5.9",
     "astro-robots-txt": "^1.0.0",
-    "markdown-it": "^14.0.0",
+    "markdown-it": "^14.1.0",
     "sanitize-html": "^2.12.1",
     "svelte": "^4.2.12",
     "tailwindcss": "^3.4.1",
