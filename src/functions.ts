@@ -29,7 +29,7 @@ export const sortExperience = (experience: CollectionEntry<'experience'>[]): Col
  * @returns True if the post is not a draft
  */
 export const excludeDrafts = ({ data }: CollectionEntry<'posts'>): boolean => {
-    return import.meta.env.PROD ? !(data.draft || false) : true;
+    return !(data.draft || false);
 }
 
 export const excludeInstagram = ({ data }: CollectionEntry<'posts'>): boolean => {
