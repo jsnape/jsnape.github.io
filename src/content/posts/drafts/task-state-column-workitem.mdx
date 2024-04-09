@@ -1,18 +1,19 @@
 ---
 title: "Task, state, column or work item?"
-postDate: 2024-04-04
+postDate: 2024-04-09
 draft: true
 description: >-
   It can be confusing knowing how to represent something in Azure DevOps. Should it be a work item? What about a task or new work item state? Here is my guide for you to classify with confidence.
 image:
   src: "./3836751678_f73f4c1490_k.jpg"
-  alt: ""
+  alt: "The look of someone who is not where he is supposed to be. My dog Thula looking rather sheepish as a puppy."
 categories:
   - "agile"
 tags:
-  - "lean"
+  - "azure boards"
   - "azure devops"
   - "opinion"
+  - "work items"
 ---
 ## Introduction
 
@@ -30,7 +31,43 @@ The primary use for a work item is to capture something of value that needs to b
 
 I don't think folks pay much attention to states and generally treat them as a set of steps that work goes though until its done. This gives rise to my pet hate - the _testing_ state, the idea that you don't do any testing until the work has cleared development.
 
+I prefer to think of work item states in the same way as state machines:
+
+- A work item can only exist in one state at a time (obviously).
+- A state defines the set of events that can be handled and actions that can be performed.
+- Events determine transitions to other states.
+
+This is why, for cross functional scrum teams, the four states should be all that are needed:
+
+- **New:** candidate ideas, not yet on the backlog.
+- **Approved:** work items that are on the product backlog.
+- **Committed:** work items that match the sprint goal and are on the sprint backlog.
+- **Done:** work items that meet the done criteria and are potentially shippable.
+
+A cross functional team will perform all sorts of tasks on a work item in a committed state - writing code, updating documentation, writing test automation, performing exploratory testing, bug fixing, merging pull requests, etc. All of these happen iteratively and often concurrently. 
+
+If your states represent the steps in a waterfall process then you are doing mini-waterfalls.
+
+More states equals longer cycle times - I once had a customer who had 20 states from new to done and was releasing work quarterly. By the time we finished transforming their process we had 4 states and releasing weekly.
+
+So where does it make sense to create new states? The only times I've needed to are for integrating into a wider, non-agile, organization at a feature or epic level. For example, if you have mandatory a hand-off of features to other teams - for example quality assurance then adding a new state at the feature level is possible.
 
 ## Board Column
 
+Board columns are a little like states but are only visible to the team that owns the board. For this reason the rules governing their use can be a little more relaxed but less is still better. An example of board columns I use regularly at feature or epic level is to rename the `in progress` column to `now` then add `next` and `later` columns. This gives a simple roadmap view of the future but its no different than using iteration paths.
+
 ## Task
+
+You have probably figured out by now that I think nearly everything that isn't of identifiable value to the customer should be a task. Personally, I use tasks for everything. If its not written as a task I invariably forget about it. Plus the little dopamine hit you get from ticking a task off feels great throughout the day.
+
+Testing...task; writing documentation...task; reviewing a PR...task; updating a build script...task; if in doubt...make it a task.
+
+The one time this sometimes isn't so simple is for bugs. If you find a bug in a PBI before its done is it really a bug? I wish Azure DevOps would allow you to create bug-tasks like JIRA that work like tasks but visually appear as bugs. Until then I prefer to create another task but style the card on the task board. Bug work items are reserved for defects found after the PBI has been completed and the sprint ended. This differentiation also helps calculate the escaped defect ratio for sprints.
+
+To aid with all these tasks there is a fabulous extension called [1-Click Child-Links](https://marketplace.visualstudio.com/items?itemName=ruifig.vsts-work-item-one-click-child-links&ssr=false#overview) but sadly I don't think its been maintained and there are now plenty of issues. Alternatively using the [az boards work-item](https://learn.microsoft.com/en-us/cli/azure/boards/work-item?view=azure-cli-latest#az-boards-work-item-create) command line can alleviate some of the grunt work.
+
+## Finally
+
+Hopefully the above provides a little bit of guidance on the use of various Azure Board features. What I haven't talked about are tags which are incredibly useful when it comes to removing columns and states. More on this in a later post.
+
+Photo by [James Snape](https://www.flickr.com/people/jamessnape/) on [Flickr](https://www.flickr.com/photos/jamessnape/3836751678/)
