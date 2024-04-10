@@ -5,8 +5,10 @@ import Meta from "@/components/Meta.astro";
 import Hero from "@/components/Hero.astro";
 import Footer from "@/components/Footer.astro";
 import CookieConsent from "@/components/CookieConsent.svelte";
+import GoogleTags from "@/components/GoogleTags.astro";
 
 import "../styles/base.css";
+import GoogleTagsNoScript from "@/components/GoogleTagsNoScript.astro";
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
@@ -16,85 +18,7 @@ const robotsContent = !robots || robots.length === 0 ? "index, follow" : robots;
 
 <html lang="en">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-
-      // global function so that it can be called from anywhere
-      // Updates consent for GA4 to granted if called
-      window.consentGranted = function () {
-        console.log("consent granted");
-        gtag("consent", "update", {
-          ad_storage: "granted",
-          analytics_storage: "granted",
-          functionality_storage: "granted",
-          personalization_storage: "granted",
-          security_storage: "granted",
-        });
-      };
-
-      // Returns value of a cookie named 'cookie-consent'
-      // Should be either "granted" or "denied"
-      window.getCookieConsent = function () {
-        try {
-          const consent = document.cookie.match(/cookie-consent=([^;]+)/)[1];
-          return consent;
-        } catch (error) {
-          return "unk";
-        }
-      };
-
-      if (window.getCookieConsent() == "granted") {
-        // If cookies already approved, set that
-        console.log("default set to granted");
-        gtag("consent", "default", {
-          ad_storage: "granted",
-          analytics_storage: "granted",
-          functionality_storage: "granted",
-          personalization_storage: "granted",
-          security_storage: "granted",
-        });
-      } else {
-        // default all to 'denied'.
-        console.log("default set to denied");
-        gtag("consent", "default", {
-          ad_storage: "denied",
-          analytics_storage: "denied",
-          functionality_storage: "denied",
-          personalization_storage: "denied",
-          security_storage: "denied",
-        });
-      }
-    </script>
-    <script is:inline
-      type="text/partytown"
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-9XV00FHBVL"></script>
-    <script is:inline type="text/partytown">
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-      gtag("config", "G-9XV00FHBVL");
-    </script>
-    <!-- Google Tag Manager -->
-    <script is:inline>
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != "dataLayer" ? "&l=" + l : "";
-        j.async = true;
-        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, "script", "dataLayer", "GTM-PZLZ35H6");
-    </script>
-    <!-- End Google Tag Manager -->
+    <GoogleTags />
     <meta charset="utf-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <SEO title={pageTitle} canonicalURL={canonicalURL} frontmatter={frontmatter} />
@@ -124,15 +48,7 @@ const robotsContent = !robots || robots.length === 0 ? "index, follow" : robots;
   </head>
   <body class="min-h-screen">
     <CookieConsent CookieConsent="false" client:load />
-    <!-- Google Tag Manager (noscript) -->
-    <noscript
-      ><iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-PZLZ35H6"
-        height="0"
-        width="0"
-        style="display:none;visibility:hidden"></iframe></noscript
-    >
-    <!-- End Google Tag Manager (noscript) -->
+    <GoogleTagsNoScript />
     <div class="flex flex-col min-h-screen mx-auto">
       <div
         class="sticky z-50 top-0 backdrop-filter backdrop-blur-xl bg-opacity-60"
