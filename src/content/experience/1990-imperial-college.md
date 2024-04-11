@@ -4,7 +4,7 @@ role: "Electrical and Electronic Engineering"
 startDate: 1990-09-01
 endDate: 1992-07-01
 location: "South Kensington, London"
-employmentType: "Full-Time"
+employmentType: "Education"
 companyName: "Imperial College, London"
 companyUrl: "https://www.imperial.ac.uk/"
 companyLogo:

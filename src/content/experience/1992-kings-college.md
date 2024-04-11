@@ -4,7 +4,7 @@ role: "Computer Systems and Electronics, B.Eng"
 startDate: 1992-09-01
 endDate: 1994-07-01
 location: "Strand, London"
-employmentType: "Full-Time"
+employmentType: "Education"
 companyName: "Kings College, London"
 companyUrl: "https://www.kcl.ac.uk/"
 companyLogo:

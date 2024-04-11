@@ -4,7 +4,7 @@ role: "New House"
 startDate: 1985-09-01
 endDate: 1990-07-01
 location: "Repton, Derbyshire"
-employmentType: "Boarding"
+employmentType: "Education"
 companyName: "Repton School"
 companyUrl: "https://www.repton.org.uk/"
 companyLogo:

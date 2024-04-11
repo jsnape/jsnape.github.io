@@ -1,0 +1,58 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+    experience: any;
+    index: number;
+}
+
+import Link from "@/components/Link.astro";
+
+const { experience, index  } = Astro.props;
+const { title, role, startDate, endDate, skills, technologies, companyLogo } = experience.data;
+const { Content } = await experience.render();
+
+const roleLabel = role ? `(${role})` : '';
+const startFormatted = `${startDate.toLocaleString('default', { month: 'short' })} ${startDate.getFullYear()}`;
+const endFormatted = endDate ? `${endDate.toLocaleString('default', { month: 'short' })} ${endDate.getFullYear()}` : 'Present';
+const experienceSpan = `${startFormatted} - ${endFormatted}`;
+
+const currentEndDate = endDate ? endDate : new Date();
+const durationInYears = (currentEndDate - startDate) / 1000 / 60 / 60 / 24 / 365.25;
+const years = Math.floor(durationInYears);
+const months = Math.floor((durationInYears - years) * 12);
+
+const yearsFormatted = years > 1 ? `${years} years` : years > 0 ? `${years} year` : '';
+const monthsFormatted = months > 1 ? `${months} months` : months > 0 ? `${months} month` : '';
+const joiner = yearsFormatted.length > 0 && monthsFormatted.length > 0 ? ' and ' : '';
+const formattedDuration = `${yearsFormatted}${joiner}${monthsFormatted}`;
+
+---
+<li class="rounded-lg border my-3 p-3">
+    <div class="">
+        <div class="mx-5 w-11/12">
+            <div class="float-right">
+                <time class="text-sm">{experienceSpan}</time><br>
+                <time class="text-sm">{formattedDuration}</time>
+            </div>
+            {companyLogo &&
+                <Image class="float-left mr-3 mt-1" src={companyLogo.src} alt={companyLogo?.alt}} width="40" />
+            }
+            <h2 class="text-xl">{title}&nbsp;{roleLabel}</h2>
+            <Link href={experience.data.companyUrl} title={experience.data.companyName}>
+                {experience.data.companyName}
+            </Link>
+        </div>
+        <div class="prose m-5 w-full">
+            <Content />
+        </div>
+        <div class="mx-5 w-full">
+        {skills.length > 0 && 
+        <p class="text-sm">Skills: {skills.map((skill:string, i:number) => <span>{i > 0 ? ',' : ''}&nbsp{skill}</span>)}</p>
+        }
+        {technologies.length > 0 && 
+        <p class="text-sm">Technologies: {technologies.map((tech:string, i:number) => <span>{i > 0 ? ',' : ''}&nbsp{tech}</span>)}</p>
+        }
+        </div>
+    </div>
+</li>

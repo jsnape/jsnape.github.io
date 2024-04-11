@@ -1,0 +1,87 @@
+---
+import BareLayout from "@/layouts/BareLayout.astro";
+import { getCollection } from "astro:content";
+import CvExperienceEntry from "@components/CvExperienceEntry.astro";
+import { sortExperience } from "@/functions";
+import type { CollectionEntry } from "astro:content";
+import ThemeIcon from '@components/ThemeIcon.astro';
+const experience = await
+	getCollection('experience', ({ data }: CollectionEntry<'experience'>): boolean => {
+		return data.employmentType !== "Education";
+	})
+	.then(sortExperience);
+
+// use experience to generate a list of technologies sorted by count descending
+const technologies = experience
+	.map(exp => exp.data.technologies)
+	.flat()
+	.reduce((acc: {[key: string]: number}, tech:string) => {
+		if (acc[tech]) {
+			acc[tech]++;
+		} else {
+			acc[tech] = 1;
+		}
+		return acc;
+	}, {});
+
+const skills = experience
+	.map(exp => exp.data.skills)
+	.flat()
+	.map(skill => skill.charAt(0).toUpperCase() + skill.slice(1))
+	.reduce((acc: {[key: string]: number}, tech:string) => {
+		if (acc[tech]) {
+			acc[tech]++;
+		} else {
+			acc[tech] = 1;
+		}
+		return acc;
+	}, {});
+
+const pageTitle = "James Snape - Curriculum Vitae";
+---
+<BareLayout pageTitle={pageTitle}>
+	<div class="hidden">
+		<ThemeIcon /> 	
+	</div>
+	<div class="m-3">
+		<h1 class="text-4xl text-center">{pageTitle}</h1>
+		<div class="rounded-lg border my-3 p-5 space-y-3">
+			<dl>
+				<dt class="font-bold float-left float clear w-[100px] text-align-right">Phone:</dt><dd class="mx-[110px]">+44 7790 925 202</dd>
+				<dt class="font-bold float-left float clear w-[100px] text-align-right">Email:</dt><dd class="mx-[110px]">james.snape at gmail.com</dd>
+				<dt class="font-bold float-left float clear w-[100px] text-align-right">Web:</dt><dd class="mx-[110px]">http://snape.me</dd>
+				<dt class="font-bold float-left float clear w-[100px] text-align-right">LinkedIn:</dt><dd class="mx-[110px]">http://www.linkedin.com/in/jamessnape</dd>
+			</dl>
+		</div>
+		<h2 class="text-3xl text-center">General</h2>
+		<div class="rounded-lg border my-3 p-5 space-y-3">
+			<p>I have a broad experience with many techniques and technologies but also deep technical expertise with SQL Server and, in particular, business intelligence solutions.</p>
+			<p>I work best under pressure and love nothing more than to jump on a whiteboard and work directly with customers to create solutions for complex problems.</p>
+			<p>I have an aptitude to quickly learn new products, technologies and businesses.</p>
+			<p>I am particularly interested in developing processes and skills for lean architecture and solution delivery.</p>
+		</div>
+		<h2 class="text-3xl text-center">Skills and Technologies</h2>
+		<div class="rounded-lg border my-3 p-5 space-y-3">
+			<h3>Skills:</h3>
+			<div class="ml-3">{Object.entries(skills)
+				.sort((a, b) => b[1] - a[1])
+				.map(([skill, count], i) => <span>{i === 0 ? '' : ', '}{skill}</span>)}</div>
+			<h3>Technologies:</h3>
+			<div class="ml-3">{Object.entries(technologies)
+				.sort((a, b) => b[1] - a[1])
+				.map(([tech, count], i) => <span>{i === 0 ? '' : ', '}{tech} </span>)}</div>
+		</div>
+		<h2 class="text-3xl text-center">Employment History</h2>
+		<ul class="">
+			{!experience.length && 'No experience found.'}
+			{experience.map((exp, index) => <li><CvExperienceEntry experience={exp} index={index}/></li>)}
+		</ul>
+		<h2 class="text-3xl text-center">Education</h2>
+		<div class="rounded-lg border my-3 p-5 space-y-3">
+			<dl>
+				<dt class="font-bold float-left float clear w-[100px] text-align-right">Degree:</dt><dd class="mx-[110px]"> Kings College, London – Computer Systems & Electronics – B.Eng (1994)</dd>
+				<dt class="font-bold float-left float clear w-[100px] text-align-right">A-Levels:</dt><dd class="mx-[110px]">Repton School – Maths (B), Physics (B), Chemistry (A), Electronics (C) (1990)</dd>
+			</dl>
+		</div>
+	</div>
+</BareLayout>

@@ -1,0 +1,56 @@
+---
+import Header from "@/components/Header.astro";
+import SEO from "@/components/SEO.astro";
+import Meta from "@/components/Meta.astro";
+import Hero from "@/components/Hero.astro";
+import Footer from "@/components/Footer.astro";
+import CookieConsent from "@/components/CookieConsent.svelte";
+import GoogleTags from "@/components/GoogleTags.astro";
+
+import "../styles/base.css";
+import GoogleTagsNoScript from "@/components/GoogleTagsNoScript.astro";
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const { pageTitle, robots, frontmatter } = Astro.props;
+const robotsContent = !robots || robots.length === 0 ? "index, follow" : robots;
+---
+
+<html lang="en">
+  <head>
+    <GoogleTags />
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <SEO title={pageTitle} canonicalURL={canonicalURL} frontmatter={frontmatter} />
+    <Meta title={pageTitle} canonicalURL={canonicalURL} frontmatter={frontmatter} />
+    <meta name="robots" content={robotsContent} />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="canonical" href={canonicalURL} />
+    <link href="https://mastodon.world/@jsnape" rel="me" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="James Snape » Feed"
+      href="/rss.xml"
+    />
+    <script is:inline
+      src="https://kit.fontawesome.com/788d72bc6c.js"
+      crossorigin="anonymous"></script>
+    <title>{pageTitle}</title>
+  </head>
+  <body class="min-h-screen">
+    <CookieConsent CookieConsent="false" client:load />
+    <GoogleTagsNoScript />
+    <div class="flex flex-col min-h-screen mx-auto">
+        <slot />
+    </div>
+  </body>
+</html>
