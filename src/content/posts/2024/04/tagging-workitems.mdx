@@ -1,25 +1,29 @@
 ---
-title: "Tagging Work Items"
-postDate: 2024-04-10
-draft: true
+title: Tagging Work Items
+postDate: 2024-04-11
 description: >-
   Tags are the simplest of concepts in Azure DevOps and other work item tracking systems. When you combine them with visual styles they become a powerful user experience feature.
 image:
-  src: "./k-mitch-hodge-vNmCItb-YPE-unsplash.jpg"
-  alt: "Brightly coloured graffiti decorating the High Street Subway in Belfast City Centre."
+  src: ./k-mitch-hodge-vNmCItb-YPE-unsplash.jpg
+  alt: Brightly coloured graffiti decorating the High Street Subway in Belfast City Centre.
 categories:
-  - "agile"
+  - agile
 tags:
-  - "lean"
-  - "azure devops"
-  - "opinion"
+  - lean
+  - azure devops
+  - azure boards
+  - card styles
+  - blocked
+  - opinion
 ---
-Whilst I was researching content for [Task, state, column or work item?](https://snape.me/2024/04/task-state-column-workitem/) I came across [Promoting "Blocked" to State from Status on Agile Board for better visibility](https://www.linkedin.com/pulse/promoting-blocked-state-from-status-agile-board-better-diva-jain/) which, IMHO, is absolutely the worst way to solve the problem of blocked work items. One of the comments even mentions creating a swimlane to put blocked items in.
+Whilst I was researching content for [Task, state, column or work item?](https://snape.me/2024/04/task-state-column-workitem/) I came across [Promoting "Blocked" to State from Status on Agile Board for better visibility](https://www.linkedin.com/pulse/promoting-blocked-state-from-status-agile-board-better-diva-jain/) which, IMHO, is absolutely the worst way to solve the problem of blocked work items. One of the comments even mentions creating a swimlane to put blocked items in which is especially bad since you can collapse the lane and forget about all your problems.
 
 There are a number of reasons why a blocked column is a poor choice most of which discussed here:
 
 - [Blocked is bad](https://www.linkedin.com/pulse/blocked-bad-brett-maytom/)
 - [Don’t Make These 3 Scrum with Kanban Mistakes](https://www.linkedin.com/pulse/dont-make-3-scrum-kanban-mistakes-georgina-hughes-e5kdf/)
+
+Using my [rules for states](https://snape.me/2024/04/task-state-column-workitem/#work-item-state) also implies that the only thing you can do to a blocked work item is to unblock it which isn't the case. 
 
 A far better way to indicated blockage is with tags. Leave the work item where it is and add the `blocked` tag. Don't forget to add a comment as to why its blocked and, if possible, some tasks for getting it unblocked. The plain visual doesn't stand out much but you can apply some colour either as a tag colour: ![Blocked tag colour dialog](./blocked-tag-colour.png)
 or card styling: ![Blocked card style dialog](./blocked-card-style.png)
