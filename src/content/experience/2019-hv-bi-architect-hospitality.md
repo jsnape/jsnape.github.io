@@ -12,14 +12,14 @@ companyLogo:
     src: "./hitachi-icon.png"
     alt: ""
 technologies:
-  - "SQL Server"
-  - "Azure Devops"
-  - "Azure Functions"
-  - "Data Factory"
-  - "Stream Analytics"
-  - "Event Hub"
-  - "Data Lake"
-  - "Power BI"
+  - SQL Server
+  - Azure DevOps
+  - Azure Functions
+  - Data Factory
+  - Stream Analytics
+  - Event Hub
+  - Data Lake
+  - Power BI
 ---
 BI Architect with hospitality client:
 

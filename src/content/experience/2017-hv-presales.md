@@ -11,6 +11,8 @@ companyUrl: "https://www.hitachivantara.com/"
 companyLogo:
     src: "./hitachi-icon.png"
     alt: ""
+skills:
+  - technical presales
 technologies:
   - "SQL Server"
   - "Tableau"

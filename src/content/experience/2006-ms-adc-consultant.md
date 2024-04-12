@@ -10,6 +10,16 @@ companyUrl: "https://www.microsoft.com/en-gb/about/"
 companyLogo:
     src: "./microsoft-icon.png"
     alt: ""
+skills:
+    - performance tuning
+    - build management
+    - stakeholder management
+    - office development
+    - application architecture
+    - software design
+    - development process
+    - architecture reviews
+    - software consulting
 ---
 Working with a broad range of customers from small ISVs to large enterprises, and engage in all aspects of the development lifecycle from requirements and architecture through performance and scale testing.
 

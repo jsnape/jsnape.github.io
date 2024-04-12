@@ -14,11 +14,11 @@ companyLogo:
 skills: 
   - "agile"
 technologies:
-  - "Azure DevOps"
-  - "Azure Functions"
-  - "CosmosDB"
-  - "Event Hub"
-  - "HL7"
+  - Azure DevOps
+  - Azure Functions
+  - CosmosDB
+  - Event Hub
+  - HL7
 ---
 Data and Integration Architect for a Healthcare Patient Flow and Optimization project:
 

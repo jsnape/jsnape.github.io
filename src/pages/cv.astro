@@ -27,7 +27,7 @@ const technologies = experience
 const skills = experience
 	.map(exp => exp.data.skills)
 	.flat()
-	.map(skill => skill.charAt(0).toUpperCase() + skill.slice(1))
+	.map(tech => tech.replace(/\b\w/g, l => l.toUpperCase()))
 	.reduce((acc: {[key: string]: number}, tech:string) => {
 		if (acc[tech]) {
 			acc[tech]++;
@@ -69,7 +69,7 @@ const pageTitle = "James Snape - Curriculum Vitae";
 			<h3>Technologies:</h3>
 			<div class="ml-3">{Object.entries(technologies)
 				.sort((a, b) => b[1] - a[1])
-				.map(([tech, count], i) => <span>{i === 0 ? '' : ', '}{tech} </span>)}</div>
+				.map(([tech, count], i) => <span>{i === 0 ? '' : ', '}{tech}</span>)}</div>
 		</div>
 		<h2 class="text-3xl text-center">Employment History</h2>
 		<ul class="">

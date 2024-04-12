@@ -11,15 +11,15 @@ companyUrl: "https://www.hitachivantara.com/"
 companyLogo:
     src: "./hitachi-icon.png"
     alt: ""
+skills:
+  - Data Vault
 technologies:
-  - "SQL Server"
-  - "C#"
-  - "PowerShell"
-  - "Azure DevOps"
-  - "Azure"
-  - "Data Factory"
-  - "Data Vault"
-
+  - SQL Server
+  - C#
+  - PowerShell
+  - Azure DevOps
+  - Azure
+  - Data Factory
 ---
 BI Architect at a retailer:
 

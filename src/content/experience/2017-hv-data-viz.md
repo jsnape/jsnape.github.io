@@ -11,12 +11,13 @@ companyLogo:
     src: "./hitachi-icon.png"
     alt: ""
 skills:
-  - "Kanban"
-  - "Scrum"
-  - "Data Visualization"
+  - Kanban
+  - Scrum
+  - Data Visualization
 technologies:
-  - "SQL Server"
-  - "Tableau"
+  - SQL Server
+  - Tableau
+  - JIRA
 ---
 Agile Coach, Data Visualization for a bank
 

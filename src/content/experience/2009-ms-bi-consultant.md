@@ -10,6 +10,16 @@ companyUrl: "https://www.microsoft.com/en-gb/about/"
 companyLogo:
     src: "./microsoft-icon.png"
     alt: ""
+skills:
+    - dimensional modelling
+    - data warehouse design
+    - business intelligence
+technologies:
+    - SQL Server
+    - Integration Services
+    - Analysis Services
+    - Reporting Services
+    - Data Visualization
 ---
 I advised customers on how to get the best from their business data. The role includes everything from data acquisition and cleansing through data warehousing to reporting and data visualization.
 
