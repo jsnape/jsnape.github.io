@@ -1,12 +1,12 @@
 ---
-title: "snape.me blog"
-role: "Designer/Developer"
+title: Designer/Developer
+role: Personal Project
 startDate: 2024-01-01
-locationType: "remote"
-location: "London, United Kingdom"
-companyName: "Personal Project"
-employmentType: "Side-Project"
-companyUrl: "https://github.com/jsnape/jsnape.github.io"
+locationType: remote
+location: London, United Kingdom
+companyName: snape.me blog
+employmentType: Side-Project
+companyUrl: https://github.com/jsnape/jsnape.github.io
 companyLogo:
     src: "@assets/tinmonkey.png"
     alt: ""
