@@ -28,13 +28,13 @@ All of these questions should be answered in the context of the sprint goal so l
 
 Next, remember that the reason for the stand-up is to discuss the sprint work items and their progress _not_ focus on the team members doing the work. To that end I prefer to _Group By: Parents_ so that work items are visible on the left.
 
-![Group By Parents](.\group-by-parents.png)
+![Group By Parents](./group-by-parents.png)
 
 This does mean that some team members might speak multiple times as each item comes up but the order of discussion is in backlog priority. If you want to quickly see all work for a person use the person filter at the top.
 
 This is what a typical board might look like (note the sprint goal in the tabs at the top):
 
-![Typical task board](.\typical-task-board.png)
+![Typical task board](./typical-task-board.png)
 
 Even without seeing the detail I can tell this board has:
 
@@ -52,7 +52,7 @@ How does this help with the standup? Lets go through the questions above, one by
 
 For this I want to highlight tasks that were moved to the done state since the last meeting.
 
-![Tasks done since last meeting](.\completed-yesterday-rule.png)
+![Tasks done since last meeting](./completed-yesterday-rule.png)
 
 - `State = Done`
 - `Closed Date > @Today-1` (this is the magic, since yesterday selector)
@@ -69,7 +69,7 @@ Most people move tasks to `in progress` when they start working on them. I prefe
 
 Before I start moving tasks I want to make sure they are all small enough to fit into a single day's work. This style rule shows them as <span class="bg-purple-800 text-white px-1">[purple]</span>. Its purple because I associate the colour with royalty and they are too posh to actually do any work.
 
-![Tasks that are too large](.\too-large-rule.png)
+![Tasks that are too large](./too-large-rule.png)
 
 - `Remaining Work > 8` (or use 6 if you factor in slack time)
 
@@ -79,14 +79,14 @@ Before I start moving tasks I want to make sure they are all small enough to fit
 
 This last question uses the remaining style rules. We already saw how to highlight blocked tasks:
 
-![Blocked Task Rule](.\blocked-task-rule.png)
+![Blocked Task Rule](./blocked-task-rule.png)
 
 - `Blocked = Yes`
 - `State = In Progress`
 
 and blocked backlog items:
 
-![Blocked Backlog Item Rule](.\work-item-blocked-rule.png)
+![Blocked Backlog Item Rule](./work-item-blocked-rule.png)
 
 - `Work Item Type <> Task`
 - `Tags Contains blocked`
@@ -95,14 +95,14 @@ But there are other styles that can highlight blockers. Firstly, if a task has n
 
 To highlight these stuck tasks the following rule works.
 
-![Task In Progress To Long](.\inprogress-too-long-rule.png)
+![Task In Progress To Long](./inprogress-too-long-rule.png)
 
 - `State = In Progress`
 - `State Change Date < @Today`
 
 Finally, the <span class="bg-sky-600 text-white px-1">[blue]</span> task is simply a team member adding a `help-needed` tag. Blue represents 'emergency services' in my head. Since the goal of a sprint is to complete work and not start work, I prefer that the team works as a team instead of a bunch of individuals working in their own areas. To that extent, its always better to help someone else complete a backlog item than it is fo you to start something that potentially won't get done in time. This is especially true in the second week of a two-week sprint.
 
-![Task with Help Needed](.\help-needed-rule.png)
+![Task with Help Needed](./help-needed-rule.png)
 
 - `Tags Contains help-needed`
 
