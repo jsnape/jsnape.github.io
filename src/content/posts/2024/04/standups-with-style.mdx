@@ -1,0 +1,113 @@
+---
+title: Standups with Style
+postDate: 2024-04-17
+description: >-
+  A little bit of styling can really help with your process. Using card colours can remove motion waste and save you time searching for things. Highlight, don't hide and run stylish stand-ups.
+image:
+  src: ./parabol-the-agile-meeting-toolbox-p0xDCNg3cw8-unsplash.jpg
+  alt: Scrum Master with kanban board.
+categories:
+  - agile
+tags:
+  - lean
+  - azure devops
+  - azure boards
+  - card styles
+  - blocked
+  - opinion
+---
+## Introduction
+
+Following on from my previous post there is much more styling you can do in Azure Boards. My favourite thing to do is to really lean in to the process with styles. Take daily stand-ups, they happen at the same time every working day and typically ask the same three questions:
+
+1. What did I complete since the last meeting?
+2. What will I do before the next meeting?
+3. What blockers and other issues are standing in the way of the sprint goal?
+
+All of these questions should be answered in the context of the sprint goal so lets make that really clear using a marketplace extension: [Azure DevOps - Sprint Goal](https://marketplace.visualstudio.com/items?itemName=keesschollaart.sprint-goal). This creates an extra tab at the top where you can keep your goal in mind.
+
+Next, remember that the reason for the stand-up is to discuss the sprint work items and their progress _not_ focus on the team members doing the work. To that end I prefer to _Group By: Parents_ so that work items are visible on the left.
+![Group By: Parents](.\group-by-parents.png)
+
+This does mean that some team members might speak multiple times as each item comes up but the order of discussion is in backlog priority. If you want to quickly see all work for a person use the person filter at the top.
+
+This is what a typical board might look like (note the sprint goal in the tabs at the top):
+![Typical task board](.\typical-task-board.png)
+
+Even without seeing the detail I can tell this board has:
+
+- one task recently completed <span class="bg-lime-600 text-black font-bold px-1">[green]</span>
+- a task that is blocked (and its corresponding work item also blocked) <span class="bg-red-600 text-white px-1">[red]</span>
+- a task where someone is requesting help <span class="bg-sky-600 text-white px-1">[blue]</span>
+- a task that is too large and needs to be split into something smaller <span class="bg-purple-800 text-white px-1">[purple]</span>
+- a task that has not moved recently and could be blocked <span class="bg-yellow-400 text-black font-bold px-1">[yellow]</span>
+
+There is also an unrealistic amount of work scheduled for today since there is 12 hours of task `in progress`.
+
+How does this help with the standup? Lets go through the questions above, one by one. But first, these depend on having your stand-up at the same time every day. Styling based on date fields is a bit of a blunt instrument so if you vary your standup time they won't work.
+
+## What did I complete since the last meeting?
+
+For this I want to highlight tasks that were moved to the done state since the last meeting.
+
+![Tasks done since last meeting](.\completed-yesterday-rule.png)
+
+- `State = Done`
+- `Closed Date > @Today-1` (this is the magic, since yesterday selector)
+
+During the standup you can concentrate on your green tasks for this question.
+
+## What will I do before the next meeting?
+
+Most people move tasks to `in progress` when they start working on them. I prefer to use it as a today view and place all the work I intend to do today in this bucket. That way I can see that:
+
+- I'm not taking on too much work because the sum of hours should be less than a working day. Typically 6 or 8 hours depending if you factor in some slack time to cover non-project work.
+- If at the end of the day there are tasks left I can make a call to work a little longer or accept the impact.
+- Similarly, if I finish early then I can also make a call to pull more work into the in progress bucket or see if anyone needs help on their tasks.
+
+Before I start moving tasks I want to make sure they are all small enough to fit into a single day's work. This style rule shows them as <span class="bg-purple-800 text-white px-1">[purple]</span>. Its purple because I associate the colour with royalty and they are too posh to actually do any work.
+
+![Tasks that are too large](.\too-large-rule.png)
+
+- `Remaining Work > 8` (or use 6 if you factor in slack time)
+
+<aside>As an aside, I will also add effortless tasks thought the day as I'm working to remind me of things I need to do. If I plan on completing them today in the context of the work I've already queued up then they go to `in progress`; if they are for the future then they go into `to do` and get estimated in the evening before I finish work.</aside>
+
+## What blockers and other issues are standing in the way of the sprint goal?
+
+This last question uses the remaining style rules. We already saw how to highlight blocked tasks:
+
+![Blocked Task Rule](.\blocked-task-rule.png)
+
+- `Blocked = Yes`
+- `State = In Progress`
+
+and blocked backlog items:
+
+![Blocked Backlog Item Rule](.\work-item-blocked-rule.png)
+
+- `Work Item Type <> Task`
+- `Tags Contains blocked`
+
+But there are other styles that can highlight blockers. Firstly, if a task has not moved from the `in progress` state in the last day then something must be wrong since they are all supposed to be less than a day in size. Note, if you decide to stop working on a task and defer it to a later date I encourage you to update the remaining work value and move it back to the `to do` pile to keep the `in progress = today` list correct.
+
+To highlight these stuck tasks the following rule works.
+
+![Task In Progress To Long](.\inprogress-too-long-rule.png)
+
+- `State = In Progress`
+- `State Change Date < @Today`
+
+Finally, the <span class="bg-sky-600 text-white px-1">[blue]</span> task is simply a team member adding a `help-needed` tag. Blue represents 'emergency services' in my head. Since the goal of a sprint is to complete work and not start work, I prefer that the team works as a team instead of a bunch of individuals working in their own areas. To that extent, its always better to help someone else complete a backlog item than it is fo you to start something that potentially won't get done in time. This is especially true in the second week of a two-week sprint.
+
+![Task with Help Needed](.\help-needed-rule.png)
+
+- `Tags Contains help-needed`
+
+## Summary
+
+> Just a quick note on colour blindness. I know many folks might have trouble differentiating the colours I've used here so work with your team to identify combinations of hue and brightness that allows everyone to visually distinguish each style.
+
+I really like using styles to highlight areas for action. If you have a style rule not listed here then I would love to learn about it.
+
+Photo by [Parabol | The Agile Meeting Toolbox](https://unsplash.com/@parabol) on [Unsplash](https://unsplash.com/photos/woman-in-gray-sweater-holding-white-and-yellow-sticky-notes-p0xDCNg3cw8) [This is clever marketing by offering great images for free so when attribution is made then your company name shows up in relevant web sites. However I am not making any recommendations here; only attributing the photo.]
