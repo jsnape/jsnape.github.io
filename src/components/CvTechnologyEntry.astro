@@ -3,12 +3,11 @@ import { Image } from 'astro:assets';
 
 interface Props {
     experience: any;
-    index: number;
 }
 
 import Link from "@/components/Link.astro";
 
-const { experience, index  } = Astro.props;
+const { experience  } = Astro.props;
 const { title, role, startDate, endDate, skills, technologies, companyLogo } = experience.data;
 const { Content } = await experience.render();
 

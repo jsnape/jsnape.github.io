@@ -74,7 +74,7 @@ const pageTitle = "James Snape - Curriculum Vitae";
 		<h2 class="text-3xl text-center">Employment History</h2>
 		<ul class="">
 			{!experience.length && 'No experience found.'}
-			{experience.map((exp, index) => <li><CvExperienceEntry experience={exp} index={index}/></li>)}
+			{experience.map((exp) => <li><CvExperienceEntry experience={exp} /></li>)}
 		</ul>
 		<h2 class="text-3xl text-center">Education</h2>
 		<div class="rounded-lg border my-3 p-5 space-y-3">
