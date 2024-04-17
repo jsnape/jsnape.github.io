@@ -65,11 +65,11 @@ const pageTitle = "James Snape - Curriculum Vitae";
 			<h3>Skills:</h3>
 			<div class="ml-3">{Object.entries(skills)
 				.sort((a, b) => b[1] - a[1])
-				.map(([skill, count], i) => <span>{i === 0 ? '' : ', '}{skill}</span>)}</div>
+				.map(([skill, count], i) => <span data-count={count}>{i === 0 ? '' : ', '}{skill}</span>)}</div>
 			<h3>Technologies:</h3>
 			<div class="ml-3">{Object.entries(technologies)
 				.sort((a, b) => b[1] - a[1])
-				.map(([tech, count], i) => <span>{i === 0 ? '' : ', '}{tech}</span>)}</div>
+				.map(([tech, count], i) => <span data-count={count}>{i === 0 ? '' : ', '}{tech}</span>)}</div>
 		</div>
 		<h2 class="text-3xl text-center">Employment History</h2>
 		<ul class="">
