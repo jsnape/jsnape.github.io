@@ -26,3 +26,5 @@ Data and Integration Architect for a Healthcare Patient Flow and Optimization pr
 - Designed low-latency kappa style solution for monitoring and control of patient flow
 - Designed and implemented HL7 event processor with Azure Function and CosmosDB
 - Integrated machine learning models to ensure timely predictions on length of stay, admission risk etc
+
+For more on this project see [The digital tools that could save the NHS](https://www.wired.com/sponsored/story/the-digital-tools-that-could-save-the-nhs/) and [AI-enabled Healthcare Systems CDT Seminar](https://www.youtube.com/watch?v=gz741hZyfSk).
