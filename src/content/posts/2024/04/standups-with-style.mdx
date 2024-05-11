@@ -16,6 +16,8 @@ tags:
   - blocked
   - opinion
 ---
+import Aside from '@components/Aside.astro';
+
 ## Introduction
 
 Following on from my previous post there is much more styling you can do in Azure Boards. My favourite thing to do is to really lean in to the process with styles. Take daily stand-ups, they happen at the same time every working day and typically ask the same three questions:
@@ -73,7 +75,9 @@ Before I start moving tasks I want to make sure they are all small enough to fit
 
 - `Remaining Work > 8` (or use 6 if you factor in slack time)
 
-<aside>As an aside, I will also add effortless tasks thought the day as I'm working to remind me of things I need to do. If I plan on completing them today in the context of the work I've already queued up then they go to `in progress`; if they are for the future then they go into `to do` and get estimated in the evening before I finish work.</aside>
+<Aside type="tip">
+I will also add effortless tasks thought the day as I'm working to remind me of things I need to do. If I plan on completing them today in the context of the work I've already queued up then they go to _in progress_; if they are for the future then they go into _to do_ and get estimated in the evening before I finish work.
+</Aside>
 
 ## What blockers and other issues are standing in the way of the sprint goal?
 

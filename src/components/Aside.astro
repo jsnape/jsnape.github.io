@@ -1,0 +1,32 @@
+---
+let { type, title } = Astro.props;
+
+if (!type) {
+    type = 'note';
+}
+
+// if title is blank, use the type as the title
+if (!title) {
+    title = type.charAt(0).toUpperCase() + type.slice(1);
+}
+
+const iconClass = {
+    tip: 'fa-solid fa-rocket',
+    note: 'fa-solid fa-circle-info',
+    caution: 'fa-solid fa-triangle-exclamation',
+    danger: 'fa-solid fa-circle-exclamation'
+}[type as keyof { tip: string; note: string; caution: string; danger: string; }];
+
+const asideClass = {
+    tip: 'bg-accent text-accent-content border-teal-700',
+    note: 'bg-info text-info-content border-sky-700',
+    caution: 'bg-warning text-warning-content border-amber-700',
+    danger: 'bg-error text-error-content border-red-700'
+}[type as keyof { tip: string; note: string; caution: string; danger: string; }];
+---
+<aside class=`p-4 border-s-4 border-solid ${asideClass}`>
+    <div class="text-xl flex gap-3 items-center">
+        <i class=`${iconClass}`></i>{title}
+    </div>
+    <slot/>
+</aside>

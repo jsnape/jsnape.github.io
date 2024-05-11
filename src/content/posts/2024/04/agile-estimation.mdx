@@ -13,6 +13,8 @@ tags:
   - planning poker
   - opinion
 ---
+import Aside from '@components/Aside.astro';
+
 ## Introduction
 
 The ability to estimate something is a core engineering skill. In software estimation is mostly about how long something will take to complete. I know lots of developers say they are terrible at estimation and will do anything to avoid giving a number. I think a lot of this has to do with our desire to be correct all the time but refusing to estimate isn't helpful; you just need to accept that sometimes your estimates may not be accurate.
@@ -54,7 +56,9 @@ This should be a good way of estimating as it depends on the wisdom of crowds to
 
 The part that is missing from most planning poker sessions is a menu of stories for comparison. This is especially true at the start of a project and the shear number of stories that need estimation create more temptation to take shortcuts.
 
-<aside>I have seen some truly terrible versions of planning poker too - typically in these there is no hidden voting but instead after the story is described someone says "It feels like a 5, anyone think differently?"... everyone agrees and the story is now a 5 pointer. No wisdom of crowds here.</aside>
+<Aside type="caution">
+I have seen some truly terrible versions of planning poker too - typically in these there is no hidden voting but instead after the story is described someone says "It feels like a 5, anyone think differently?"... everyone agrees and the story is now a 5 pointer. No wisdom of crowds here.
+</Aside>
 
 ## An Alternative
 
