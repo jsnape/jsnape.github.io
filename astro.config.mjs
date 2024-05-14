@@ -18,23 +18,23 @@ export default defineConfig({
       policy: [
         {
           userAgent: 'CCBot',
-          allow: '/',
+          disallow: '/',
         },
         {
           userAgent: 'ChatGPT-User',
-          allow: '/',
+          disallow: '/',
         },
         {
           userAgent: 'GPTBot',
-          allow: '/',
+          disallow: '/',
         },
         {
           userAgent: 'Google-Extended',
-          allow: '/',
+          disallow: '/',
         },
         {
           userAgent: 'anthropic-ai',
-          allow: '/',
+          disallow: '/',
         },
         {
           userAgent: 'ClaudeBot',
@@ -68,7 +68,10 @@ export default defineConfig({
           userAgent: 'cohere-ai',
           disallow: '/',
         },
-      ],
+        {
+          userAgent: '*',
+          allow: '/',
+        },],
     }),
 		partytown({
 			config: {
