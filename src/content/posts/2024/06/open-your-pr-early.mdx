@@ -1,7 +1,6 @@
 ---
 title: Open your PR early
-postDate: 2024-06-14
-draft: true
+postDate: 2024-06-15
 description: >-
   Pull request workflow need not be an inconvenient bump in the road on your way to merging code.
 image:
@@ -14,4 +13,50 @@ tags:
   - pull-request
   - opinion
 ---
+import Aside from '@components/Aside.astro';
+
+I saw a post on LinkedIn this week where the author was moaning about how pull requests decrease your value-add ratio because of the time waiting for review. After doing a quick search I think there is a lot of opinion that PRs are for the singular purpose of stopping bad code getting into your mainline.
+
+> [PRs are about quality of code. Nothing else](https://www.linkedin.com/feed/update/urn:li:activity:7076438501063307264?commentUrn=urn%3Ali%3Acomment%3A%28activity%3A7076438501063307264%2C7076444648285569024%29&replyUrn=urn%3Ali%3Acomment%3A%28activity%3A7076438501063307264%2C7076453117382287360%29&dashCommentUrn=urn%3Ali%3Afsd_comment%3A%287076444648285569024%2Curn%3Ali%3Aactivity%3A7076438501063307264%29&dashReplyUrn=urn%3Ali%3Afsd_comment%3A%287076453117382287360%2Curn%3Ali%3Aactivity%3A7076438501063307264%29)
+> -- Darío Griffo
+
+PRs originally came from open source projects but also work well in the modern, distributed workplace. I both create PRs and also review a lot of code from others. I don't agree with the statement above. In my mind, PRs are primarily a vehicle for feedback.
+
+> Feedback works best when it’s a continual process rather than a formal session
+> -- [Harvard Business Review](https://hbr.org/2009/04/feedback-that-works)
+
+As a reviewer I'm less impressed with a 400 line review because you finished your work and created a PR just before you want to merge. At this point it's way too late to make any major changes.
+
+## PR as a Workspaces
+
+I prefer to look at a PR as a workspace. I tend to open one in draft mode as soon as I've created a branch. I use it to work through designs, research, invite discussion on an approach, and give others visibility into what I'm working on. Writing markdown documentation as I go becomes part of the feature.
+
+As a dev lead I appreciate being on the other side of the fence too - being able to see features as they take shape allows for much lighter touch in direction setting. I can see where you are at and if you are blocked without disturbing your flow. Transparency is the goal and if you are unwilling to let me see then I worry about your overall attitude to the rest of the team too.
+
+Also:
+
+- @'ing someone in a review comment on code you are writing is a great asynchronous way of asking for help as you go.
+- Seeing code evolve in a PR is an excellent way for juniors to learn.
+
+That 400 line review, if you open your PR before you start, isn't a single review. It's 10 reviews of 40 lines plus some minor changes along the way. It's easy to see what changes from commit to commit so you don't need to review the entire branch.
+
+<Aside type="tip" title="Code History">
+Most code bases have a lot of historical reasons for why they end up as you see today. Before picking them apart for modernization be sure to understand that history so you are not condemned to repeat it. A good set of historical PRs created as workspaces will provide all the information you need to understand why a product is written that way.
+</Aside>
+
+## Code Quality
+
+That comment about code quality above... most code quality comes from automation. Your build, code analysis checks, test coverage etc. This feedback should be almost immediate and happen before you even push your commits. Additional automation in the PR can push your code to a smoke environment to run more functional tests, dynamic security testing, fitness functions, etc.
+
+Automation doesn't need to wait for a human. If it fails, you get more feedback to act on.
+
+## Before Branching
+
+I remember times before git where branching was hard so we didn't. Developers committed directly into the mainline. Quality was up and down depending on the status of the latest build. There were informal team rules like "nobody should commit on a Friday". We used to lock the branch when nearing release to ensure nobody committed something that caused a regression - that was a real block on productivity.
+
+## Your attitude determines your reality
+
+If you think a pull request is the creation of mean corporate overlords designed to stop your quite obviously perfect code from flowing freely towards production. Then it will be exactly that. How dare they dare question your skills and perfection.
+
+Personally, I welcome any opportunity for feedback so I might deliver something of higher quality. It's my name on the code and the quality reflects on me.
 
