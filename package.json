@@ -29,7 +29,7 @@
     "typescript": "^5.4.4"
   },
   "devDependencies": {
-    "@astrojs/partytown": "^2.1.0",
+    "@astrojs/partytown": "^2.1.1",
     "@tailwindcss/typography": "^0.5.13",
     "daisyui": "^4.11.1"
   }
