@@ -29,7 +29,12 @@ export const sortExperience = (experience: CollectionEntry<'experience'>[]): Col
  * @returns True if the post is not a draft
  */
 export const excludeDrafts = ({ data }: CollectionEntry<'posts'>): boolean => {
-    return import.meta.env.PROD ? !(data.draft || false) : true;
+    const isDraft = data.draft || false;
+    const postDate = new Date(data.postDate);
+    const currentDate = new Date();
+
+    // Exclude if it's a draft or the post date is in the future
+    return import.meta.env.PROD ? !(isDraft || postDate > currentDate || false) : true;
 }
 
 export const excludeInstagram = ({ data }: CollectionEntry<'posts'>): boolean => {
