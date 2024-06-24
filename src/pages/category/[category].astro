@@ -6,7 +6,7 @@ import BlogPostArticle from "@components/BlogPostArticle.astro";
 import {excludeDrafts, sortBlogPosts} from "@/functions";
 
 export async function getStaticPaths() {
-  const posts = await getCollection('posts');
+  const posts = await getCollection('posts', excludeDrafts);
   const categories = [...new Set(posts.flatMap((p) => p.data.categories))];
   return categories.map(cat => ({
     params: { category: cat },
