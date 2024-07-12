@@ -1,0 +1,139 @@
+---
+title: Ideal wiki structure
+postDate: 2024-07-12
+description: >-
+  Most team wikis are a mess of folders and pages with very little thought to structure. Here is a complex system evolved from a simple one over time for you to use as a shortcut.
+image:
+  src: "./christian-wiediger-czHHGuraIQQ-unsplash.jpg"
+  alt: High-key image of the multi-level Stuttgart library. Stairways around the central atrium look like an M.C. Escher artwork. Rows of bookshelves line the three walls visible. Everything is white including the floors and stairs. Only the books, people and small seats are in colour.
+categories:
+  - documentation
+tags:
+  - wiki
+  - information
+---
+## Introduction
+
+A large amount of thought goes into all aspects of the development process from software design, release strategy, delivery processes, etc. So its surprising that the team wiki tends to be thrown together into whatever structure evolves. In theory, wikis don't need any structure because the inherent linking between pages allows you navigate but most modern tools use a form of folder structure that requires some organization.
+
+Some tell-tail signs you need this guide are:
+
+- You find yourself searching for content by repeatedly opening the wrong folders
+- Team members are unaware that the information they need already exists then this guide is for you
+- You are unsure where the new page you are writing should live
+
+Let me start by saying that if you are not familiar with information architecture then it can be quite difficult to design a solution that covers all your needs from scratch.
+
+> A complex system that works has evolved from a simple system that worked. A complex system built from scratch won’t work. -- John Gall, 1975 (Gall's Law)
+
+The structure I describe below was evolved from a simple system that worked and is based around the context a user will have when trying to access information in the wiki. One caveat though - its designed for a single software project.
+
+## Basic Structure
+
+At the top level we have some high level category folders depending broadly on your goal - do you want to know how it works, what it does, when and where its running, get some help on how your work or tools you use, find the policies you must adhere to or even some information on how to use the wiki itself.
+
+- [Home](#home)
+- [Designs](#designs)
+- [Features](#features)
+- [Releases](#releases)
+- [Guides](#guides)
+- [Tools](#tools)
+- [Standards](#standards)
+- [Help](#help)
+
+## Home
+
+This is the root page of the wiki, providing a landing page for easily finding extra content. Typically this page has a introduction, some helpful notes about the wiki, announcements and then a giant [map-of-content (MOC)](https://obsidian.rocks/maps-of-content-effortless-organization-for-notes/) linking to the various places of interest.
+
+## Designs
+
+This section of the wiki describes the product being build. Content under this node is independent of feature or release. It describes the as-is structure of the solution.
+
+Readers should be able to view this node only to get a thorough understanding of what is or will be built.
+
+I have used a few different names for this node such as 'architecture' or 'product' but have settled on 'designs' because its more encompassing. Typically, architects spend most of their time adding content here. Under this node are typically two specific sub-folders:
+
+- Design Considerations
+- Design Governance
+
+### Design Considerations
+
+This section describes design principles, solution constraints and responses to specific stakeholder concerns with respect to the solution design. Content here should explain why the solution is designed as it is.
+
+### Design Governance
+
+Here is the set of [architectural decisions records (ADRs)](https://adr.github.io/) arising as the solution is designed and developed. One page for each decision containing at least the following: add-number, status, status-date, title, context, decision but may also include tags, options and recommendations, implications and caveats, with supporting references.
+
+These one-pager decisions are a lightweight method for documenting an architecture as it evolves. Over time further organization might be needed but initially a flat list of records is fine.
+
+## Features
+
+If the designs section describes how the solution is built then this features section provides all the detail on what is being built. Ultimately I settled on calling this 'features' because there should be a simple relationship with the feature work items. It might be called 'requirements' in a waterfall project.
+
+This is where business analysts or product owners will create most of their content but it should be noted that not every requirement or feature will need a whole wiki page to describe it. Only those that can't be described in a single work item card might get promoted to a longer form wiki page and then [linked back to the original work item](https://devblogs.microsoft.com/devops/link-wiki-pages-and-work-items-write-math-formulas-in-wiki-keyboard-shortcuts-and-more/#link-work-items-and-wiki-pages).
+
+Another way this section differs from designs is that it maintains a history of how a feature evolves over time to avoid going over old ground. Consider is a workspace for BAs in the same way a [pull request is a workspace for developers](https://snape.me/2024/06/open-your-pr-early/#pr-as-a-workspace).
+
+## Releases
+
+You have a release coming up; everything is automated but you still need sign-offs, contact lists in case of issues, a shared scratch-pad for notes as the release progresses, etc. This section contains one page per release, each containing release notes, timings, troubleshooting hints and other useful content specific to the release.
+
+Release pipelines are now more automated and the time between deployments decreased so this section's value has dropped over time. In my last few projects it was generally left empty but I have included it for completeness.
+
+## Guides
+
+The sections above are focused on the solution itself - how its designed, what it does and its status. What is missing is the information team members need to do their jobs successfully. I split this information into different categories depending on context: guides, tools, standards and help.
+
+Guides are a role specific place for all sorts of guidance documentation. This is where how-to, check-list, troubleshooting notes live. Where security policies permit, this is also a place to keep implementation notes such as URLs and other useful information.
+
+Team members are encouraged to add pages in response to their own questions once they have found answers.
+
+- **Business Analyst Guide:**
+    Typically contains information on how to write great stories and how to perform specific documentation tasks such as data requirements.
+- **Data Engineer Guide:**
+    Details of databases, notes on performance tuning, data volumes.
+- **Developer Guide:**
+    Details of specific tools and techniques used; pull request procedures, git specifics, dev-build etc.
+- **Tester Guide:**
+    Test suite descriptions; execution guides; rules for raising bugs etc.
+- **Release Guide:**
+    Information on how to release the service; environment details; sign-off procedures.
+- **Support Guide:**
+    Error code library, troubleshooting answers, known issues etc.
+- **Operations Guide:**
+    Standard running operations such as daily, weekly, monthly tasks (if any). Details of run-books and other automation.
+- **Onboarding Guide:**
+    Workstation setup, how-tos, communication details such as Teams and email, answers to typical new joiner questions.
+
+## Tools
+
+During the delivery, we may need to create custom tools and scripts. These are documented here in man-page style.
+
+## Standards
+
+These are mandatory practices for team members to follow. Typically they link to other external documentation but can be copied and maintained here too. This node is different from Guides since the content is more formal and mandatory that it is followed. There are sub-sections for:
+
+- Design Standards
+- Code Standards
+- Data Standards
+- Process Standards
+- Security Standards
+- Release Standards
+
+I try to document these standards in the simplest structure possible such as check lists. Nobody wants to waste time reading policies if they can help it. So the easier they are to follow, the more likely they will be.
+
+## References
+
+Initially I didn't have a references section but over time folks started adding random pages and links amongst other wiki documentation. It confused readers who thought it part of the solution design so in response we moved anything not directly related to the product into a reference folder.
+
+It contains lots of useful external and web content exists that may be relevant but not specifically part of this solution. Users are encouraged to link here from other wiki pages for background reading.
+
+## Help
+
+Finally, so save yourself from repeating the same explanations over and over, this help section is the perfect place to write is down and point folks to if they need guidance on how to use this wiki. I often borrow or link to pages on [Wiki social norms](https://wiki.c2.com/?WikiSocialNorms) too.
+
+## Finally
+
+If you have a different template then I'd love to hear about it but feel free to copy mine as a starter and tell me how you get on.
+
+Photo by [Christian Wiediger](https://unsplash.com/@christianw) on [Unsplash](https://unsplash.com/photos/white-concrete-building-czHHGuraIQQ?)  
