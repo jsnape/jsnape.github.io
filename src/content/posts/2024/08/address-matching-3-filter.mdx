@@ -1,0 +1,167 @@
+---
+title: Address Matching Part 3 - Filtering
+postDate: 2024-08-05
+draft: true
+description: >-
+  Using a postcode to reduce the search space ready for matching.
+image:
+  src: "./mylo-kaye-aoRQu1VXaMI-unsplash.jpg"
+  alt: UK Post Office by The Royal Mail.
+categories:
+  - code
+tags:
+  - example
+  - addresses
+  - postal
+---
+This is a multi-part blog series where I take the single problem of address matching from start to finish.
+
+- [Part 1](./address-matching-1-scope): an introduction to the challenge and creation of initial acceptance criteria.
+- [Part 2](./address-matching-2-postcodes): finding postcodes.
+- Part 3 (this one): loading and filtering the AddressBase data set.
+- Part 4: Splitting the incoming address into fields.
+- Part 5: Working out which field is which with closest match.
+- Part 6: Parsing building number from street name.
+- Part 7: Matching the full address.
+- Part 8: Recap and some ideas for alternate matching methods.
+
+---
+
+So now we have a postcode, we can fetch a bunch of possible matches. With 33 million records in the full data set I probably wouldn't load the whole thing into memory but instead make a query to a data service such as Cosmos Database or Azure Cache for Redis. For simplicity we will just load the 50,000 records we have.
+
+First we need something to hold the Address Base dataset.
+
+```csharp
+public class Address
+{
+    public required string Uprn { get; set; }
+
+    public required string ClassificationCode { get; set; }
+
+    public required string SingleLineAddress { get; set; }
+    
+    public string? Organisation { get; set; }
+    
+    public string? SubBuilding { get; set; }
+    
+    public string? BuildingName { get; set; }
+    
+    public string? BuildingNumber { get; set; }
+    
+    public string? StreetName { get; set; }
+    
+    public string? Locality { get; set; }
+    
+    public string? TownName { get; set; }
+    
+    public required string Postcode { get; set; }
+}
+
+public interface IPostcodeLookup
+{
+    IEnumerable<Address> FindByPostcode(string postcode);
+}
+
+public class AddressBase(IEnumerable<Address> Addresses) : IPostcodeLookup
+{
+    private readonly ILookup<string, Address> addresses = 
+        Addresses.ToLookup(x => x.Postcode.ToUpperInvariant());
+
+    public IEnumerable<Address> FindByPostcode(string postcode)
+    {
+        return this.addresses[postcode.ToUpperInvariant()];
+    }
+}
+```
+
+Plus some code to load the data from the standard format CSV file. I'm a big fan of [CSVHelper](https://joshclose.github.io/CsvHelper/) for this kind of thing. The mapping needs configuring because the source format field names aren't standard C#.
+
+```csharp
+internal class AddressMap : ClassMap<Address>
+{
+    public AddressMap()
+    {
+        Map(m => m.Uprn).Name("UPRN");
+        Map(m => m.ClassificationCode).Name("CLASSIFICATION_CODE");
+        Map(m => m.SingleLineAddress).Name("SINGLE_LINE_ADDRESS");
+        Map(m => m.Organisation).Name("ORGANISATION");
+        Map(m => m.SubBuilding).Name("SUB_BUILDING");
+        Map(m => m.BuildingName).Name("BUILDING_NAME");
+        Map(m => m.BuildingNumber).Name("BUILDING_NUMBER");
+        Map(m => m.StreetName).Name("STREET_NAME");
+        Map(m => m.Locality).Name("LOCALITY");
+        Map(m => m.TownName).Name("TOWN_NAME");
+        Map(m => m.Postcode).Name("POSTCODE");
+    }
+}
+
+internal class AddressBaseLoader
+{
+    public const string AddressBaseFile = "addressbase-core-sample.csv";
+
+    public static IEnumerable<Address> Load(string path)
+    {
+        using var reader = new StreamReader(path);
+        using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+        csv.Context.RegisterClassMap<AddressMap>();
+
+        // Addresses with an 'R' classification are residential.
+        return csv
+            .GetRecords<Address>()
+            .Where(r => r.ClassificationCode[0] == 'R')
+            // Fix - sequence needs materializing before this function returns.
+            .ToList();
+    }
+}
+```
+
+Lets check its all working OK and since I want to reuse this data in a lot of unit tests it is worth creating a test fixture.
+
+```csharp
+public class AddressBaseFixture
+{
+    public AddressBaseFixture()
+    {
+        var addressBaseRecords = 
+            AddressBaseLoader.Load(AddressBaseLoader.AddressBaseFile);
+
+        AddressBase = new AddressBase(addressBaseRecords);
+    }
+
+    public AddressBase AddressBase { get; }
+}
+
+[CollectionDefinition(nameof(AddressBaseCollection))]
+public class AddressBaseCollection : ICollectionFixture<AddressBaseFixture>
+{
+}
+```
+
+Then the unit tests for valid and missing post codes.
+
+```csharp
+[Collection(nameof(AddressBaseCollection))]
+public class AddressBaseFacts(AddressBaseFixture Fixture)
+{
+    private readonly AddressBaseFixture fixture = Fixture;
+
+    [Fact]
+    public void FindByMissingPostcodeReturnsEmptyList()
+    {
+        var candidates = fixture.AddressBase.FindByPostcode("AB12 3CD");
+        Assert.Empty(candidates);
+    }
+
+    [Theory]
+    [ClassData(typeof(BasicAddressExamples))]
+    public void FindByPostcodeReturnsMatchingAddresses(
+        string _, string postcode, string _1)
+    {
+        var candidates = fixture.AddressBase.FindByPostcode(postcode);
+        Assert.NotEmpty(candidates);
+    }
+}
+```
+
+---
+Photo by [Mylo Kaye](https://unsplash.com/@mylokaye) on [Unsplash](https://unsplash.com/photos/a-post-office-sign-on-the-side-of-a-building-aoRQu1VXaMI)

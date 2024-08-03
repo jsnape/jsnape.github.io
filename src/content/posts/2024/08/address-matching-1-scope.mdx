@@ -1,0 +1,190 @@
+---
+title: Address Matching Part 1 - Scope
+postDate: 2024-08-03
+draft: true
+description: >-
+  Matching addresses is not a trivial task and there are plenty of services that will do it for you but what if they are not available?
+image:
+  src: "./the-blowup-nsOYGt6E-Ag-unsplash.jpg"
+  alt: Close up of iconic red London Royal Mail postbox.
+categories:
+  - code
+tags:
+  - example
+  - addresses
+  - postal
+---
+import Aside from '@components/Aside.astro';
+
+This is a multi-part blog series where I take the single problem of address matching from start to finish.
+
+- Part 1 (this one): an introduction to the challenge and creation of initial acceptance criteria.
+- Part 2: finding postcodes.
+- Part 3: loading and filtering the AddressBase data set.
+- Part 4: Splitting the incoming address into fields.
+- Part 5: Working out which field is which with closest match.
+- Part 6: Parsing building number from street name.
+- Part 7: Matching the full address.
+- Part 8: Recap and some ideas for alternate matching methods.
+
+---
+
+## Introduction
+
+Normally I don't talk about work because its confidential but this part of a project I have on the horizon is abstract enough to talk about here.
+
+The project is a much larger, more interesting gig which may be publicly available eventually but for now the part I can discuss is the need to match an address. Consider lots of websites allow users to input addresses in a fairly freeform style by typing into a large text area. Often there are separate fields for postcode etc but I want to try the worst case as a single string.
+
+The second requirement is I'm not looking to parse an address, only match it with a known good record. These records are publicly available and free for a number of specific use cases (of which this project will be). The dataset I'm going to use is [AddressBase Core from Ordinance Survey](https://www.ordnancesurvey.co.uk/products/addressbase-core). I, as a person, don't meet the requirements for free access so I'll use the example download instead to write the code.
+
+Writing a global address matcher would be very complex so it is fortunate the scope is just England and Wales in this case. Initially I'm going to ignore Wales too since I know how to make that work once I have a basic matcher up and running.
+
+<Aside type="note" title="Welsh Addresses">
+The issue with Welsh addresses is there are generally two versions, the original Welsh and an English translation. You have to check twice.
+For example:
+- 5 Heol y Dderwen, Caerdydd, CF24 5AB (15 Oak Road, Cardiff, CF24 5AB)
+- Y Fferm Wen, Llandeilo, SA20 0AB (The White Farm, Llandeilo, SA20 0AB)
+- Flat 2, 7 Bryn y Mor, Aberystwyth, SY23 1DG (Flat 2, 7 Hill by the Sea, Aberystwyth, SY23 1DG)
+- Ty Newydd, Pontardawe, SA8 4LP (New House, Pontardawe, SA8 4LP)
+</Aside>
+
+## Requirements
+
+Ultimately what I want to do is write a function that takes any old garbage in the rough form of a English address and returns the corresponding UPRN (Unique Property Reference Number) assigned by Ordinance Survey.
+
+Let's start with some things I think I know:
+
+1. Every address has a postcode.
+2. Addresses are either comma or newline separated.
+
+Looking at my example dataset I can see that every line has a postcode. This is something to check with the full dataset of 33 million addresses but for now it rings true. This is good because if you can match a postcode then the number of candidate matches drops significantly.
+
+The second observation is really the difference between single line or multi-line text entry and a possible combination of both. The building number and street are not comma separated so we will have to address that separately (no pun intended). Similarly I wonder how often folks just smash the town and postcode together without a comma or newline in between?
+
+So at this point I've got a little task list that looks like:
+
+- Function signature `let AddressMatch = string -> string`[^1] since UPRNs are strings too.
+- Split an address by newline or comma.
+- Split building number from street address.
+- Handle case where no separator between town and postcode.
+
+## Test Data
+
+We will come back to this but I need to look at test data first. The example dataset from Ordinance Survey has approximately 51,000 records in it but for my use case I can filter it because I know every address must belong to a residential address with someone living there so no PO Boxes and no businesses. There is a `CLASSIFICATION_CODE` field and if it starts with R then its a residential address. We can remove around 5,000 records with this filter.
+
+From the remaining data lets pick some test cases to use in my acceptance criteria.
+
+| Test Case | Result | Reason |
+| - | - | - |
+|2A NEWTOWN CLOSE, EXETER, EX1 2EU|10013045896|Basic address|
+|2A NEWTOWN CLOSE<br/>EXETER<br/>EX1 2EU|10013045896|Basic address but multiline|
+|2A NEWTOWN CLOSE<br/>EXETER EX1 2EU|10013045896|Basic address but multiline with postcode on same line as town|
+|FLAT 6, GERBERA HOUSE, MEDLEY COURT, EXETER, EX4 2QF|10013045868|Includes sub-building and building name|
+|FLAT 11, BARTS MEWS, 53 BARTHOLOMEW STREET WEST, EXETER, EX4 3AJ|10013036113|All fields including building number without comma|
+|ORCHARD HOUSE, IDE LANE, ALPHINGTON, EXETER, EX2 8UT|10013040942|Locality but no building number|
+|19, PEGASUS COURT, NORTH STREET, HEAVITREE, EXETER, EX1 2RP|10013041164|Sub-building number and no building number|
+|FLAT 2B, ANGEL PAVEMENT, 145-147 FORE STREET, ST DAVIDS, EXETER, EX4 3AN|10013042138|Complex, all fields address|
+|D M A ENGINEERING, 1, GERALD DINNIS UNITS, COFTON ROAD, MARSH BARTON TRADING ESTATE, EXETER, EX2 8QW|10013042292|Red herring - D M A ENGINEERING is an organization name|
+
+This will do to start. We can add more later but for now we can write some code. First a stub matcher that implements the correct signature above:
+
+```csharp
+public class Matcher
+{
+    public static string? MatchAddress(string address)
+    {
+        return null;
+    }
+}
+```
+
+Plus the set of acceptance tests:
+
+```csharp
+public class MatchSpecs
+{
+    [Theory]
+    [ClassData(typeof(BasicAddressExamples))]
+    public void BasicAddressMatching(string address, string _, string expectedUprn)
+    {
+        var actualUprn = Matcher.MatchAddress(address);
+
+        Assert.Equal(expectedUprn, actualUprn);
+    }
+}
+
+public class BasicAddressExamples : TheoryData<string, string, string>
+{
+    public BasicAddressExamples()
+    {
+        foreach (var (address, postcode, uprn) in GetBasicAddressExamples())
+        {
+            Add(address, postcode, uprn);
+        }
+    }
+
+    private static IEnumerable<(string, string, string)> GetBasicAddressExamples()
+    {
+        yield return (
+            "2A NEWTOWN CLOSE, EXETER, EX1 2EU",
+            "EX1 2EU",
+            "10013045896"
+        );
+        yield return (
+            "2A NEWTOWN CLOSE\nEXETER\nEX1 2EU",
+            "EX1 2EU",
+            "10013045896"
+        );
+        yield return (
+            "2A NEWTOWN CLOSE\nEXETER EX12EU",
+            "EX1 2EU",
+            "10013045896"
+        );
+        yield return (
+            "FLAT 6, GERBERA HOUSE, MEDLEY COURT, EXETER, EX4 2QF",
+            "EX4 2QF",
+            "10013045868"
+        );
+        yield return (
+            "FLAT 11, BARTS MEWS, 53 BARTHOLOMEW STREET WEST, EXETER, EX4 3AJ",
+            "EX4 3AJ",
+            "10013036113"
+        );
+        yield return (
+            "ORCHARD HOUSE, IDE LANE, ALPHINGTON, EXETER, EX2 8UT",
+            "EX2 8UT",
+            "10013040942"
+        );
+        yield return (
+            "19, PEGASUS COURT, NORTH STREET, HEAVITREE, EXETER, EX1 2RP",
+            "EX1 2RP",
+            "10013041164"
+        );
+        yield return (
+            @"FLAT 2B, ANGEL PAVEMENT, 145-147 FORE STREET,
+            ST DAVIDS, EXETER, EX4 3AN",
+            "EX4 3AN",
+            "10013042138"
+        );
+        yield return (
+            @"D M A ENGINEERING, 1, GERALD DINNIS UNITS,
+            COFTON ROAD, MARSH BARTON TRADING ESTATE
+            EXETER, EX2 8QW",
+            "EX2 8QW",
+            "10013042292"
+        );
+    }
+}
+```
+
+Note, I've added some multiline strings too for alternate formatting tests and included the correct postcode so I can use the same data in the next article.
+
+Running these tests gives a failure for each one which is to be expected. When they are all green we can think about additional edge cases.
+
+In the next post I'll look at splitting these addresses into something we can match against.
+
+---
+
+Photo by [Narain Jashanmal](https://unsplash.com/@theblowup) on [Unsplash](https://unsplash.com/photos/red-mail-box-on-road-nsOYGt6E-Ag)
+
+[^1]: This is F# syntax which I tend to use when working though algorithms as its succinct than the C# equivalent: `var AddressMatch = Function<string, string>`.

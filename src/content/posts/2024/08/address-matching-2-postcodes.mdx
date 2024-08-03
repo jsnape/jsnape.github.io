@@ -1,0 +1,148 @@
+---
+title: Address Matching Part 2 - Postcodes
+postDate: 2024-08-04
+draft: true
+description: >-
+  For UK addresses, the postcode is an anchor point. Finding this field is key to matching addresses.
+image:
+  src: "./johannes-plenio-UGMf30W28qc-unsplash.jpg"
+  alt: Close up of iconic red London Royal Mail postbox.
+categories:
+  - code
+tags:
+  - example
+  - addresses
+  - postal
+---
+This is a multi-part blog series where I take the single problem of address matching from start to finish.
+
+- [Part 1](./address-matching-1-scope): an introduction to the challenge and creation of initial acceptance criteria.
+- Part 2 (this one): finding postcodes.
+- Part 3: loading and filtering the AddressBase data set.
+- Part 4: Splitting the incoming address into fields.
+- Part 5: Working out which field is which with closest match.
+- Part 6: Parsing building number from street name.
+- Part 7: Matching the full address.
+- Part 8: Recap and some ideas for alternate matching methods.
+
+---
+
+All UK addresses will have a postcode and it always follows [a specific format](https://coderwall.com/p/rnucjg/regexp-how-to-validate-a-uk-postcode). GitHub Copilot tells me the standard regex for matching is:
+
+```regex
+^[A-Z]{1,2}[0-9R][0-9A-Z]? [0-9][A-Z]{2}$
+```
+
+- The outward code consists of 1 or 2 uppercase letters, followed by a digit or 'R', and an optional digit or uppercase letter.
+- A mandatory space separates the outward code from the inward code.
+- The inward code consists of a digit followed by exactly 2 uppercase letters.
+
+This is great for validating a postcode exactly but I know folks don't always work as neatly. Sometimes the space is missing from the middle, other times they may place the postcode on a line with the town. So for example:
+
+- EX12EU
+- EXETER EX1 2EU
+
+Lets loosen the spec a little to account for these possibilities:
+
+```regex
+.*?([A-Z]{1,2}[0-9R][0-9A-Z]?)[ ]*([0-9][A-Z]{2}).*$
+```
+
+Copilot can explain this better than I can.
+
+> 1.	**^**: Asserts the position at the start of the string. This ensures that the pattern must match from the beginning of the string.
+> 2.	**.*?**: Matches any character (except for line terminators) zero or more times, but as few times as possible (non-greedy). This allows the regex engine to find the shortest possible match for the subsequent patterns.
+> 3.	**([A-Z]{1,2}[0-9R][0-9A-Z]?)**: This is the first capture group - the outward code.
+>   -	**[A-Z]{1,2}**: Matches 1 or 2 uppercase letters. This part represents the area code of the postcode.
+>   -	**[0-9R]**: Matches a single digit (0-9) or the letter 'R'. This part represents the first character of the district code.
+>   -	**[0-9A-Z]?**: Matches an optional single digit (0-9) or uppercase letter (A-Z). The ? makes this part optional, meaning it can appear 0 or 1 time. This part represents the second character of the district code, which is optional.
+> 4.	**[ ]***: Matches zero or more spaces. This allows for flexibility in the spacing between the outcode and incode.
+> 5.	**([0-9][A-Z]{2})**: This is the second capture group - the inward code.
+>   -	**[0-9]**: Matches a single digit (0-9). This part represents the first character of the inward code.
+>   -	**[A-Z]{2}**: Matches exactly 2 uppercase letters (A-Z). This part represents the second and third characters of the inward code.
+> 6.	.*: Matches any character (except for line terminators) zero or more times. This allows for any characters to appear after the incode.
+> 7.	**$**: Asserts the position at the end of the string. This ensures that the pattern must match until the end of the string.
+
+So here is my initial Postcode parser:
+
+```csharp
+public static partial class Validator
+{
+    public static (bool, string?, string?) TryParsePostcode(this string address)
+    {
+        var match = LikelyPostcodeRegex().Match(address);
+
+        return match.Groups.Count switch
+        {
+            // Both parts must match or its not a valid postcode.
+            3 => (match.Success, match.Groups[1].Value, match.Groups[2].Value),
+            _ => (false, null, null)
+        };
+    }
+
+    // Fix - Multiline match because the input string might contain newlines.
+    [GeneratedRegex(
+      @"^.*?([A-Z]{1,2}[0-9R][0-9A-Z]?)[ ]*([0-9][A-Z]{2}).*$",
+      RegexOptions.Multiline)]
+    private static partial Regex LikelyPostcodeRegex();
+}
+```
+
+And if I run this against my test dataset we have a success[^1].
+
+```csharp
+[Theory]
+[ClassData(typeof(BasicAddressExamples))]
+public void BasicAddressMatchingWithPostcode(
+    string address, string postcode, string _)
+{
+    var (success, outcode, incode) = address.TryParsePostcode();
+
+    Assert.True(success);
+    Assert.NotNull(outcode);
+    Assert.NotNull(incode);
+    Assert.Equal(postcode, $"{outcode} {incode}");
+}
+```
+
+Also some negative tests:
+
+```csharp
+public class InvalidPostcodeExamples : TheoryData<string>
+{
+    public InvalidPostcodeExamples()
+    {
+        Add("2A NEWTOWN CLOSE, EXETER, EX1");
+        Add("2A NEWTOWN CLOSE\nEXETER\n2EU");
+        Add("FLAT 11, BARTS MEWS, EX4 BARTHOLOMEW STREET WEST, EXETER, 3AJ");
+        Add("19, PEGASUS COURT, NORTH STREET, HEAVITREE, EXETER, 2RP EX1");
+        Add("19, PEGASUS COURT, NORTH STREET, HEAVITREE, EXETER, EX1,2RP");
+        Add("19, PEGASUS COURT, NORTH STREET, HEAVITREE, EXETER, EX1\n2RP");        
+        Add(@"FLAT 3AN, ANGEL PAVEMENT, 145-147 FORE STREET,
+            ST DAVIDS, EXETER, EX4");
+        Add(@"E X 2 8QW ENGINEERING, 1, GERALD DINNIS UNITS,
+            COFTON ROAD, MARSH BARTON TRADING ESTATE
+            EXETER");
+    }
+}
+
+[Theory]
+[ClassData(typeof(InvalidPostcodeExamples))]
+public void BasicAddressMatchingWithInvalidPostcode(string address)
+{
+    var (success, outcode, incode) = address.TryParsePostcode();
+
+    Assert.False(success);
+    Assert.Null(outcode);
+    Assert.Null(incode);
+}
+```
+
+Now we can find a valid postcode we can simplify the matching algorithm by reducing the number of match possibilities significantly from millions to a handful[^2].
+
+---
+Photo by [Johannes Plenio](https://unsplash.com/@jplenio) on [Unsplash](https://unsplash.com/photos/close-up-photo-of-red-wall-UGMf30W28qc)
+
+[^1]: ...eventually. I haven't included any of the bug fixing because its not that interesting. I have put comments in the code explaining anything I had to fix.
+
+[^2]: This is a pretty good assumption for my use case but be aware that some postcodes have a much larger set of associated addresses. CV4 7AL is the postcode of the University of Warwick - [one postcode for 6,000 students](https://www.mjt.me.uk/posts/falsehoods-programmers-believe-about-addresses/) living on campus, and academics/administrators working on campus.
