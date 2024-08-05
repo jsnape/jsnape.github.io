@@ -14,6 +14,8 @@ tags:
   - addresses
   - postal
 ---
+import Aside from '@components/Aside.astro';
+
 This is a multi-part blog series where I take the single problem of address matching from start to finish.
 
 - [Part 1](./address-matching-1-scope): an introduction to the challenge and creation of initial acceptance criteria.
@@ -27,6 +29,96 @@ This is a multi-part blog series where I take the single problem of address matc
 
 ---
 
+## Introduction
+
+The goal of this post is to process the input address into something a little easier to match against. Again, we will make some assumptions but as few as possible.
+
+UK addresses are written in a number of different ways. On a single line with fields comma separated, on multiple lines with or even a combination of both styles. Some examples from a famous address:
+
+```text
+221b Baker Street, London NW1 6XE
+
+Flat B, 221 Baker St., London, NW1 6XE
+
+221B BAKER STREET
+LONDON NW1 6XE
+
+221B Baker Street
+London
+NW1 6XE
+```
+
+As a function we need to write the signature is going to like `let splitAddress = string -> string sequence` or in C# we need to fill out this function:
+
+```csharp
+public IEnumerable<string> SplitAddress(string input)
+{
+
+}
+```
+
+<Aside type="note" title="Abbreviations">
+As this point I should note that I tried to do some abbreviation replacements for example Ave -> Avenue but it got very complex so I decided to drop it. I am hoping the nearest match algorithm in the next post will side step this issue entirely.
+</Aside>
+
+Splitting the address on comma or newline boundaries is fairly trivial really.
+
+```csharp
+    private static readonly char[] separators = [',', '\r', '\n'];
+
+    public static IEnumerable<string> SplitAddress(string input)
+    {
+        return input
+            .ToUpperInvariant()
+            .Split(separators, StringSplitOptions.RemoveEmptyEntries)
+            .Select(c => c.Trim());
+    }
+```
+
+Plus the test cases:
+
+```csharp
+    private readonly List<string> expected =
+        ["123 FAKE STREET", "LONDON", "W1A 1AA"];
+
+    [Fact]
+    public void SplitAddressSingleLineAddressReturnsCorrectParts()
+    {
+        string input = "123 Fake Street, London, W1A 1AA";
+        var result = Splitter.SplitAddress(input).ToList();
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void SplitAddressMultiLineAddressReturnsCorrectParts()
+    {
+        string input = "123 Fake Street\r\nLondon\r\nW1A 1AA";
+        var result = Splitter.SplitAddress(input).ToList();
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void SplitAddressEmptyEntriesReturnsCorrectParts()
+    {
+        string input = "123 Fake Street,,London,\r\nW1A 1AA";
+        var result = Splitter.SplitAddress(input).ToList();
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void SplitAddressEmptyStringReturnsEmptyList()
+    {
+        string input = string.Empty;
+        var result = Splitter.SplitAddress(input).ToList();
+
+        Assert.Empty(result);
+    }
+```
+
+With an address split into lines we can start to try and match it with one of the records that the postcode filtered to.
+
 ---
 Photo by [Francais a Londres](https://unsplash.com/@francaisalondres) on [Unsplash](https://unsplash.com/photos/red-mail-box-on-road-VQae7zBAoqs)
-  

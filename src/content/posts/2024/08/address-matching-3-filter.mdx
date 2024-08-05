@@ -14,6 +14,7 @@ tags:
   - addresses
   - postal
 ---
+
 This is a multi-part blog series where I take the single problem of address matching from start to finish.
 
 - [Part 1](./address-matching-1-scope): an introduction to the challenge and creation of initial acceptance criteria.
@@ -39,21 +40,21 @@ public class Address
     public required string ClassificationCode { get; set; }
 
     public required string SingleLineAddress { get; set; }
-    
+
     public string? Organisation { get; set; }
-    
+
     public string? SubBuilding { get; set; }
-    
+
     public string? BuildingName { get; set; }
-    
+
     public string? BuildingNumber { get; set; }
-    
+
     public string? StreetName { get; set; }
-    
+
     public string? Locality { get; set; }
-    
+
     public string? TownName { get; set; }
-    
+
     public required string Postcode { get; set; }
 }
 
@@ -64,7 +65,7 @@ public interface IPostcodeLookup
 
 public class AddressBase(IEnumerable<Address> Addresses) : IPostcodeLookup
 {
-    private readonly ILookup<string, Address> addresses = 
+    private readonly ILookup<string, Address> addresses =
         Addresses.ToLookup(x => x.Postcode.ToUpperInvariant());
 
     public IEnumerable<Address> FindByPostcode(string postcode)
@@ -122,7 +123,7 @@ public class AddressBaseFixture
 {
     public AddressBaseFixture()
     {
-        var addressBaseRecords = 
+        var addressBaseRecords =
             AddressBaseLoader.Load(AddressBaseLoader.AddressBaseFile);
 
         AddressBase = new AddressBase(addressBaseRecords);
@@ -163,5 +164,10 @@ public class AddressBaseFacts(AddressBaseFixture Fixture)
 }
 ```
 
+## Summary
+
+At this point we can find a postcode in the input address and use it to reduce the set of possible options to a handful. In next post we will look at some preprocessing on the input address to make matching easier.
+
 ---
+
 Photo by [Mylo Kaye](https://unsplash.com/@mylokaye) on [Unsplash](https://unsplash.com/photos/a-post-office-sign-on-the-side-of-a-building-aoRQu1VXaMI)
