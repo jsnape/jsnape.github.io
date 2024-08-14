@@ -28,7 +28,7 @@ This is a multi-part blog series where I take the single problem of address matc
 
 All UK addresses will have a postcode and it always follows [a specific format](https://coderwall.com/p/rnucjg/regexp-how-to-validate-a-uk-postcode). GitHub Copilot tells me the standard regex for matching is:
 
-```regex
+```csharp
 ^[A-Z]{1,2}[0-9R][0-9A-Z]? [0-9][A-Z]{2}$
 ```
 
@@ -43,7 +43,7 @@ This is great for validating a postcode exactly but I know folks don't always wo
 
 Lets loosen the spec a little to account for these possibilities:
 
-```regex
+```csharp
 .*?([A-Z]{1,2}[0-9R][0-9A-Z]?)[ ]*([0-9][A-Z]{2}).*$
 ```
 
