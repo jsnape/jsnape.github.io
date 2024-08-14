@@ -27,5 +27,322 @@ This is a multi-part blog series where I take the single problem of address matc
 
 ---
 
+This post is possibly going to be the most complex of the series because it concerns field level matching. We start with an array of fields split from the original address input and try to match each one to one of the AddressBase records matching a postcode we found earlier.
+
+## General Algorithm
+
+My plan is to progressively reduce the set of possible candidates as each field is matched until we have one remaining or no match. Every time we have a match, remove that value from the input so as to not match it again. So for example:
+
+> FLAT 11, BARTS MEWS, 53 BARTHOLOMEW STREET WEST, EX4 3AJ
+
+Matching the postcode reduces the candidate set to:
+
+|SUB_BUILDING|BUILDING_NAME|BUILDING_NUMBER|STREET_NAME|
+|-|-|-|-|
+|||1|BARTHOLOMEW STREET WEST|
+|||10|BARTHOLOMEW STREET WEST|
+|||2|BARTHOLOMEW STREET WEST|
+|||68A|BARTHOLOMEW STREET WEST|
+|||68B|BARTHOLOMEW STREET WEST|
+|||68C|BARTHOLOMEW STREET WEST|
+|||9|BARTHOLOMEW STREET WEST|
+||WESTGATE HOUSE||BARTHOLOMEW STREET WEST|
+|FIRST FLOOR FLAT|WESTGATE HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 1|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 1|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 10|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 10|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 11|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 11|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 12|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 13|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 14|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 1A|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 2|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 2|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 3|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 3|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 4|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 4|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 5|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 5|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 6|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 6|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 7|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 7|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 8|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 8|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 9|BARTHOLOMEW HOUSE||BARTHOLOMEW STREET WEST|
+|FLAT 9|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|UPPER MAISONETTE|WESTGATE HOUSE||BARTHOLOMEW STREET WEST|
+
+Matching the street doesn't reduce the candidate set any further but if it doesn't match then the process has failed to match. Remaining unmatched values are:
+
+> FLAT 11, BARTS MEWS
+
+<Aside type="note" title="Locality and Town">
+Most UK addresses have a single street per postcode so matching with a street first is more efficient. Some don't have a street so locality and town must then be matched.
+</Aside>
+
+The algorithm needs to parse out the house number (53) from the matched street field using the strategy from the previous postDate. Moving to the next field we have 'BARTS MEWS'. A match reduced the candidates to:
+
+|SUB_BUILDING|BUILDING_NAME|BUILDING_NUMBER|STREET_NAME|
+|-|-|-|-|
+|FLAT 1|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 10|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 11|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 2|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 3|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 4|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 5|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 6|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 7|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 8|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+|FLAT 9|BARTS MEWS|53|BARTHOLOMEW STREET WEST|
+
+Finally the sub-building of 'FLAT 11' gives an exact match.
+
+## Show me the code
+
+I've talked a lot about algorithms so lets look at how I've implemented this. Firstly I recognize this approach is quite iterative and whilst we proceed an element of internal state will need updating. This could be a set of class member fields but I prefer to think a little bit functionally. Lets start with the match state. This is a minimal implementation which we can grow.
+
+```csharp
+internal partial record MatchState
+{
+    public required ImmutableArray<Address> Candidates { get; init; }
+
+    public required ImmutableArray<string> UnmatchedParts { get; init; }
+
+    public string? LastMatchedCandidate { get; init; }
+
+    public string? LastMatchedPart { get; init; }
+
+    public bool IsMatch => Candidates.Length > 0;
+}
+```
+
+There are two arrays, one for the lookup candidates we get via the postcode and one for the unmatched fields we get from the address splitter. Each pass will create a new, adjusted state for example:
+
+```csharp
+internal static MatchState MatchField(MatchState state)
+{
+    // do the matching
+
+    // return a new state
+    return state with 
+    {
+        LastMatchedCandidate = candidate,
+        LastMatchedPart = part,
+
+        Candidates = state.Candidates
+            .RemoveAll(c => candidateSelector(c) != candidate),
+
+        UnmatchedParts = state.UnmatchedParts
+            .Remove(part)
+    }
+}
+```
+
+If there is a single candidate left when the unmatched (input) parts have run out then we have a match. To initialize as described above is:
+
+```csharp
+var state = new MatchState
+{
+    Candidates = Lookup
+        .FindByPostcode($"{outcode} {incode}")
+        .ToImmutableArray(),
+
+    UnmatchedParts = address
+        .Split(AddressLineSeparators, StringSplitOptions.RemoveEmptyEntries)
+        .Select(p => p.Trim())
+        .Where(p => !string.IsNullOrEmpty(p))
+        .Reverse()
+        .ToImmutableArray(),
+};
+```
+
+When I originally wrote the code to match each candidate component it was a cut and paste job with only the field name changing. I've generalized into a higher order function which allows the selection of a single address field from the candidate set.
+
+```csharp
+    internal static (bool, MatchState) MatchPart(
+        MatchState state, Func<Address, string?> candidateSelector, int maxTolerance)
+    {
+        var candidateValues = state.Candidates
+            .Select(candidateSelector)
+            .Distinct()
+            .Where(s => !string.IsNullOrEmpty(s))
+            .Cast<string>()
+            .ToArray();
+
+        if (candidateValues.Length == 0)
+        {
+            // There were no candidates to match but this is OK
+            // if the set of addresses has no value in that field.
+            return (true, UnmatchState(state));
+        }
+
+        var matches = candidateValues
+            .SelectMany(c => state.UnmatchedParts.Select(p => (c, p, MatchDistance(c, p))))
+            .OrderBy(m => m.Item3);
+
+        var (candidate, part, distance) = matches
+            .Where(m => m.Item3 <= maxTolerance)
+            .OrderBy(m => m.Item3)
+            .FirstOrDefault();
+
+        if (part == null)
+        {
+            // There were no unmatched parts that meet the tolerance criteria
+            // If there are no candidates left then we have failed to match
+            // and should stop.
+            return (candidateValues.Length == 0, UnmatchState(state));
+        }
+
+        var nextstate = state with
+        {
+            LastMatchedCandidate = candidate,
+            LastMatchedPart = part,
+
+            Candidates = state.Candidates
+                .RemoveAll(c => candidateSelector(c) != candidate),
+
+            UnmatchedParts = state.UnmatchedParts
+                .Remove(part)
+        };
+
+        return (true, nextstate);
+    }
+
+    // Helper function to clear the match state.
+    internal static MatchState UnmatchState(MatchState state)
+    {
+        return state with
+        {
+            LastMatchedCandidate = null,
+            LastMatchedPart = null,
+        };
+    }
+
+```
+
+To split a matched field in the case of combined town/postcode and building number/street combinations:
+
+```csharp
+    private static MatchState SplitMatchedField(MatchState state)
+    {
+        var candidate = state.LastMatchedCandidate;
+        var matched = state.LastMatchedPart;
+
+        if (candidate == null || matched == null)
+        {
+            return state;
+        }
+
+        if (candidate.Length < matched.Length)
+        {
+            var leftPart = matched[..(matched.Length - candidate.Length)].Trim();
+
+            state = state with
+            {
+                UnmatchedParts = state.UnmatchedParts.Add(leftPart)
+            };
+        }
+
+        return state;
+    }
+```
+
+Finally, we can put this all together into an overall match.
+
+```csharp
+    public string? Match(string address)
+    {
+        if (string.IsNullOrEmpty(address))
+        {
+            return null;
+        }
+
+        var (foundPostcode, outcode, incode) = address.TryParsePostcode();
+
+        if (!foundPostcode)
+        {
+            return null;
+        }
+
+        var state = new MatchState
+        {
+            Candidates = Lookup
+                .FindByPostcode($"{outcode} {incode}")
+                .ToImmutableArray(),
+
+            UnmatchedParts = address
+                .Split(AddressLineSeparators, StringSplitOptions.RemoveEmptyEntries)
+                .Select(p => p.Trim())
+                .Where(p => !string.IsNullOrEmpty(p))
+                .Reverse()
+                .ToImmutableArray(),
+        };
+
+        if (state.Candidates.Length == 0)
+        {
+            return null;
+        }
+
+        bool continueMatching;
+
+        // Match the postcode to remove it from the unmatched parts
+        (_, state) = MatchPart(state, c => c.Postcode, MaxTolerance);
+
+        // But it may need splitting
+        state = SplitMatchedField(state);
+
+        (_, state) = MatchPart(state, c => c.TownName, MaxTolerance);
+        (_, state) = MatchPart(state, c => c.Locality, MaxTolerance);
+        (continueMatching, state) = MatchPart(state, c => c.StreetName, MaxTolerance);
+
+        if (!continueMatching)
+        {
+            return null;
+        }
+
+        state = SplitMatchedField(state);
+
+        (continueMatching, state) = MatchPart(state, c => c.BuildingName, MaxTolerance);
+
+        if (!continueMatching)
+        {
+            return null;
+        }
+
+        (continueMatching, state) = MatchPart(state, c => c.BuildingNumber, MaxTolerance);
+
+        if (!continueMatching)
+        {
+            return null;
+        }
+
+        (continueMatching, state) = MatchPart(state, c => c.SubBuilding, MaxTolerance);
+
+        if (!continueMatching)
+        {
+            return null;
+        }
+
+        (continueMatching, state) = MatchPart(state, c => c.Organisation, MaxTolerance);
+
+        if (!continueMatching)
+        {
+            return null;
+        }
+
+        if (state.IsMatch)
+        {
+            return state.Candidates.Single().Uprn;
+        }
+
+        return null;
+    }
+```
+
 ---
 Photo by [K. Mitch Hodge](https://unsplash.com/@kmitchhodge) on [Unsplash](https://unsplash.com/photos/royal-mail-signage-XLiOKVIE4FU)

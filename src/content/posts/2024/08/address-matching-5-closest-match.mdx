@@ -14,6 +14,8 @@ tags:
   - addresses
   - postal
 ---
+import Aside from '@components/Aside.astro';
+
 This is a multi-part blog series where I take the single problem of address matching from start to finish.
 
 - [Part 1](../address-matching-1-scope): an introduction to the challenge and creation of initial acceptance criteria.
@@ -26,6 +28,70 @@ This is a multi-part blog series where I take the single problem of address matc
 - Part 8: Recap and some ideas for alternate matching methods.
 
 ---
+
+Manual address entry typically has typos and errors, additional characters, accented characters etc. These could be coded as specific exceptions but I would rather just say that the match 'is close enough'. To that end the most appropriate algorithm is [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance) - a string metric for the difference between two strings. Ordering the input field by Levenshtein distance will give you the best match as the first value. Including a tolerance cutoff ensures completely dissimilar strings do not match.
+
+To work out the Levenshtein distance I'm going to rely on a a third party library https://github.com/DanHarltey/Fastenshtein which claims to be one of the fastest implementations available. Sounds perfect given I want to do a lot of matching in bulk.
+
+There are two APIs - one to setup and match multiple strings against a single value and another to supply both. I'm opting for the latter as my inputs are different each time.
+
+```csharp
+    // Calculate the distance between the two values.
+    internal static int MatchDistance(string value, string match)
+    {
+        // Fix: if the match is longer than the value
+        // then we are looking for a suffix
+        var part = match[Math.Max(0, match.Length - value.Length)..];
+        return Levenshtein.Distance(value, part);
+    }
+```
+
+This function is going to be called in a linq query allowing us to match and story based on the best match. Given any set of address candidated might have multiple values, for example different flats in a building, we need to match the remaining input address fields against the set of available candidates.
+
+```csharp
+        var matches = candidateValues
+            .SelectMany(c => 
+                state.UnmatchedParts
+                .Select(p => (c, p, MatchDistance(c, p))))
+            .OrderBy(m => m.Item3);
+
+        var (candidate, part, distance) = matches
+            .Where(m => m.Item3 <= maxTolerance)
+            .OrderBy(m => m.Item3)
+            .FirstOrDefault();
+```
+
+If we have a a single unmatched part and a number of candidates (sub-building in this example):
+
+- FLAT 9
+- FLAT 8
+- FLAT 7
+- FLAT 6
+- FLAT 5
+- FLAT 4
+- FLAT 3
+- FLAT 2
+- FLAT 11
+- FLAT 10
+- FLAT 1
+
+Then the match tuples are:
+
+- (FLAT 11, FLAT 11, 0) // Best Match
+- (FLAT 10, FLAT 11, 1)
+- (FLAT 1, FLAT 11, 2)
+- (FLAT 6, FLAT 11, 3)
+- (FLAT 4, FLAT 11, 3)
+- (FLAT 7, FLAT 11, 3)
+- (FLAT 5, FLAT 11, 3)
+- (FLAT 9, FLAT 11, 3)
+- (FLAT 8, FLAT 11, 3)
+- (FLAT 2, FLAT 11, 3)
+- (FLAT 3, FLAT 11, 3)
+
+The best match is exact here but it might not be. We should be careful of allowing different numbers though - something to add later.
+
+In the next post we will look at the problem of combined fields.
 
 ---
 Photo by [Phil Hearing](https://unsplash.com/@philhearing) on [Unsplash](https://unsplash.com/photos/red-and-white-mail-box-HX8IpHq1Qg8)
