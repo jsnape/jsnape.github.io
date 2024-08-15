@@ -18,12 +18,12 @@ import Aside from '@components/Aside.astro';
 
 This is a multi-part blog series where I take the single problem of address matching from start to finish.
 
-- [Part 1](../address-matching-1-scope): an introduction to the challenge and creation of initial acceptance criteria.
-- [Part 2](../address-matching-2-postcodes): finding postcodes.
-- [Part 3](../address-matching-3-filter): loading and filtering the AddressBase data set.
-- [Part 4](../address-matching-4-field-splitting): Splitting the incoming address into fields.
-- [Part 5](../address-matching-5-closest-match) : Working out which field is which with closest match.
-- [Part 6](../address-matching-6-building-number): Parsing building number from street name.
+- [Part 1](https://snape.me/2024/08/address-matching-1-scope): an introduction to the challenge and creation of initial acceptance criteria.
+- [Part 2](https://snape.me/2024/08/address-matching-2-postcodes): finding postcodes.
+- [Part 3](https://snape.me/2024/08/address-matching-3-filter): loading and filtering the AddressBase data set.
+- [Part 4](https://snape.me/2024/08/address-matching-4-field-splitting): Splitting the incoming address into fields.
+- [Part 5](https://snape.me/2024/08/address-matching-5-closest-match) : Working out which field is which with closest match.
+- [Part 6](https://snape.me/2024/08/address-matching-6-building-number): Parsing building number from street name.
 - Part 7 (this one): Matching the full address.
 - Part 8: Recap and some ideas for alternate matching methods.
 
@@ -126,7 +126,7 @@ internal partial record MatchState
 There are two arrays, one for the lookup candidates we get via the postcode and one for the unmatched fields we get from the address splitter. Each pass will create a new, adjusted state for example:
 
 ```csharp
-internal static MatchState MatchField(MatchState state)
+internal static MatchState MatchField(MatchState state, ...)
 {
     // do the matching
 
@@ -137,7 +137,7 @@ internal static MatchState MatchField(MatchState state)
         LastMatchedPart = part,
 
         Candidates = state.Candidates
-            .RemoveAll(c => candidateSelector(c) != candidate),
+            .RemoveAll(c => `fieldValue` != candidate),
 
         UnmatchedParts = state.UnmatchedParts
             .Remove(part)
@@ -166,8 +166,8 @@ var state = new MatchState
 When I originally wrote the code to match each candidate component it was a cut and paste job with only the field name changing. I've generalized into a higher order function which allows the selection of a single address field from the candidate set.
 
 ```csharp
-    internal static (bool, MatchState) MatchPart(
-        MatchState state, Func<Address, string?> candidateSelector, int maxTolerance)
+    internal static MatchState MatchPart(MatchState state,
+        Func<Address, string?> candidateSelector, int maxTolerance)
     {
         var candidateValues = state.Candidates
             .Select(candidateSelector)
@@ -180,16 +180,21 @@ When I originally wrote the code to match each candidate component it was a cut 
         {
             // There were no candidates to match but this is OK
             // if the set of addresses has no value in that field.
-            return (true, UnmatchState(state));
+            return state with
+            {
+                LastMatchedCandidate = null,
+                LastMatchedPart = null,
+            };
         }
 
         var matches = candidateValues
-            .SelectMany(c => state.UnmatchedParts.Select(p => (c, p, MatchDistance(c, p))))
-            .OrderBy(m => m.Item3);
+            .SelectMany(c => state.UnmatchedParts
+                .Select(p => (c, p, d: MatchDistance(c, p))))
+            .OrderBy(m => m.d);
 
         var (candidate, part, distance) = matches
-            .Where(m => m.Item3 <= maxTolerance)
-            .OrderBy(m => m.Item3)
+            .Where(m => m.d * 100 / m.c.Length <= maxTolerance)
+            .OrderBy(m => m.d)
             .FirstOrDefault();
 
         if (part == null)
@@ -197,10 +202,17 @@ When I originally wrote the code to match each candidate component it was a cut 
             // There were no unmatched parts that meet the tolerance criteria
             // If there are no candidates left then we have failed to match
             // and should stop.
-            return (candidateValues.Length == 0, UnmatchState(state));
+            return state with
+            {
+                LastMatchedCandidate = candidate,
+                LastMatchedPart = part,
+
+                Candidates = state.Candidates
+                    .RemoveAll(c => candidateSelector(c) != candidate),
+            };
         }
 
-        var nextstate = state with
+        return state with
         {
             LastMatchedCandidate = candidate,
             LastMatchedPart = part,
@@ -211,47 +223,8 @@ When I originally wrote the code to match each candidate component it was a cut 
             UnmatchedParts = state.UnmatchedParts
                 .Remove(part)
         };
-
-        return (true, nextstate);
     }
 
-    // Helper function to clear the match state.
-    internal static MatchState UnmatchState(MatchState state)
-    {
-        return state with
-        {
-            LastMatchedCandidate = null,
-            LastMatchedPart = null,
-        };
-    }
-
-```
-
-To split a matched field in the case of combined town/postcode and building number/street combinations:
-
-```csharp
-    private static MatchState SplitMatchedField(MatchState state)
-    {
-        var candidate = state.LastMatchedCandidate;
-        var matched = state.LastMatchedPart;
-
-        if (candidate == null || matched == null)
-        {
-            return state;
-        }
-
-        if (candidate.Length < matched.Length)
-        {
-            var leftPart = matched[..(matched.Length - candidate.Length)].Trim();
-
-            state = state with
-            {
-                UnmatchedParts = state.UnmatchedParts.Add(leftPart)
-            };
-        }
-
-        return state;
-    }
 ```
 
 Finally, we can put this all together into an overall match.

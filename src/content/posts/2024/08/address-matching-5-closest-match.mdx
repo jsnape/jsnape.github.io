@@ -18,10 +18,10 @@ import Aside from '@components/Aside.astro';
 
 This is a multi-part blog series where I take the single problem of address matching from start to finish.
 
-- [Part 1](../address-matching-1-scope): an introduction to the challenge and creation of initial acceptance criteria.
-- [Part 2](../address-matching-2-postcodes): finding postcodes.
-- [Part 3](../address-matching-3-filter): loading and filtering the AddressBase data set.
-- [Part 4](../address-matching-4-field-splitting): Splitting the incoming address into fields.
+- [Part 1](https://snape.me/2024/08/address-matching-1-scope): an introduction to the challenge and creation of initial acceptance criteria.
+- [Part 2](https://snape.me/2024/08/address-matching-2-postcodes): finding postcodes.
+- [Part 3](https://snape.me/2024/08/address-matching-3-filter): loading and filtering the AddressBase data set.
+- [Part 4](https://snape.me/2024/08/address-matching-4-field-splitting): Splitting the incoming address into fields.
 - Part 5 (this one): Working out which field is which with closest match.
 - Part 6: Parsing building number from street name.
 - Part 7: Matching the full address.
@@ -46,18 +46,19 @@ There are two APIs - one to setup and match multiple strings against a single va
     }
 ```
 
-This function is going to be called in a linq query allowing us to match and story based on the best match. Given any set of address candidated might have multiple values, for example different flats in a building, we need to match the remaining input address fields against the set of available candidates.
+This function is going to be called in a linq query allowing us to match and story based on the best match. Given any set of address, candidates might have multiple values, for example different flats in a building, we need to match the remaining input address fields against the set of available candidates.
 
 ```csharp
         var matches = candidateValues
-            .SelectMany(c => 
-                state.UnmatchedParts
-                .Select(p => (c, p, MatchDistance(c, p))))
-            .OrderBy(m => m.Item3);
+            .SelectMany(c => state.UnmatchedParts
+                .Select(p => (c, p, d: MatchDistance(c, p))))
+            .OrderBy(m => m.d);
 
         var (candidate, part, distance) = matches
-            .Where(m => m.Item3 <= maxTolerance)
-            .OrderBy(m => m.Item3)
+            // Fix: simple tolerance fails with short strings,
+            // changed to percentage of length
+            .Where(m => m.d * 100 / m.c.Length <= maxTolerance)
+            .OrderBy(m => m.d)
             .FirstOrDefault();
 ```
 
@@ -77,7 +78,7 @@ If we have a a single unmatched part and a number of candidates (sub-building in
 
 Then the match tuples are:
 
-- (FLAT 11, FLAT 11, 0) // Best Match
+- (FLAT 11, FLAT 11, 0) // Zero is the best match
 - (FLAT 10, FLAT 11, 1)
 - (FLAT 1, FLAT 11, 2)
 - (FLAT 6, FLAT 11, 3)
@@ -89,7 +90,14 @@ Then the match tuples are:
 - (FLAT 2, FLAT 11, 3)
 - (FLAT 3, FLAT 11, 3)
 
-The best match is exact here but it might not be. We should be careful of allowing different numbers though - something to add later.
+The best match is exact here but it might not be. We should be careful of allowing address digits to differ though - something to add later.
+
+A different example with an inexact match shows that even with a abbreviations and spelling mistakes, taking the best available match still works.
+
+- (BARTHOLOMEW ST**REET** W**EST**, 53 BART**S**OLOMEW ST W, **11**)
+- (BARTHOLOMEW STREET WEST, BARTS MEWS, 15)
+- (BARTHOLOMEW STREET WEST, EXETER, 19)
+- (BARTHOLOMEW STREET WEST, FLAT 11, 20)
 
 In the next post we will look at the problem of combined fields.
 

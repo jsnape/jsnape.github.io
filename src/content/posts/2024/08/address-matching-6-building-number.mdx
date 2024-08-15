@@ -16,20 +16,58 @@ tags:
 ---
 This is a multi-part blog series where I take the single problem of address matching from start to finish.
 
-- [Part 1](../address-matching-1-scope): an introduction to the challenge and creation of initial acceptance criteria.
-- [Part 2](../address-matching-2-postcodes): finding postcodes.
-- [Part 3](../address-matching-3-filter): loading and filtering the AddressBase data set.
-- [Part 4](../address-matching-4-field-splitting): Splitting the incoming address into fields.
-- [Part 5](../address-matching-5-closest-match) : Working out which field is which with closest match.
+- [Part 1](https://snape.me/2024/08/address-matching-1-scope): an introduction to the challenge and creation of initial acceptance criteria.
+- [Part 2](https://snape.me/2024/08/address-matching-2-postcodes): finding postcodes.
+- [Part 3](https://snape.me/2024/08/address-matching-3-filter): loading and filtering the AddressBase data set.
+- [Part 4](https://snape.me/2024/08/address-matching-4-field-splitting): Splitting the incoming address into fields.
+- [Part 5](https://snape.me/2024/08/address-matching-5-closest-match) : Working out which field is which with closest match.
 - Part 6 (this one): Parsing building number from street name.
 - Part 7: Matching the full address.
 - Part 8: Recap and some ideas for alternate matching methods.
 
 ---
 
-Often we see composite fields such as the building number in this case, so if the candidate matched is shorter we should split the field and re-add the left part back into the unmatched set. After the street match the available set of candidates should really be:
+Often we see composite fields such as the building number in the case of `FLAT 11, BARTS MEWS, 53 BARTHOLOMEW STREET WEST`. If the candidate matched is shorter we should split the field and re-add the left part back into the unmatched set. After the street match on this example, the available set of candidates should really be `FLAT 11, BARTS MEWS, 53` but currently the last element is missing from the available set.
 
-> FLAT 11, BARTS MEWS, 53
+I will discuss more about `MatchState` in the next post but suffice to say its holding the list of unmatched parts and we want to put a part back if it get split from the previous match.
+
+How should the split operate? Originally I tried taking the extra letters at the start of the field above the length of the matched candidate but that didn't work when the match isn't exact. A better option turns out to be look for the 1st `SPACE` character and then take up to that index. This works because building numbers don't have spaces in and towns still match the first word OK in multi-word towns.
+
+To split a matched field in the case of combined town/postcode and building number/street combinations:
+
+```csharp
+    internal static MatchState SplitMatchedField(MatchState state)
+    {
+        var candidate = state.LastMatchedCandidate;
+        var matched = state.LastMatchedPart;
+
+        if (candidate == null || matched == null)
+        {
+            // Nothing matched.
+            return state;
+        }
+
+        int firstSpaceIndex = matched.IndexOf(' ');
+
+        if (firstSpaceIndex > 0)
+        {
+            var leftMatched = matched[..firstSpaceIndex].Trim();
+            var leftCandidate = candidate[..firstSpaceIndex].Trim();
+
+            if (leftMatched != leftCandidate)
+            {
+                state = state with
+                {
+                    UnmatchedParts = state.UnmatchedParts.Add(leftMatched)
+                };
+            }
+        }
+
+        return state;
+    }
+```
+
+A short post this time because the next one is going to be very long. By the end of it we should have a pretty decent matching algorithm.
 
 ---
 Photo by [Jason](https://unsplash.com/@levelupfilming) on [Unsplash](https://unsplash.com/photos/a-red-telephone-booth-sitting-on-the-side-of-a-road-DrUiOZtrZEQ)
