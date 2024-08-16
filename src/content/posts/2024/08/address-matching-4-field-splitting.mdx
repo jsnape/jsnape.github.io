@@ -1,7 +1,6 @@
 ---
 title: Address Matching Part 4 - Field Splitting
 postDate: 2024-08-16
-draft: true
 description: >-
   Given the various ways of formatting and address how can we split it into fields?
 image:
@@ -48,7 +47,7 @@ London
 NW1 6XE
 ```
 
-As a function we need to write the signature is going to like `let splitAddress = string -> string seq` or in C# we need to fill out this function:
+As a function we need to write, the signature is going to look like `let splitAddress = string -> string seq` (a function that takes a string and returns a string sequence). For C# we need to fill out this function:
 
 ```csharp
 public IEnumerable<string> SplitAddress(string input)

@@ -33,7 +33,7 @@ Manual address entry typically has typos and errors, additional characters, acce
 
 To work out the Levenshtein distance I'm going to rely on a a third party library https://github.com/DanHarltey/Fastenshtein which claims to be one of the fastest implementations available. Sounds perfect given I want to do a lot of matching in bulk.
 
-There are two APIs - one to setup and match multiple strings against a single value and another to supply both. I'm opting for the latter as my inputs are different each time.
+There are two APIs - one to setup and match multiple strings against a single value and another to supply both every call. I'm opting for the latter as my inputs are different each time.
 
 ```csharp
     // Calculate the distance between the two values.
@@ -46,7 +46,7 @@ There are two APIs - one to setup and match multiple strings against a single va
     }
 ```
 
-This function is going to be called in a linq query allowing us to match and story based on the best match. Given any set of address, candidates might have multiple values, for example different flats in a building, we need to match the remaining input address fields against the set of available candidates.
+This function is going to be called in a LINQ query allowing us to match and story based on the best match. Given any set of addresses, candidates might have multiple values, for example different flats in a building, we need to match the remaining input address fields against the set of available candidates. This is the equivalent to a cross join in SQL.
 
 ```csharp
         var matches = candidateValues
@@ -61,6 +61,21 @@ This function is going to be called in a linq query allowing us to match and sto
             .OrderBy(m => m.d)
             .FirstOrDefault();
 ```
+
+<Aside type="note" title="LINQ Query Syntax">
+I *think* the equivalent LINQ query syntax for the cross join above is:
+
+```csharp
+var matches = 
+    from c in candidateValues
+    from p in state.UnmatchedParts
+    let m = (c, p, d: MatchDistance(c, p))
+    orderby m.d
+    select m;
+```
+
+I hardly ever use it though as I find it difficult to write and debug.
+</Aside>
 
 If we have a a single unmatched part and a number of candidates (sub-building in this example):
 
