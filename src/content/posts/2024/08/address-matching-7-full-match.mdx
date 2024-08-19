@@ -167,7 +167,7 @@ When I originally wrote the code to match each candidate component it was a cut 
 
 ```csharp
     internal static MatchState MatchPart(MatchState state,
-        Func<Address, string?> candidateSelector, int maxTolerance)
+        Func<Address, string?> candidateSelector, int tolerance)
     {
         var candidateValues = state.Candidates
             .Select(candidateSelector)
@@ -193,7 +193,7 @@ When I originally wrote the code to match each candidate component it was a cut 
             .OrderBy(m => m.d);
 
         var (candidate, part, distance) = matches
-            .Where(m => m.d * 100 / m.c.Length <= maxTolerance)
+            .Where(m => m.d * 100 / m.c.Length <= tolerance)
             .OrderBy(m => m.d)
             .FirstOrDefault();
 
@@ -258,54 +258,58 @@ Finally, we can put this all together into an overall match.
                 .ToImmutableArray(),
         };
 
-        if (state.Candidates.Length == 0)
+        if (!state.IsMatch)
         {
             return null;
         }
 
-        bool continueMatching;
-
         // Match the postcode to remove it from the unmatched parts
-        (_, state) = MatchPart(state, c => c.Postcode, MaxTolerance);
+        state = MatchPart(state, c => c.Postcode, Tolerance);
 
         // But it may need splitting
         state = SplitMatchedField(state);
 
-        (_, state) = MatchPart(state, c => c.TownName, MaxTolerance);
-        (_, state) = MatchPart(state, c => c.Locality, MaxTolerance);
-        (continueMatching, state) = MatchPart(state, c => c.StreetName, MaxTolerance);
+        if (state.Candidates.Any(c => c.StreetName == null))
+        {
+            state = MatchPart(state, c => c.TownName, Tolerance);
+            state = MatchPart(state, c => c.Locality, Tolerance);
+        }
 
-        if (!continueMatching)
+        state = MatchPart(state, c => c.StreetName, Tolerance);
+
+        if (!state.IsMatch)
         {
             return null;
         }
 
         state = SplitMatchedField(state);
+        state = MatchPart(state, c => c.BuildingName, Tolerance);
 
-        (continueMatching, state) = MatchPart(state, c => c.BuildingName, MaxTolerance);
-
-        if (!continueMatching)
+        if (!state.IsMatch)
         {
             return null;
         }
 
-        (continueMatching, state) = MatchPart(state, c => c.BuildingNumber, MaxTolerance);
+        state = SplitMatchedField(state);
+        state = MatchPart(state, c => c.BuildingNumber, Tolerance);
 
-        if (!continueMatching)
+        if (!state.IsMatch)
         {
             return null;
         }
 
-        (continueMatching, state) = MatchPart(state, c => c.SubBuilding, MaxTolerance);
+        state = SplitMatchedField(state);
+        state = MatchPart(state, c => c.SubBuilding, Tolerance);
 
-        if (!continueMatching)
+        if (!state.IsMatch)
         {
             return null;
         }
 
-        (continueMatching, state) = MatchPart(state, c => c.Organisation, MaxTolerance);
+        state = SplitMatchedField(state);
+        state = MatchPart(state, c => c.Organisation, Tolerance);
 
-        if (!continueMatching)
+        if (!state.IsMatch)
         {
             return null;
         }
