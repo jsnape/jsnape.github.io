@@ -1,7 +1,6 @@
 ---
 title: Address Matching Part 6 - Parsing Building Number
 postDate: 2024-08-21
-draft: true
 description: >-
   There are generally no field separators between building number and street so how can they be split?
 image:
@@ -27,38 +26,43 @@ This is a multi-part blog series where I take the single problem of address matc
 
 ---
 
-Often we see composite fields such as the building number in the case of `FLAT 11, BARTS MEWS, 53 BARTHOLOMEW STREET WEST`. If the candidate matched is shorter we should split the field and re-add the left part back into the unmatched set. After the street match on this example, the available set of candidates should really be `FLAT 11, BARTS MEWS, 53` but currently the last element is missing from the available set.
+Often we see composite fields such as the building number joined to the street field without a comma or newline separator. If the candidate matched is shorter we should split the field and re-add the left part back into the unmatched set. Using the following example:
 
-I will discuss more about `MatchState` in the next post but suffice to say its holding the list of unmatched parts and we want to put a part back if it get split from the previous match.
+> FLAT 11, BARTS MEWS, 53 BARTHOLOMEW STREET WEST, EX4 3AJ
 
-How should the split operate? Originally I tried taking the extra letters at the start of the field above the length of the matched candidate but that didn't work when the match isn't exact. A better option turns out to be look for the 1st `SPACE` character and then take up to that index. This works because building numbers don't have spaces in and towns still match the first word OK in multi-word towns.
+After the street match, the available set of candidates should really be `FLAT 11, BARTS MEWS, 53` but currently the last element would be missing because the closest match would ignore the `53` part of the string. What needs to happen is: detect the match was imperfect, extract the leading part of the matched field and re-add it back the the unmatched parts for future matches.
+
+I will discuss more about `MatchState` in the next post but suffice to say its holding the list of unmatched parts and we want to put a part back if it is split from the previous match.
+
+How should the split operate? Originally I tried taking the extra letters at the start of the field above the length of the matched candidate but that didn't work when the match isn't exact. A better option turns out to be look for the 1st `SPACE` character and then take up to that index. This works because building numbers don't have spaces in and towns still match the first word well enough in multi-word towns.
 
 To split a matched field in the case of combined town/postcode and building number/street combinations:
 
 ```csharp
     internal static MatchState SplitMatchedField(MatchState state)
     {
-        var candidate = state.LastMatchedCandidate;
-        var matched = state.LastMatchedPart;
-
-        if (candidate == null || matched == null)
+        if (state.LastMatchedCandidate == null || state.LastMatchedPart == null)
         {
             // Nothing matched.
             return state;
         }
 
-        int firstSpaceIndex = matched.IndexOf(' ');
+        // Fix: Converting to spans saves a few allocations when slicing below.
+        var candidate = state.LastMatchedCandidate.AsSpan();
+        var matched = state.LastMatchedPart.AsSpan();
+
+        var firstSpaceIndex = matched.IndexOf(' ');
 
         if (firstSpaceIndex > 0)
         {
-            var leftMatched = matched[..firstSpaceIndex].Trim();
-            var leftCandidate = candidate[..firstSpaceIndex].Trim();
+            var leftMatched = matched[..firstSpaceIndex];
+            var leftCandidate = candidate[..firstSpaceIndex];
 
-            if (leftMatched != leftCandidate)
+            if (!leftMatched.SequenceEqual(leftCandidate))
             {
                 state = state with
                 {
-                    UnmatchedParts = state.UnmatchedParts.Add(leftMatched)
+                    UnmatchedParts = state.UnmatchedParts.Add(leftMatched.ToString())
                 };
             }
         }
