@@ -1,7 +1,6 @@
 ---
 title: Address Matching Part 7 - Matching a Full Address
 postDate: 2024-08-23
-draft: true
 description: >-
   Using all the code from before we can now determine if the entered address is actually a match.
 image:
@@ -83,7 +82,7 @@ Matching the street doesn't reduce the candidate set any further but if it doesn
 > FLAT 11, BARTS MEWS
 
 <Aside type="note" title="Locality and Town">
-Most UK addresses have a single street per postcode so matching with a street first is more efficient. Some don't have a street so locality and town must then be matched.
+Most UK addresses have a single street per postcode so matching with a street first is more efficient. Some don't have a street so locality and town must then be matched first.
 </Aside>
 
 The algorithm needs to parse out the house number (53) from the matched street field using the strategy from the previous post. Moving to the next field we have 'BARTS MEWS'. A match reduced the candidates to:
@@ -230,6 +229,26 @@ When I originally wrote the code to match each candidate component it was a cut 
 Finally, we can put this all together into an overall match.
 
 ```csharp
+public partial class AddressMatcher(IAddressLookup Lookup, int Tolerance)
+{
+    private static readonly Func<Address, string?>[] FieldSelectors =
+    [
+        // Order is important because the match
+        // iteration operates in this sequence.
+        c => c.StreetName,
+        c => c.BuildingName,
+        c => c.BuildingNumber,
+        c => c.SubBuilding,
+        c => c.Organisation,
+    ];
+
+    public static string? Match(
+        string address, IAddressLookup lookup, int Tolerance)
+    {
+        var matcher = new AddressMatcher(lookup, Tolerance);
+        return matcher.Match(address);
+    }
+
     public string? Match(string address)
     {
         if (string.IsNullOrEmpty(address))
@@ -251,7 +270,8 @@ Finally, we can put this all together into an overall match.
                 .ToImmutableArray(),
 
             UnmatchedParts = address
-                .Split(AddressLineSeparators, StringSplitOptions.RemoveEmptyEntries)
+                .Split(AddressLineSeparators, 
+                    StringSplitOptions.RemoveEmptyEntries)
                 .Select(p => p.Trim())
                 .Where(p => !string.IsNullOrEmpty(p))
                 .Reverse()
@@ -271,57 +291,49 @@ Finally, we can put this all together into an overall match.
 
         if (state.Candidates.Any(c => c.StreetName == null))
         {
+            // If any addresses are missing a street name
+            // we should try and match town and locality first.
             state = MatchPart(state, c => c.TownName, Tolerance);
             state = MatchPart(state, c => c.Locality, Tolerance);
         }
 
-        state = MatchPart(state, c => c.StreetName, Tolerance);
-
-        if (!state.IsMatch)
+        foreach (var selector in FieldSelectors)
         {
-            return null;
-        }
+            state = MatchPart(state, selector, Tolerance);
 
-        state = SplitMatchedField(state);
-        state = MatchPart(state, c => c.BuildingName, Tolerance);
+            if (!state.IsMatch)
+            {
+                return null;
+            }
 
-        if (!state.IsMatch)
-        {
-            return null;
-        }
-
-        state = SplitMatchedField(state);
-        state = MatchPart(state, c => c.BuildingNumber, Tolerance);
-
-        if (!state.IsMatch)
-        {
-            return null;
-        }
-
-        state = SplitMatchedField(state);
-        state = MatchPart(state, c => c.SubBuilding, Tolerance);
-
-        if (!state.IsMatch)
-        {
-            return null;
-        }
-
-        state = SplitMatchedField(state);
-        state = MatchPart(state, c => c.Organisation, Tolerance);
-
-        if (!state.IsMatch)
-        {
-            return null;
+            state = SplitMatchedField(state);
         }
 
         if (state.IsMatch)
         {
+            // There can only be one candidate left.
             return state.Candidates.Single().Uprn;
         }
 
         return null;
     }
+}
 ```
+
+There we have it a full test pass on my original specs and a few more I found for additional edge cases along the way.
+
+```Powershell
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!
+  - Failed:     0, Passed:    57, Skipped:     0, Total:    57,
+Duration: 30 ms - TinMonkey.PostIQ.Tests.dll (net8.0)
+```
+
+I have one more post next week with some follow up and a little bit about match confidence. The complete source code for these articles available at https://github.com/jsnape/PostIQ too.
+
+What I would like from you is examples of weird addresses so I can extend my test set. Given my dataset I would appreciate them to be in the Exeter postal area too if possible. Try and find an edge case so I can make this more robust.
 
 ---
 Photo by [K. Mitch Hodge](https://unsplash.com/@kmitchhodge) on [Unsplash](https://unsplash.com/photos/royal-mail-signage-XLiOKVIE4FU)
