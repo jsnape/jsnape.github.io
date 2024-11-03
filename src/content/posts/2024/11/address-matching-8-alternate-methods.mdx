@@ -1,0 +1,111 @@
+---
+title: Address Matching Part 8 - Alternate Matching Methods
+postDate: 2024-11-03
+description: >-
+  Is the matching method we implemented the best solution? What other ways could this have been achieved?
+image:
+  src: "./grooveland-designs-SHeN-2puD7s-unsplash.jpg"
+  alt: 120-year old Royal Mail post box being swallowed up by a tree
+categories:
+  - code
+tags:
+  - example
+  - addresses
+  - postal
+---
+import Aside from '@components/Aside.astro';
+
+This is a multi-part blog series where I take the single problem of address matching from start to finish.
+
+- [Part 1](https://snape.me/2024/08/address-matching-1-scope): an introduction to the challenge and creation of initial acceptance criteria.
+- [Part 2](https://snape.me/2024/08/address-matching-2-postcodes): finding postcodes.
+- [Part 3](https://snape.me/2024/08/address-matching-3-filter): loading and filtering the AddressBase data set.
+- [Part 4](https://snape.me/2024/08/address-matching-4-field-splitting): Splitting the incoming address into fields.
+- [Part 5](https://snape.me/2024/08/address-matching-5-closest-match) : Working out which field is which with closest match.
+- [Part 6](https://snape.me/2024/08/address-matching-6-building-number): Parsing building number from street name.
+- [Part 7](https://snape.me/2024/08/address-matching-7-full-match): Matching the full address.
+- Part 8 (this one): Recap and some ideas for alternate matching methods.
+
+---
+
+I had hoped to write this post soon after the last one but the project in question took over all my spare time. But I finally had some time this week to try and alternate matching method for comparison.
+
+The alternate method in question uses both OpenAI embeddings and a new vector index capability in cosmosdb. In case you are not familiar, an embedding model turns a string of text into a list of floating point numbers that represents the string in a way that two strings can then be ranked for similarity. Cosmos database has a preview feature allowing the creation of a [vector index](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/vector-search) and a new [`VectorDistance`](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/vectordistance) function to return this value.
+
+As an example, the address `7 ALPHA STREET, EXETER, EX1 2SP` when passed to the OpenAI `text-embedding-ada-002` model produces a vector of doubles similar to below. The real vector is 1535 long and way to big to bore you with here.
+
+```
+  [ 0.009497759863734245, 
+    0.012733984738588333, 
+   -0.027128923684358597, ... +  1533 more values ]
+```
+
+<Aside type="note" title="">
+  I haven't tried to optimize this at all. It is quite likely with a more modern embedding model this length can be reduced significantly.
+</Aside>
+
+So for each address I can turn the string into a list of double values and store each one in a cosmos item. Bulk loading into cosmos can easily blow the throughput limit and I'm a cheap skate on the free tier here so had to build in some limiting to get it all in successfully.
+
+```csharp
+    // Chunk the address into postcode groups.
+    var addressGroups = AddressBaseLoader
+        .Load(AddressBaseLoader.AddressBaseFile)
+        .GroupBy(x => x.Postcode);
+
+    foreach (var group in addressGroups)
+    {
+        // Fetch the addresses for a single postcode.
+        var inputs = group.Select(x => x.SingleLineAddress).ToList();
+
+        // Request a list of embedding values back.
+        var embeddings = await openAIService.GetEmbeddingsAsync(inputs);
+
+        // Attach the new embeddings to the original address list.
+        var addresses = group.Zip(embeddings, (address, embedding) =>
+        {
+            Debug.Assert(address.SingleLineAddress == embedding.Item1);
+            return address with { Vectors = embedding.Item2 };
+        });
+
+        // Push the data into cosmos.
+        await cosmosService.LoadAsync(addresses);
+
+        // HACK: Sleep to avoid rate limiting
+        await Task.Delay(10000);
+    }
+```
+
+Once the vector index has been built we can then take new addresses, our test ones, and also convert to embeddings. This function signature is similar to the original except its now async.
+
+```csharp
+    public async Task<string?> MatchAsync(string address)
+    {
+        var embeddings = await OpenAIService.GetEmbeddingsAsync([address]);
+        var candidates = await CosmosService.QueryAsync(embeddings.Single().Item2);
+        return candidates.FirstOrDefault()?.Uprn;
+    }
+```
+
+To query the data in cosmos we use a query similar to this one that returns the top 5 closest addresses from the database. For my experiment I was using a [cosine similarity score](https://en.wikipedia.org/wiki/Cosine_similarity) for distance against a quantizedFlat index structure.
+
+```sql
+SELECT TOP 5 
+    c.uprn,
+    c.singleLineAddress,
+    VectorDistance(c.vectors, @embedding) AS similarityScore
+FROM c
+ORDER BY VectorDistance(c.vectors,@embedding)
+```
+
+Given how little algorithmic complexity is here the match results are really very good. The only problem is it will always return a match even though that match may be nothing like the value we are matching to so it needs some sanity checking adding such as constraining the similarityScore above a certain value.
+
+How does it stack up against the algorithmic approach? It is a lot more forgiving - I didn't need to preprocess the data beyond converting to a vector; I wrote far less code (a good thing); and it will likely get better as models improve.
+
+However, I do think its overkill for this kind of problem. Calls to OpenAI are neither cheap nor fast; and the database storage size in cosmos is many times the original record size. I think to run this to the scale of matching multiple millions of records will cost quite a lot by comparison and take much longer that we want.
+
+As usual the code is available at https://github.com/jsnape/PostIQ.
+
+Which method would you use?
+
+---
+Photo by [Grooveland Designs](https://unsplash.com/@groovelanddesigns) on [Unsplash](https://unsplash.com/photos/red-mail-box-on-road-during-daytime-SHeN-2puD7s)
