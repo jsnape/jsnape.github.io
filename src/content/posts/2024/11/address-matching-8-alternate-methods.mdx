@@ -12,6 +12,11 @@ tags:
   - example
   - addresses
   - postal
+  - OpenAI
+  - generative-ai
+  - embeddings
+  - cosmosdb
+  - vector-database
 ---
 import Aside from '@components/Aside.astro';
 
@@ -28,11 +33,11 @@ This is a multi-part blog series where I take the single problem of address matc
 
 ---
 
-I had hoped to write this post soon after the last one but the project in question took over all my spare time. But I finally had some time this week to try and alternate matching method for comparison.
+I had hoped to write this post soon after the last one but the project in question took over all my spare time. I finally had some time this weekend to try and alternate matching method for comparison.
 
-The alternate method in question uses both OpenAI embeddings and a new vector index capability in cosmosdb. In case you are not familiar, an embedding model turns a string of text into a list of floating point numbers that represents the string in a way that two strings can then be ranked for similarity. Cosmos database has a preview feature allowing the creation of a [vector index](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/vector-search) and a new [`VectorDistance`](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/vectordistance) function to return this value.
+This version uses both OpenAI embeddings and a new vector index capability in cosmosdb. In case you are not familiar, an embedding model turns a string of text into a list of floating point numbers that represents the string in a way that two strings can then be ranked for similarity. Cosmos database has a preview feature allowing the creation of a [vector index](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/vector-search) and a new [`VectorDistance`](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/vectordistance) function to return this value.
 
-As an example, the address `7 ALPHA STREET, EXETER, EX1 2SP` when passed to the OpenAI `text-embedding-ada-002` model produces a vector of doubles similar to below. The real vector is 1535 long and way to big to bore you with here.
+As an example, the address `7 ALPHA STREET, EXETER, EX1 2SP` when passed to the OpenAI `text-embedding-ada-002` model produces a vector of doubles similar to below. The real vector is 1535 values long and way to big to bore you with here.
 
 ```
   [ 0.009497759863734245, 
@@ -44,7 +49,7 @@ As an example, the address `7 ALPHA STREET, EXETER, EX1 2SP` when passed to the 
   I haven't tried to optimize this at all. It is quite likely with a more modern embedding model this length can be reduced significantly.
 </Aside>
 
-So for each address I can turn the string into a list of double values and store each one in a cosmos item. Bulk loading into cosmos can easily blow the throughput limit and I'm a cheap skate on the free tier here so had to build in some limiting to get it all in successfully.
+So for each address I can turn the string into a list of double values and store each one as a cosmos item. Bulk loading into cosmos can easily blow the throughput limit and I'm a cheap skate on the free tier here so had to build in some limiting to get it all in successfully.
 
 ```csharp
     // Chunk the address into postcode groups.
@@ -75,7 +80,7 @@ So for each address I can turn the string into a list of double values and store
     }
 ```
 
-Once the vector index has been built we can then take new addresses, our test ones, and also convert to embeddings. This function signature is similar to the original except its now async.
+Once the vector index has been built we can then take new input addresses, our test ones, and also convert to embeddings. This function signature is similar to the original except its now async.
 
 ```csharp
     public async Task<string?> MatchAsync(string address)
