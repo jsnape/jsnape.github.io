@@ -31,6 +31,6 @@
   "devDependencies": {
     "@astrojs/partytown": "^2.1.2",
     "@tailwindcss/typography": "^0.5.15",
-    "daisyui": "^4.12.13"
+    "daisyui": "^4.12.14"
   }
 }
