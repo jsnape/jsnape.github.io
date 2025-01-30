@@ -4,9 +4,13 @@
 
     import { onMount } from "svelte";
 
-    let cookies = "unk";
-    let isMounted = false;
-    export let CookieConsent = "denied";
+    let cookies = $state("unk");
+    let isMounted = $state(false);
+    interface Props {
+        CookieConsent?: string;
+    }
+
+    let { CookieConsent = $bindable("denied") }: Props = $props();
 
     const handleAccept = () => {
         cookies = "granted";
@@ -61,13 +65,13 @@
         <div class="mx-auto">
         <button
             class="rounded-md bg-blue-600 p-2 text-white transition hover:bg-blue-700"
-            on:click={handleAccept}
+            onclick={handleAccept}
         >
             Accept
         </button>
         <button
             class="ml-2 rounded-md bg-transparent p-2 text-slate-600 transition hover:bg-gray-200"
-            on:click={handleDecline}
+            onclick={handleDecline}
         >
             Decline
         </button>
