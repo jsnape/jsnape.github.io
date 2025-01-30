@@ -8,7 +8,6 @@
 
         window.location.href = "https://www.bing.com/search?q=" + query;
     }
-
 </script>
 
 <div class="space-x-6 my-5 uppercase">Search</div>
