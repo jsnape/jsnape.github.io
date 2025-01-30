@@ -52,7 +52,7 @@ export async function GET(context) {
       pubDate: post.data.postDate,
       description: post.data.description || post.data.title,
       link: `/${post.slug}/`,
-      content: sanitizeHtml(appendPermalink(parser.render(post.body), `${context.site}${post.slug}`), {
+      content: sanitizeHtml(appendPermalink(parser.render(post.body ?? ""), `${context.site}${post.slug}`), {
         allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'a']),
         allowedAttributes: {
           img: ["src", "alt"],

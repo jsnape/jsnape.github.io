@@ -3,15 +3,13 @@ import { z, defineCollection } from "astro:content";
 // Define a `type` and `schema` for each collection
 const postsCollection = defineCollection({
     type: 'content',
-    schema: ({image}) => z.object({
+    schema: ({ image }) => z.object({
         title: z.string(),
         postDate: z.date(),
         draft: z.boolean().optional(),
         description: z.string().optional(),
         image: z.object({
-            src: image().refine((img) => img.width >= 640, {
-                message: "Cover image must be at least 640 pixels wide!",
-            }),
+            src: image(),
             alt: z.string()
         }).optional(),
         tags: z.array(z.string()).default([]),
@@ -21,7 +19,7 @@ const postsCollection = defineCollection({
 
 const experienceCollection = defineCollection({
     type: 'content',
-    schema:  ({image}) => z.object({
+    schema: ({ image }) => z.object({
         title: z.string(),
         role: z.string().optional(),
         startDate: z.date(),
