@@ -338,7 +338,7 @@ The final code for the converted CookieConsent.svelte component looks like:
     id="cookie-banner"
     class={`${
         cookies === "granted" || cookies === "denied" ? "hidden" : ""
-    } fixed bottom-0 right-0 z-50 m-2 max-w-screen-sm rounded-lg border-2 border-slate-300 bg-purple-50 text-slate-800 shadow-xl`}
+    } fixed bottom-0 right-0 z-50 m-2 max-w-(--breakpoint-sm) rounded-lg border-2 border-slate-300 bg-purple-50 text-slate-800 shadow-xl`}
     >
     <div class="p-4 text-center">
         <p class="mb-4 text-sm sm:text-base">
