@@ -12,10 +12,11 @@ export default {
     },
   },
 
-  plugins: [require('@tailwindcss/typography'), require('daisyui')],
+//  plugins: [require('@tailwindcss/typography'), require('daisyui')],
+  plugins: [require('@tailwindcss/typography')],
 
   // config docs: https://daisyui.com/docs/config/
-  daisyui: {
-    themes: ['light', 'dark'],
-  },
+  // daisyui: {
+  //   themes: ['light', 'dark'],
+  // },
 }
