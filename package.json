@@ -33,6 +33,6 @@
     "@astrojs/partytown": "^2.1.4",
     "@tailwindcss/typography": "^0.5.15",
     "@tailwindcss/vite": "^4.0.14",
-    "daisyui": "^5.0.4"
+    "daisyui": "^5.0.9"
   }
 }
