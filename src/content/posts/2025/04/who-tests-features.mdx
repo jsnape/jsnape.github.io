@@ -1,0 +1,75 @@
+---
+title: Who tests features?
+postDate: 2025-04-01
+description: >-
+  The "Test" column is a remnant of traditional waterfall practices that has no place in a truly agile environment. By shifting left, using automation, and focusing on the unique skills each role brings to the project, you can create a more efficient and effective workflow that delivers high-quality software.
+image:
+  src: "./474080618_ab7906839a_k.jpg"
+  alt: Tasting room at Rust en Vrede. The foreground shows a woman waiting to be served at a wooden bar. Behind are some very large bottles of wine arranged in height order. At the back is a row of giant steel fermenting tanks.
+categories:
+  - devops
+tags:
+  - opinion
+  - test
+---
+import Aside from '@components/Aside.astro';
+
+One of the reasons why I don't recommend the old [Azure DevOps Agile process model](/2024/03/perfect-process-model/) is work items transition through a `Resolved` state before they are closed. The implication being that a team member must validate the work is complete (or bug is fixed) before closing it. You also see the equivalent when teams add a `Test` column to their boards. The team member doing the validating is invariably someone in a tester role.
+
+I don't believe there is any value in having testers signing-off work from developers. This is old thinking when the product was code complete and chucked over the wall to the testers to find issues and raise bugs back over the wall.
+
+In a modern agile project, everyone is responsible for testing (quality) but each in their own unique way.
+
+- **Developers** are responsible for ensuring the developed features meet the specifications (acceptance criteria)
+- **Testers** are responsible for ensuring the product meets the needs of the customer
+
+Let me give you an example. I'm working on a project that includes features related to uploading CSV data into a database via a web interface. The CSV upload feature happy path is going to be tested by the developer through unit tests, integration tests, automated acceptance tests and even exploratory testing as they develop the code. By the time that code hits the main branch we can be sure it works and meets any acceptance criteria on the backlog item. What the developer won't have done is test anything outside of the acceptance criteria which is where skilled testers are invaluable. For this example:
+
+- What if the file is empty?
+- What if there are too many columns, duplicate column names, missing columns etc?
+- What if the file is really large?
+- What if the field values are not in the correct format?
+- Is the whole CSV specification implemented correctly - delimiters, double quotes, newlines in fields?
+- What if the file isn't correct CSV?
+
+This list can go on and on which is the perspective you want from your testers. These are all likely real world problems that may occur, hence _meet the needs of the customer_ above.
+
+<Aside type="note" title="">
+The true value from testers actually happens before developers start working on a story. Applying the unique perspective testers have early on ensures the acceptance criteria already has these edge cases listed as scenarios.
+</Aside>
+
+Flipping back to the dreaded `test` state for a second. When do testers do their work? They certainly don't wait for developers to complete a feature before springing into action at the end of the sprint, magically testing everything to set that work item as DoneDone before the sprint completes.
+
+Pipelining the sprints so the testers test the work items from the previous sprint is maybe a little bit easier but that `test` column means work items are not completed in sprint. You are no longer doing Scrum, you are firmly in the Kanban world.
+
+I find a change of perspective can help with a solution but first we need to recognize the types of work a tester will do:
+
+1. Contributing to work item definitions and acceptance criteria during spring planning and refinement
+2. Planning and writing test cases (I love the "add test" button on Azure DevOps board during the above sessions)
+3. Writing manual test steps
+4. Automating tests
+5. Performing test runs
+6. Collecting and reporting results, raising bugs, checking regressions
+
+The first 4 of these tasks are feature and sprint based. The last two occur over and over until the product is complete; specifically the same tests are run over and over for features that may have been delivered many sprints ago, to check for regressions.
+
+The first 4 of these are literal tasks on work items. There are completed in sprint and contributing towards the sprint goal, ensuring work items meet the definition of done. The last two become repetitive work in subsequent sprints. You can either reserve sprint capacity for repeating test activities or create tasks to be completed if you prefer tracking completion.
+
+The really important distinction for the last two activities on the testers list is this... They operate on builds not features. We can refine our test responsibilities now.
+
+<Aside type="important" title="Test Responsibilities">
+- Developers test features
+- Testers test builds
+</Aside>
+
+Just like that, no need for a test column and the answer to the question in the title is... developers do.
+
+----
+
+Before anyone points out, yes there are some nuances:
+
+- If you operate in a highly regulated environment then there might be a quality assurance step required to sign-off features. In which case I would say you are signing off builds and you must know which features are in the build.
+- What about retesting bugfixes? I would hope the developer as part of the fix created a unit test which exposed the bug and therefore doesn't need test sign-off. If not then two options:
+  1. Don't close the bug, assign it back to the tester and let them close it.
+  2. Add a retest task to the bug (we manage bugs on the backlog) which must be completed before the bug is done.
+- Automation is the goal. Fast feedback on every push FTW.
