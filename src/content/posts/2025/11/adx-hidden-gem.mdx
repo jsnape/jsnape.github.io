@@ -1,0 +1,93 @@
+---
+title: Azure Data Explorer - The Hidden Gem You’re Overlooking
+postDate: 2025-11-21
+description: >-
+  Discover why Azure Data Explorer (ADX) outperforms Cosmos DB for event stream analytics. Learn why ADX should be your default choice for real-time insights.
+image:
+  src: "./hidden-gem-2.jpg"
+  alt: Female explorer is kneeling next to a large gem rising out of a large minecraft chest.
+categories:
+  - low-latency-analytics
+tags:
+  - azure-data-explorer
+  - event-analytics
+---
+import Aside from '@components/Aside.astro';
+
+## Introduction
+
+When architects think about event-driven systems on Azure, the usual suspects come to mind: Event Hub, Cosmos DB, maybe Azure Functions. Cosmos DB often gets picked as the destination for event streams because it’s marketed as “low latency” but it isn't well-suited for this purpose. Cosmos DB is great for transactional workloads, but not analytics.
+
+If your goal is real-time insights, low-latency queries, and scalable analytics, Azure Data Explorer (ADX) is the service you should be using. Yet, ADX remains one of the most underappreciated tools in the Azure ecosystem.
+
+## Why Cosmos DB Isn’t Enough
+
+Cosmos DB excels at:
+
+- Transactional operations (CRUD at scale).
+- Global distribution for OLTP workloads.
+
+But when you try to run analytical queries on event streams:
+
+- Latency spikes.
+- Costs escalate due to RU consumption.
+- Query complexity increases.
+
+Cosmos DB was never designed for high-speed aggregations or time-series analytics. It’s a transactional database, not an analytical engine. If you do want to use Cosmos then you will need to factor in extra components such as the integrated cache or analytical store.
+
+## Enter Azure Data Explorer
+
+ADX is purpose-built for:
+
+- High-volume telemetry and event data.
+- Typically sub-second query latency for analytics.
+- Time-series and anomaly detection out of the box.
+
+ADX should be considered as the default persistence store for your event streams. It is designed to handle millions of events per second and lets you query them instantly using Kusto Query Language (KQL).
+
+Data Explorer is a PaaS service but it shows up as the underlying tech in many other Azure services such as Azure Monitor, Time Series Insights, and Microsoft Sentinel. The PaaS version is much less restrictive for use in your own solutions though.
+
+<Aside type="tip">
+Data Explorer also exists in Microsoft Fabric as a KQL Database. If your solution design already includes Fabric then use a KQL Database instead.
+</Aside>
+
+## Why ADX Should Be Your Default Destination for Event Streams
+
+The primary reasons for using ADX are the standard architectural reasons about cost, performance and scale:
+
+1. **Performance:** ADX indexes data on ingestion, enabling lightning-fast queries.
+2. **Cost Efficiency:** Pay for compute, storage and markup separately; no RU-based surprises.
+3. **Built for Analytics:** Native support for aggregations, joins, and time-series functions.
+4. **Integration:** Works seamlessly with Event Hub, IoT Hub, Power BI, and Azure Databases.
+
+In addition, data explorer's relaxed attitude to schema and simple data mapping ability significantly shortens time to value because you don't need to manually write a bunch of ETL code to get data into a useable format.
+
+## Common Misconception: “ADX Is Niche”
+
+Many people think ADX is only for IoT or telemetry use cases. I think thats a limited viewpoint. Think of it as a very low-latency analytic database.
+
+If you have any event stream, from application logs to clickstream data, ADX is the ideal choice. It’s not niche; it’s specialized for the exact problem most modern systems face which is turning raw events into actionable insights in real time.
+
+## Architecture Snapshot
+
+Here’s what a typical ADX event pipeline looks like:
+
+![Typical Data Explorer Pipeline](typical-adx-pipeline.png)
+
+- Event Hub handles ingestion as a standard destination that many services already integrate with.
+- Mapping between event hub messages and ADX tables configured simply (post to follow)
+- ADX stores and indexes data for analytics.
+- Power BI or Grafana (or even ADX native dashboards) to visualize insights.
+
+ADX is a first class data source for Power BI so it supports direct query with dynamic M query parameters. These allow filter or slicer values in Power BI to be pushed back to the data source for execution.
+
+## Next Steps
+
+In the next post, we’ll dive into why storing events isn’t enough and how ADX transforms raw streams into real-time intelligence with minimal effort.
+
+## Key Takeaways
+
+- Cosmos DB = transactional database, not analytics engine.
+- ADX = low-latency, high-scale analytics for event streams.
+- If you’re building event-driven systems, ADX should be your default destination.
+

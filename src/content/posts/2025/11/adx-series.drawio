@@ -1,0 +1,44 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+  <diagram name="Page-1" id="Ie361YHNS0-QNIujDtQq">
+    <mxGraphModel dx="1553" dy="906" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="IePO5LynUco03nYfc8qs-2" value="Event Hub" style="image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=20;image=img/lib/mscae/Event_Hubs.svg;fontFamily=Tahoma;convertToSvg=0;whiteSpace=wrap;labelBackgroundColor=none;" vertex="1" parent="1">
+          <mxGeometry x="240" y="150" width="76.8" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="IePO5LynUco03nYfc8qs-3" value="Azure&amp;nbsp;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Data Explorer&lt;/span&gt;" style="image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=20;image=img/lib/mscae/Azure_Data_Explorer_Clusters.svg;fontFamily=Tahoma;convertToSvg=0;whiteSpace=wrap;labelBackgroundColor=none;" vertex="1" parent="1">
+          <mxGeometry x="440" y="150" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="IePO5LynUco03nYfc8qs-4" value="Power BI" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=20;image=img/lib/azure2/power_platform/PowerBI.svg;fontFamily=Tahoma;convertToSvg=0;whiteSpace=wrap;labelBackgroundColor=none;" vertex="1" parent="1">
+          <mxGeometry x="651" y="80" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="IePO5LynUco03nYfc8qs-5" value="Grafana" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=20;image=img/lib/azure2/other/Grafana.svg;fontFamily=Tahoma;convertToSvg=0;whiteSpace=wrap;labelBackgroundColor=none;" vertex="1" parent="1">
+          <mxGeometry x="640" y="230" width="82" height="63.67" as="geometry" />
+        </mxCell>
+        <mxCell id="IePO5LynUco03nYfc8qs-9" value="Event Stream" style="html=1;shadow=0;dashed=0;align=center;verticalAlign=middle;shape=mxgraph.arrows2.stripedArrow;dy=0.6;dx=40;notch=25;strokeColor=#808080;fontFamily=Tahoma;fontSize=20;convertToSvg=0;whiteSpace=wrap;labelBackgroundColor=none;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="30" y="155" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="IePO5LynUco03nYfc8qs-6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;curved=0;strokeWidth=2;shape=pipe;endArrow=block;endFill=1;fillColor=light-dark(#808080,#EDEDED);strokeColor=light-dark(#808080,#EDEDED);fontFamily=Tahoma;fontSize=20;convertToSvg=0;labelBackgroundColor=none;" edge="1" parent="1" source="IePO5LynUco03nYfc8qs-2" target="IePO5LynUco03nYfc8qs-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="IePO5LynUco03nYfc8qs-7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;curved=0;strokeWidth=2;shape=pipe;endArrow=block;endFill=1;fillColor=light-dark(#808080,#EDEDED);strokeColor=light-dark(#808080,#EDEDED);fontFamily=Tahoma;fontSize=20;convertToSvg=0;labelBackgroundColor=none;" edge="1" parent="1" source="IePO5LynUco03nYfc8qs-3" target="IePO5LynUco03nYfc8qs-4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="190" />
+              <mxPoint x="570" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IePO5LynUco03nYfc8qs-8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;curved=0;strokeWidth=2;shape=pipe;endArrow=block;endFill=1;fillColor=light-dark(#808080,#EDEDED);strokeColor=light-dark(#808080,#EDEDED);fontFamily=Tahoma;fontSize=20;convertToSvg=0;labelBackgroundColor=none;" edge="1" parent="1" source="IePO5LynUco03nYfc8qs-3" target="IePO5LynUco03nYfc8qs-5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="190" />
+              <mxPoint x="570" y="262" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
