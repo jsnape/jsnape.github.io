@@ -37,7 +37,9 @@ const pageTitle = "Tag Archives: #" + tag;
 		{!page.data.length && 'No posts found.'}
 		{page.data.map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
 	</ul>
-	<div class="pagination items-center flex">
-	<Pagination page={page} urlPattern={`/tag/${tag}/{}`} firstPageUrl={`/tag/${tag}`} />
-	</div>
+	{page.lastPage > 1 && (
+		<div class="pagination items-center flex">
+		<Pagination page={page} urlPattern={`/tag/${tag}/{}`} firstPageUrl={`/tag/${tag}`} />
+		</div>
+	)}
 </SidebarLayout>

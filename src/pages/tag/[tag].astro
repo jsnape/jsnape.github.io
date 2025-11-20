@@ -53,7 +53,9 @@ const page = {
 		{!posts.length && 'No posts found.'}
 		{posts.map((post: CollectionEntry<"posts">) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
 	</ul>
-	<div class="pagination items-center flex">
-	<Pagination page={page} urlPattern={`/tag/${tag}/{}`} firstPageUrl={`/tag/${tag}`} />
-	</div>
+	{totalPages > 1 && (
+		<div class="pagination items-center flex">
+		<Pagination page={page} urlPattern={`/tag/${tag}/{}`} firstPageUrl={`/tag/${tag}`} />
+		</div>
+	)}
 </SidebarLayout>

@@ -49,7 +49,9 @@ const pageTitle = "Monthly Archives: " + monthName + " " + year;
 		{!page.data.length && 'No posts found.'}
 		{page.data.map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
 	</ul>
-	<div class="pagination items-center flex">
-	<Pagination page={page} urlPattern={`/${year}/${month}/{}`} firstPageUrl={`/${year}/${month}`} />
-	</div>
+	{page.lastPage > 1 && (
+		<div class="pagination items-center flex">
+		<Pagination page={page} urlPattern={`/${year}/${month}/{}`} firstPageUrl={`/${year}/${month}`} />
+		</div>
+	)}
 </SidebarLayout>
