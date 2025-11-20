@@ -1,26 +1,59 @@
 ---
+import { ITEMS_PER_PAGE } from '@/consts';
+import SidebarLayout from "@/layouts/SidebarLayout.astro";
 import { getCollection } from "astro:content";
+import type { CollectionEntry } from 'astro:content';
+import BlogPostArticle from "@components/BlogPostArticle.astro";
+import {excludeDrafts, sortBlogPosts} from "@/functions";
+import Pagination from "@philnash/astro-pagination";
 
 export async function getStaticPaths() {
-  const posts = await getCollection('posts');
+  const posts = await getCollection('posts', excludeDrafts);
   const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
-  return tags.map(tag => ({
-    params: { tag: tag },
-    props: { tag: tag }
-  }));  
+  
+  return tags.map(tag => {
+    const tagPosts = posts.filter(p => p.data.tags.includes(tag));
+    const sortedPosts = sortBlogPosts(tagPosts);
+    const firstPagePosts = sortedPosts.slice(0, ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(sortedPosts.length / ITEMS_PER_PAGE);
+    
+    return {
+      params: { tag },
+      props: { 
+        tag,
+        posts: firstPagePosts,
+        currentPage: 1,
+        totalPages,
+        allPosts: sortedPosts
+      }
+    };
+  });
 }
 
-const { tag } = Astro.props;
+const { tag, posts, currentPage, totalPages, allPosts } = Astro.props;
+const pageTitle = "Tag Archives: #" + tag;
+
+// Create a mock page object for the Pagination component
+const page = {
+  data: posts,
+  url: {
+    current: `/tag/${tag}`,
+    next: totalPages > 1 ? `/tag/${tag}/2` : undefined,
+    prev: undefined
+  },
+  currentPage,
+  lastPage: totalPages,
+  size: ITEMS_PER_PAGE,
+  total: allPosts.length
+};
 ---
-<!doctype html>
-<html>
-<head>
-  <title>Redirecting to: /tag/{tag}/1</title>
-  <meta http-equiv="refresh" content={`0;url=/tag/${tag}/1`}>
-  <meta name="robots" content="noindex">
-  <link rel="canonical" href={`https://snape.me/tag/${tag}/1`}>
-</head>
-<body>
-  <a href={`/tag/${tag}/1`}>Redirecting from <code>/tag/{tag}</code> to <code>/tag/{tag}/1</code></a>
-</body>
-</html>
+
+<SidebarLayout pageTitle={pageTitle}>
+	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
+		{!posts.length && 'No posts found.'}
+		{posts.map((post: CollectionEntry<"posts">) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
+	</ul>
+	<div class="pagination items-center flex">
+	<Pagination page={page} urlPattern={`/tag/${tag}/{}`} firstPageUrl={`/tag/${tag}`} />
+	</div>
+</SidebarLayout>

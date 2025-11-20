@@ -50,6 +50,6 @@ const pageTitle = "Monthly Archives: " + monthName + " " + year;
 		{page.data.map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
 	</ul>
 	<div class="pagination items-center flex">
-	<Pagination page={page} urlPattern={`/${year}/${month}/{}`} />
+	<Pagination page={page} urlPattern={`/${year}/${month}/{}`} firstPageUrl={`/${year}/${month}`} />
 	</div>
 </SidebarLayout>

@@ -1,27 +1,59 @@
 ---
+import { ITEMS_PER_PAGE } from '@/consts';
+import SidebarLayout from "@/layouts/SidebarLayout.astro";
 import { getCollection } from "astro:content";
-import {excludeDrafts} from "@/functions";
+import type { CollectionEntry } from 'astro:content';
+import BlogPostArticle from "@components/BlogPostArticle.astro";
+import {excludeDrafts, sortBlogPosts} from "@/functions";
+import Pagination from "@philnash/astro-pagination";
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', excludeDrafts);
   const categories = [...new Set(posts.flatMap((p) => p.data.categories))];
-  return categories.map(category => ({
-    params: { category: category },
-    props: { category: category }
-  }));  
+  
+  return categories.map(category => {
+    const categoryPosts = posts.filter(p => p.data.categories.includes(category));
+    const sortedPosts = sortBlogPosts(categoryPosts);
+    const firstPagePosts = sortedPosts.slice(0, ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(sortedPosts.length / ITEMS_PER_PAGE);
+    
+    return {
+      params: { category },
+      props: { 
+        category,
+        posts: firstPagePosts,
+        currentPage: 1,
+        totalPages,
+        allPosts: sortedPosts
+      }
+    };
+  });
 }
 
-const { category } = Astro.props;
+const { category, posts, currentPage, totalPages, allPosts } = Astro.props;
+const pageTitle = "Category Archives: " + category.replace(/-/g, ' ');
+
+// Create a mock page object for the Pagination component
+const page = {
+  data: posts,
+  url: {
+    current: `/category/${category}`,
+    next: totalPages > 1 ? `/category/${category}/2` : undefined,
+    prev: undefined
+  },
+  currentPage,
+  lastPage: totalPages,
+  size: ITEMS_PER_PAGE,
+  total: allPosts.length
+};
 ---
-<!doctype html>
-<html>
-<head>
-  <title>Redirecting to: /category/{category}/1</title>
-  <meta http-equiv="refresh" content={`0;url=/category/${category}/1`}>
-  <meta name="robots" content="noindex">
-  <link rel="canonical" href={`https://snape.me/category/${category}/1`}>
-</head>
-<body>
-  <a href={`/category/${category}/1`}>Redirecting from <code>/category/{category}</code> to <code>/category/{category}/1</code></a>
-</body>
-</html>
+
+<SidebarLayout pageTitle={pageTitle}>
+	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
+		{!posts.length && 'No posts found.'}
+		{posts.map((post: CollectionEntry<"posts">) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
+	</ul>
+	<div class="pagination items-center flex">
+	<Pagination page={page} urlPattern={`/category/${category}/{}`} firstPageUrl={`/category/${category}`} />
+	</div>
+</SidebarLayout>

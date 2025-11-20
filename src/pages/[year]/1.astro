@@ -1,0 +1,27 @@
+---
+import { getCollection } from "astro:content";
+import {excludeDrafts} from "@/functions";
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', excludeDrafts);
+  const years = [...new Set(posts.flatMap((p) => p.data.postDate.getFullYear()))];
+  return years.map(year => ({
+    params: { year: year },
+    props: { year: year }
+  }));  
+}
+
+const { year } = Astro.props;
+---
+<!doctype html>
+<html>
+<head>
+  <title>Redirecting to: /{year}</title>
+  <meta http-equiv="refresh" content={`0;url=/${year}`}>
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href={`https://snape.me/${year}`}>
+</head>
+<body>
+  <a href={`/${year}`}>Redirecting from <code>/{year}/1</code> to <code>/{year}</code></a>
+</body>
+</html>

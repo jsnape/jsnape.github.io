@@ -10,7 +10,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://snape.me',
   redirects: {
-    '/posts': '/posts/1',
+    '/posts/1': '/posts',
     '/resume': '/experience/',
   },
   vite: {  

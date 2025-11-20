@@ -38,6 +38,6 @@ const pageTitle = "Category Archives: " + category.replace(/-/g, ' ');
 		{page.data.map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
 	</ul>
 	<div class="pagination items-center flex">
-	<Pagination page={page} urlPattern={`/category/${category}/{}`} />
+	<Pagination page={page} urlPattern={`/category/${category}/{}`} firstPageUrl={`/category/${category}`} />
 	</div>
 </SidebarLayout>

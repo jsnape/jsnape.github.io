@@ -1,0 +1,27 @@
+---
+import { getCollection } from "astro:content";
+import {excludeDrafts} from "@/functions";
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', excludeDrafts);
+  const categories = [...new Set(posts.flatMap((p) => p.data.categories))];
+  return categories.map(category => ({
+    params: { category: category },
+    props: { category: category }
+  }));  
+}
+
+const { category } = Astro.props;
+---
+<!doctype html>
+<html>
+<head>
+  <title>Redirecting to: /category/{category}</title>
+  <meta http-equiv="refresh" content={`0;url=/category/${category}`}>
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href={`https://snape.me/category/${category}`}>
+</head>
+<body>
+  <a href={`/category/${category}`}>Redirecting from <code>/category/{category}/1</code> to <code>/category/{category}</code></a>
+</body>
+</html>

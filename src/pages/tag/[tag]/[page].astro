@@ -38,6 +38,6 @@ const pageTitle = "Tag Archives: #" + tag;
 		{page.data.map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
 	</ul>
 	<div class="pagination items-center flex">
-	<Pagination page={page} urlPattern={"/tag/" + tag + "/{}"} />
+	<Pagination page={page} urlPattern={`/tag/${tag}/{}`} firstPageUrl={`/tag/${tag}`} />
 	</div>
 </SidebarLayout>

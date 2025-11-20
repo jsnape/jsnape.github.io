@@ -38,6 +38,6 @@ const pageTitle = "Annual Archives: " + year;
 		{page.data.map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
 	</ul>
 	<div class="pagination items-center flex">
-	<Pagination page={page} urlPattern={`/${year}/{}`} />
+	<Pagination page={page} urlPattern={`/${year}/{}`} firstPageUrl={`/${year}`} />
 	</div>
 </SidebarLayout>
