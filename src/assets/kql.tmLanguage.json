@@ -1,0 +1,59 @@
+{
+  "name": "KQL-Syntax-Highlighter",
+  "scopeName": "source.kql",
+  "fileTypes": ["csl", "kql", "KQL", "kusto"],
+  "patterns": [
+    {
+      "match": "\\bcreate-or-alter\\b",
+      "name": "keyword.table.control.kusto"
+    },
+    {
+      "match": "//.*$",
+      "name": "comment.kusto"
+    },
+    {
+      "match": "\"([^\"\\\\]*(\\\\.[^\"\\\\]*)*)\"",
+      "name": "string.quoted.double.kusto"
+    },
+    {
+      "match": "'([^'\\\\]*(\\\\.[^'\\\\]*)*)'",
+      "name": "string.quoted.single.kusto"
+    },
+    {
+      "match": "\\b(bool|datetime|decimal|double|dynamic|guid|int|long|real|string|timespan)\\b",
+      "name": "keyword.types.kusto"
+    },
+    {
+      "match": "\\b(ago|now|datetime_add|datetime_diff|datepart|datetime_part|dayofmonth|dayofweek|dayofyear|startofday|endofday|endofmonth|endofweek|endofyear|week_of_year|format_datetime|format_timespan|getmonth|getyear|make_timespan|make_datetime|monthofyear|startofmonth|startofweek|startofyear|totimespan)\\b",
+      "name": "keyword.functions.datetime.kusto"
+    },
+    {
+      "match": "\\b(abs|acos|array_concat|array_length|array_slice|array_split|asin|atan|atan2|autocluster|avg|bag_keys|base64_decodestring|base64_encodestring|bin|bin_at|binary_and|binary_not|binary_or|binary_shift_left|binary_shift_right|binary_xor|case|ceiling|coalesce|columnifexists|cos|cot|countof|cursor_after|dcount|dcount_hll|degrees|exp|exp10|exp2|extract|extractall|extractjson|floor|function|gamma|geo_distance_2points|geo_geohash_to_central_point|geo_point_in_circle|geo_point_in_polygon|geo_point_to_geohash|gettype|hash|hash_sha256|hll_merge|iif|indexof|isempty|isascii|isfinite|isinf|isnan|isnotempty|isnotnull|isnull|isutf8|log|log10|log2|loggamma|make_string|max|max_of|min|min_of|next|pack|pack_array|pack_dictionary|parse_csv|parse_ipv4|parse_json|parse_path|parse_url|parse_urlquery|parse_user_agent|parse_version|parse_xml|parsejson|percentrank_tdigest|percentile_tdigest|pow|prev|radians|rand|rank_tdigest|repeat|replace|reverse|round|row_cumsum|row_window_session|series_add|series_decompose|series_decompose_anomalies|series_decompose_forecast|series_divide|series_equals|series_fill_backward|series_fill_const|series_fill_forward|series_fill_linear|series_fir|series_fit_2lines|series_fit_2lines_dynamic|series_fit_line|series_fit_line_dynamic|series_greater|series_greater_equals|series_iir|series_less|series_less_equals|series_multiply|series_not_equals|series_outliers|series_pearson_correlation|series_periods_detect|series_periods_validate|series_seasonal|series_stats|series_stats_dynamic|series_subtract|sign|sin|split|sqrt|strcat|strcat_array|strcat_delim|strcmp|strlen|strrep|string_size|substring|sum|tan|tdigest_merge|tobool|toboolean|todatetime|todecimal|todouble|todynamic|tofloat|toguid|tohex|toint|tolong|tolower|toobject|toreal|toscalar|tostring|toupper|translate|trim|trim_end|trim_start|typeof|url_decode|url_encode|welch_test)\\b",
+      "name": "keyword.functions.kusto"
+    },
+    {
+      "match": "\\b(as|consume|distinct|evaluate|extend|facet|filter|find|fork|getschema|graph-match|graph-merge|graph-to-table|invoke|join|limit|lookup|make-graph|make-series|mv-apply|mv-expand|order|parse|parse-kv|parse-where|partition|print|project-away|project-keep|project-rename|project-reorder|project|range|reduce|render|sample|sample-distinct|scan|search|serialize|sort|summarize|take|top|top-hitters|top-nested|union|where)\\b",
+      "name": "query.operators.kusto"
+    },
+    {
+      "match": "\\b(add|alter|alter-merge|append|assert|attach|cluster|count|countif|create|create-merge|create-set|database|datatable|table|tables|default|define|delete|detach|drop|drop-pretend|dup-next-failed-ingest|dup-next-ingest|export|externaldata|ingest|limit|load|materialize|move|pivot|remove|rename|replace|restrict|run|save|set|set-or-append|set-or-replace|show)\\b",
+      "name": "operator.table.kusto"
+    },
+    {
+      "match": "\\b(and|asc|between|by|contains|desc|endswith|false|from|has|has_any|in|inner|leftouter|let|not|on|or|policy|retention|startswith|to|true|with|timechart)\\b",
+      "name": "keyword.other.kusto"
+    },
+    {
+      "match": "\\b(accumulate|legend|kind|series|xcolumn|xaxis|xtitle|ycolumns|yaxis|ymin|ymax|ysplit|ytitle|title)\\b",
+      "name": "query.parameters.kusto"
+    },
+    {
+      "match": "[\\+\\-\\*\\/\\%\\!\\<\\<=\\>\\>=\\=\\==\\!=\\<\\>\\:\\;\\,\\=~\\@\\?\\=>\\!~]",
+      "name": "operator.math.kusto"
+    },
+    {
+      "match": "[\\|\\:\\=\\,\\.\\.\\.]",
+      "name": "punctuation.kusto"
+    }
+  ]
+}
