@@ -13,11 +13,9 @@ export async function getStaticPaths({ paginate }: any) {
   const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
   
   return tags.flatMap(tag => {
-    const tagPosts = posts
-      .filter(p => p.data.tags.includes(tag))
-      .sort((a, b) => new Date(b.data.postDate).getTime() - new Date(a.data.postDate).getTime());
+    const tagPosts = posts.filter(p => p.data.tags.includes(tag));
     
-    return paginate(tagPosts, {
+    return paginate(sortBlogPosts(tagPosts), {
       params: { tag },
       pageSize: ITEMS_PER_PAGE
     });

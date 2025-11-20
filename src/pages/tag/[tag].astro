@@ -16,7 +16,7 @@ const { tag } = Astro.props;
 <html>
 <head>
   <title>Redirecting to: /tag/{tag}/1</title>
-  <meta http-equiv="refresh" content=`0;url=/tag/${tag}/1`>
+  <meta http-equiv="refresh" content={`0;url=/tag/${tag}/1`}>
   <meta name="robots" content="noindex">
   <link rel="canonical" href={`https://snape.me/tag/${tag}/1`}>
 </head>
