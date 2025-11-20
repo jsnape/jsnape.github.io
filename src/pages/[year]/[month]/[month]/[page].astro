@@ -1,0 +1,57 @@
+---
+import { ITEMS_PER_PAGE } from '@/consts';
+import SidebarLayout from "@/layouts/SidebarLayout.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from 'astro:content';
+import BlogPostArticle from "@components/BlogPostArticle.astro";
+import {excludeDrafts, sortBlogPosts} from "@/functions";
+import Pagination from "@philnash/astro-pagination";
+import type { Page } from 'astro';
+
+export async function getStaticPaths({ paginate }: any) {
+  const posts = await getCollection('posts', excludeDrafts);
+  
+  const dates = [...new Set(posts.map((p) => {
+        const date = p.data.postDate;
+        const year = date.getFullYear();
+        const month = date.getMonth(); // no need to add 1 here, because getMonth() is zero-based
+        return new Date(year, month, 1); // returns a date object representing the first day of the month
+    }))];
+  
+  return dates.flatMap(d => {
+    const year = d.getFullYear();
+    const month = d.getMonth() < 10 ? '0' + (1 + d.getMonth()) : (1 + d.getMonth());
+    
+    const monthPosts = posts.filter(p => 
+      p.data.postDate.getFullYear() == year && 
+      (p.data.postDate.getMonth() + 1) == month
+    );
+    
+    return paginate(sortBlogPosts(monthPosts), {
+      params: { year, month },
+      pageSize: ITEMS_PER_PAGE
+    });
+  });
+}
+
+type Props = {
+	page: Page<CollectionEntry<"posts">>;
+};
+
+const { page } = Astro.props;
+const { year, month } = Astro.params;
+
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const monthName = monthNames[parseInt(String(month)) - 1]; // convert month to string before passing it as an argument
+const pageTitle = "Monthly Archives: " + monthName + " " + year;
+---
+
+<SidebarLayout pageTitle={pageTitle}>
+	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
+		{!page.data.length && 'No posts found.'}
+		{page.data.map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
+	</ul>
+	<div class="pagination items-center flex">
+	<Pagination page={page} urlPattern={"/" + year + "/" + month + "/" + month + "/{}"} />
+	</div>
+</SidebarLayout>

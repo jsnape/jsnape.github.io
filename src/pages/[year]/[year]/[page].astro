@@ -1,0 +1,43 @@
+---
+import { ITEMS_PER_PAGE } from '@/consts';
+import SidebarLayout from "@/layouts/SidebarLayout.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from 'astro:content';
+import BlogPostArticle from "@components/BlogPostArticle.astro";
+import {excludeDrafts, sortBlogPosts} from "@/functions";
+import Pagination from "@philnash/astro-pagination";
+import type { Page } from 'astro';
+
+export async function getStaticPaths({ paginate }: any) {
+  const posts = await getCollection('posts', excludeDrafts);
+  const years = [...new Set(posts.flatMap((p) => p.data.postDate.getFullYear()))];
+  
+  return years.flatMap(year => {
+    const yearPosts = posts.filter(p => p.data.postDate.getFullYear() == year);
+    
+    return paginate(sortBlogPosts(yearPosts), {
+      params: { year },
+      pageSize: ITEMS_PER_PAGE
+    });
+  });
+}
+
+type Props = {
+	page: Page<CollectionEntry<"posts">>;
+};
+
+const { page } = Astro.props;
+const { year } = Astro.params;
+
+const pageTitle = "Annual Archives: " + year;
+---
+
+<SidebarLayout pageTitle={pageTitle}>
+	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
+		{!page.data.length && 'No posts found.'}
+		{page.data.map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
+	</ul>
+	<div class="pagination items-center flex">
+	<Pagination page={page} urlPattern={"/" + year + "/" + year + "/{}"} />
+	</div>
+</SidebarLayout>

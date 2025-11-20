@@ -1,9 +1,6 @@
 ---
-import { ITEMS_PER_PAGE } from '@/consts';
-import SidebarLayout from "@/layouts/SidebarLayout.astro";
 import { getCollection } from "astro:content";
-import BlogPostArticle from "@components/BlogPostArticle.astro";
-import {excludeDrafts, sortBlogPosts} from "@/functions";
+import {excludeDrafts} from "@/functions";
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', excludeDrafts);
@@ -19,24 +16,24 @@ export async function getStaticPaths() {
         year: d.getFullYear(),
         month: d.getMonth() < 10 ? '0' + (1 + d.getMonth()) : (1 + d.getMonth())
         },
+    props: {
+        year: d.getFullYear(),
+        month: d.getMonth() < 10 ? '0' + (1 + d.getMonth()) : (1 + d.getMonth())
+        }
   }));  
 }
 
-const { year, month } = Astro.params;
-const posts = await getCollection('posts',
-    (post) => 
-    post.data.postDate.getFullYear() == year && (post.data.postDate.getMonth() + 1) == month && excludeDrafts(post))
-  .then(sortBlogPosts);
-
-const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const monthName = monthNames[parseInt(String(month)) - 1]; // convert month to string before passing it as an argument
-const pageTitle = "Monthly Archives: " + monthName + " " + year;
+const { year, month } = Astro.props;
 ---
-
-<SidebarLayout pageTitle={pageTitle}>
-	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
-		{!posts.length && 'No posts found.'}
-		{posts.slice(0, ITEMS_PER_PAGE).map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
-		
-	</ul>
-</SidebarLayout>
+<!doctype html>
+<html>
+<head>
+  <title>Redirecting to: /{year}/{month}/{month}/1</title>
+  <meta http-equiv="refresh" content={`0;url=/${year}/${month}/${month}/1`}>
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href={`https://snape.me/${year}/${month}/${month}/1`}>
+</head>
+<body>
+  <a href={`/${year}/${month}/${month}/1`}>Redirecting from <code>/{year}/{month}</code> to <code>/{year}/{month}/{month}/1</code></a>
+</body>
+</html>
