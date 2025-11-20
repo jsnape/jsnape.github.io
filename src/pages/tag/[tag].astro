@@ -49,6 +49,11 @@ const page = {
 ---
 
 <SidebarLayout pageTitle={pageTitle}>
+	{totalPages > 1 && (
+		<div class="pagination items-center flex mb-6">
+		<Pagination page={page} urlPattern={`/tag/${tag}/{}`} firstPageUrl={`/tag/${tag}`} />
+		</div>
+	)}
 	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
 		{!posts.length && 'No posts found.'}
 		{posts.map((post: CollectionEntry<"posts">) => <li><BlogPostArticle post={post} homepage={true}/></li>)}

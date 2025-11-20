@@ -33,6 +33,11 @@ const pageTitle = "Tag Archives: #" + tag;
 ---
 
 <SidebarLayout pageTitle={pageTitle}>
+	{page.lastPage > 1 && (
+		<div class="pagination items-center flex mb-6">
+		<Pagination page={page} urlPattern={`/tag/${tag}/{}`} firstPageUrl={`/tag/${tag}`} />
+		</div>
+	)}
 	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
 		{!page.data.length && 'No posts found.'}
 		{page.data.map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
