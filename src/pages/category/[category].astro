@@ -1,30 +1,27 @@
 ---
-import { ITEMS_PER_PAGE } from '@/consts';
-import SidebarLayout from "@/layouts/SidebarLayout.astro";
 import { getCollection } from "astro:content";
-import BlogPostArticle from "@components/BlogPostArticle.astro";
-import {excludeDrafts, sortBlogPosts} from "@/functions";
+import {excludeDrafts} from "@/functions";
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', excludeDrafts);
   const categories = [...new Set(posts.flatMap((p) => p.data.categories))];
-  return categories.map(cat => ({
-    params: { category: cat },
+  return categories.map(category => ({
+    params: { category: category },
+    props: { category: category }
   }));  
 }
 
-const { category } = Astro.params;
-const posts = await getCollection('posts', excludeDrafts)
-  .then(sortBlogPosts)
-  .then(posts => posts.filter(p => p.data.categories.includes(category)));
-
-const pageTitle = "Category Archives: " + category.replace(/-/g, ' ');
+const { category } = Astro.props;
 ---
-
-<SidebarLayout pageTitle={pageTitle}>
-	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
-		{!posts.length && 'No posts found.'}
-		{posts.slice(0, ITEMS_PER_PAGE).map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
-		
-	</ul>
-</SidebarLayout>
+<!doctype html>
+<html>
+<head>
+  <title>Redirecting to: /category/{category}/1</title>
+  <meta http-equiv="refresh" content={`0;url=/category/${category}/1`}>
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href={`https://snape.me/category/${category}/1`}>
+</head>
+<body>
+  <a href={`/category/${category}/1`}>Redirecting from <code>/category/{category}</code> to <code>/category/{category}/1</code></a>
+</body>
+</html>
