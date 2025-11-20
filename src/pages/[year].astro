@@ -9,18 +9,18 @@ import Pagination from "@philnash/astro-pagination";
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', excludeDrafts);
-  const categories = [...new Set(posts.flatMap((p) => p.data.categories))];
+  const years = [...new Set(posts.flatMap((p) => p.data.postDate.getFullYear()))];
   
-  return categories.map(category => {
-    const categoryPosts = posts.filter(p => p.data.categories.includes(category));
-    const sortedPosts = sortBlogPosts(categoryPosts);
+  return years.map(year => {
+    const yearPosts = posts.filter(p => p.data.postDate.getFullYear() == year);
+    const sortedPosts = sortBlogPosts(yearPosts);
     const firstPagePosts = sortedPosts.slice(0, ITEMS_PER_PAGE);
     const totalPages = Math.ceil(sortedPosts.length / ITEMS_PER_PAGE);
     
     return {
-      params: { category },
+      params: { year },
       props: { 
-        category,
+        year,
         posts: firstPagePosts,
         currentPage: 1,
         totalPages,
@@ -30,8 +30,8 @@ export async function getStaticPaths() {
   });
 }
 
-const { category, posts, currentPage, totalPages, allPosts } = Astro.props;
-const pageTitle = "Category Archives: " + category.replace(/-/g, ' ');
+const { year, posts, currentPage, totalPages, allPosts } = Astro.props;
+const pageTitle = "Annual Archives: " + year;
 
 // Create a mock page object for the Pagination component
 const page = {
@@ -39,8 +39,8 @@ const page = {
   start: 0,
   end: Math.min(ITEMS_PER_PAGE - 1, allPosts.length - 1),
   url: {
-    current: `/category/${category}`,
-    next: totalPages > 1 ? `/category/${category}/2` : undefined,
+    current: `/${year}`,
+    next: totalPages > 1 ? `/${year}/2` : undefined,
     prev: undefined
   },
   currentPage,
@@ -53,7 +53,7 @@ const page = {
 <SidebarLayout pageTitle={pageTitle}>
 	{totalPages > 1 && (
 		<div class="pagination items-center flex mb-6">
-		<Pagination page={page} urlPattern={`/category/${category}/{}`} firstPageUrl={`/category/${category}`} />
+		<Pagination page={page} urlPattern={`/${year}/{}`} firstPageUrl={`/${year}`} />
 		</div>
 	)}
 	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -62,7 +62,7 @@ const page = {
 	</ul>
 	{totalPages > 1 && (
 		<div class="pagination items-center flex">
-		<Pagination page={page} urlPattern={`/category/${category}/{}`} firstPageUrl={`/category/${category}`} />
+		<Pagination page={page} urlPattern={`/${year}/{}`} firstPageUrl={`/${year}`} />
 		</div>
 	)}
 </SidebarLayout>

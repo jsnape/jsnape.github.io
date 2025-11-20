@@ -1,0 +1,27 @@
+---
+import { getCollection } from "astro:content";
+import {excludeDrafts} from "@/functions";
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', excludeDrafts);
+  const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+  return tags.map(tag => ({
+    params: { tag: tag },
+    props: { tag: tag }
+  }));  
+}
+
+const { tag } = Astro.props;
+---
+<!doctype html>
+<html>
+<head>
+  <title>Redirecting to: /tag/{tag}</title>
+  <meta http-equiv="refresh" content={`0;url=/tag/${tag}`}>
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href={`https://snape.me/tag/${tag}`}>
+</head>
+<body>
+  <a href={`/tag/${tag}`}>Redirecting from <code>/tag/{tag}/1</code> to <code>/tag/{tag}</code></a>
+</body>
+</html>

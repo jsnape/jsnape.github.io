@@ -5,18 +5,59 @@ import sitemap from "@astrojs/sitemap";
 import robotsTxt from "astro-robots-txt";
 import partytown from '@astrojs/partytown';
 import tailwindcss from '@tailwindcss/vite';
+import kqlGrammar from './src/assets/kql.tmLanguage.json' with { type: 'json' };
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://snape.me',
   redirects: {
-    '/posts': '/posts/1',
+    '/posts/1': '/posts',
     '/resume': '/experience/',
+  },
+  markdown: {
+    shikiConfig: {
+      langs: [
+        'javascript',
+        'typescript',
+        'python',
+        'sql',
+        'json',
+        'yaml',
+        'bash',
+        'powershell',
+        'csharp',
+        // Custom KQL language
+        kqlGrammar
+      ],
+      theme: 'github-dark'
+    }
   },
   vite: {  
     plugins: [tailwindcss()],
   },
-  integrations: [svelte(), mdx(), sitemap(), robotsTxt({
+  integrations: [
+    svelte(),
+    mdx({
+      syntaxHighlight: 'shiki',
+      shikiConfig: {
+        langs: [
+          'javascript',
+          'typescript',
+          'python',
+          'sql',
+          'json',
+          'yaml',
+          'bash',
+          'powershell',
+          'csharp',
+          // Custom KQL language
+          kqlGrammar
+        ],
+        theme: 'github-dark'
+      }
+    }),
+    sitemap(),
+    robotsTxt({
       policy: [
         {
           userAgent: 'CCBot',

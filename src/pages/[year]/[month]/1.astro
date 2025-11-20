@@ -1,0 +1,39 @@
+---
+import { getCollection } from "astro:content";
+import {excludeDrafts} from "@/functions";
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', excludeDrafts);
+  
+  const dates = [...new Set(posts.map((p) => {
+        const date = p.data.postDate;
+        const year = date.getFullYear();
+        const month = date.getMonth(); // no need to add 1 here, because getMonth() is zero-based
+        return new Date(year, month, 1); // returns a date object representing the first day of the month
+    }))];
+  return dates.map(d => ({
+    params: {
+        year: d.getFullYear(),
+        month: d.getMonth() < 10 ? '0' + (1 + d.getMonth()) : (1 + d.getMonth())
+        },
+    props: {
+        year: d.getFullYear(),
+        month: d.getMonth() < 10 ? '0' + (1 + d.getMonth()) : (1 + d.getMonth())
+        }
+  }));  
+}
+
+const { year, month } = Astro.props;
+---
+<!doctype html>
+<html>
+<head>
+  <title>Redirecting to: /{year}/{month}</title>
+  <meta http-equiv="refresh" content={`0;url=/${year}/${month}`}>
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href={`https://snape.me/${year}/${month}`}>
+</head>
+<body>
+  <a href={`/${year}/${month}`}>Redirecting from <code>/{year}/{month}/1</code> to <code>/{year}/{month}</code></a>
+</body>
+</html>

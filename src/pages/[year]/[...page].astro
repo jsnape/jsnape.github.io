@@ -33,11 +33,18 @@ const pageTitle = "Annual Archives: " + year;
 ---
 
 <SidebarLayout pageTitle={pageTitle}>
+	{page.lastPage > 1 && (
+		<div class="pagination items-center flex mb-6">
+		<Pagination page={page} urlPattern={`/${year}/{}`} firstPageUrl={`/${year}`} />
+		</div>
+	)}
 	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
 		{!page.data.length && 'No posts found.'}
 		{page.data.map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
 	</ul>
-	<div class="pagination items-center flex">
-	<Pagination page={page} urlPattern={`/${year}/{}`} />
-	</div>
+	{page.lastPage > 1 && (
+		<div class="pagination items-center flex">
+		<Pagination page={page} urlPattern={`/${year}/{}`} firstPageUrl={`/${year}`} />
+		</div>
+	)}
 </SidebarLayout>
