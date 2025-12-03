@@ -17,6 +17,7 @@ const pageUrl = encodeURIComponent(`${import.meta.env.SITE}/${post.slug}`)
 const tagList = encodeURIComponent(tags.map((t:string) => (' #'+t.replace('-',''))).join(' '));
 const postUrl = `https://bsky.app/intent/compose?text=${pageUrl}+${tagList}+%20%40snape.me`;
 const linkedInUrl = `https://www.linkedin.com/feed/?shareActive=true&text=${pageUrl}+${tagList}`;
+const mastodonText = encodeURIComponent(`${import.meta.env.SITE}/${post.slug} ${tags.map((t:string) => (' #'+t.replace('-',''))).join(' ')} @snape.me`);
 
 ---
 <article class="prose my-6">
@@ -50,10 +51,52 @@ const linkedInUrl = `https://www.linkedin.com/feed/?shareActive=true&text=${page
                 ))}
                 on <FormattedDate date={postDate}/>.<br/>
                 Discuss this on 
-                <a class="btn btn-xs btn-primary" target="_blank" href={postUrl}>Bluesky <i class="fa-brands fa-bluesky"></i></a> or 
+                <a class="btn btn-xs btn-primary" target="_blank" href={postUrl}>Bluesky <i class="fa-brands fa-bluesky"></i></a>, 
+                <button class="btn btn-xs btn-primary mastodon-share-btn" data-text={mastodonText}>Mastodon <i class="fa-brands fa-mastodon"></i></button>, or 
                 <a class="btn btn-xs btn-primary" target="_blank" href={linkedInUrl}>LinkedIn <i class="fa-brands fa-linkedin"></i></a>
             <div>
     </div>
     </div>
 </article>
+
+<script is:inline>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listener to all Mastodon share buttons
+    document.querySelectorAll('.mastodon-share-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const text = this.getAttribute('data-text');
+            shareToMastodon(text);
+        });
+    });
+});
+
+function shareToMastodon(text) {
+    // Get stored instance or default to mastodon.world
+    let instance = localStorage.getItem('mastodonInstance') || 'mastodon.world';
+    
+    // Prompt user for their instance if it's the first time or if they want to change it
+    const userInstance = prompt(
+        `Enter your Mastodon instance (current: ${instance}):\n\nExamples:\n• mastodon.social\n• mastodon.world\n• fosstodon.org\n• mas.to\n\nOr press OK to use ${instance}`,
+        instance
+    );
+    
+    if (userInstance === null) {
+        return; // User cancelled
+    }
+    
+    // Clean and validate the instance
+    const cleanInstance = userInstance.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
+    
+    if (cleanInstance) {
+        // Store the instance for future use
+        localStorage.setItem('mastodonInstance', cleanInstance);
+        
+        // Build the share URL
+        const shareUrl = `https://${cleanInstance}/share?text=${text}`;
+        
+        // Open in new tab
+        window.open(shareUrl, '_blank');
+    }
+}
+</script>
 
