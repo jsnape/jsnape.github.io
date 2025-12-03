@@ -20,3 +20,5 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 src/content/posts/2025/11/.$adx-series.drawio.bkp
+
+.fake
