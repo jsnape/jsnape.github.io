@@ -1,6 +1,6 @@
 <script>
-    /** @type {{site?: any}} */
-    let { site = {} } = $props();
+    /** @type {{site?: string}} */
+    let { site = '' } = $props();
 
     function handleSubmit(event) {
         event.preventDefault();
