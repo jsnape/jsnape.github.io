@@ -22,3 +22,4 @@ pnpm-debug.log*
 src/content/posts/2025/11/.$adx-series.drawio.bkp
 
 .fake
+test-results/

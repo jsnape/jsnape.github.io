@@ -33,6 +33,7 @@ public/           # Static assets served as-is
 test/
   unit/           # Unit tests for src/functions.ts and other pure logic
   components/     # Svelte component tests (CookieConsent, Search)
+  e2e/            # Playwright route smoke tests
   setup.ts        # @testing-library/jest-dom matchers registration
 ```
 
@@ -143,16 +144,18 @@ HOME_PAGE_TITLE = 'Recent Posts'
 ## Build & Dev Commands
 
 ```bash
-npm run dev      # Start dev server (astro dev)
-npm run build    # Type-check then build (astro check && astro build)
-npm run preview  # Preview production build
-npm test         # Run all tests once (use before committing)
-npm run test:watch  # Run tests in watch mode during development
+npm run dev            # Start dev server (astro dev)
+npm run build          # Type-check then build (astro check && astro build)
+npm run preview        # Preview production build
+npm test               # Run Vitest unit + component tests (use before committing)
+npm run test:watch     # Vitest in watch mode during development
+npm run test:e2e       # Run Playwright E2E tests (requires dist/ — run build first)
+npm run test:e2e:ci    # Build then run E2E in one command (mirrors CI)
 ```
 
 ## Testing
 
-**Framework**: [Vitest](https://vitest.dev/) + [@testing-library/svelte](https://testing-library.com/docs/svelte-testing-library/intro) + jsdom
+**Framework**: [Vitest](https://vitest.dev/) + [@testing-library/svelte](https://testing-library.com/docs/svelte-testing-library/intro) + jsdom for unit/component tests. [Playwright](https://playwright.dev/) (Chromium) for E2E.
 
 **Always run `npm test` before committing** to confirm nothing is broken.
 
@@ -163,6 +166,16 @@ npm run test:watch  # Run tests in watch mode during development
 | `test/unit/functions.test.ts` | All 5 utility functions in `src/functions.ts` |
 | `test/components/CookieConsent.test.ts` | Banner visibility, accept/decline flows, cookie writing |
 | `test/components/Search.test.ts` | Render, Bing URL construction, query encoding, site prop |
+| `test/e2e/routes.spec.ts` | Smoke test — every major route returns HTTP 200 |
+
+### E2E tests (Playwright)
+
+E2E tests run against the production build served by `astro preview`. Each test navigates to a route and asserts HTTP 200. Adding a new route? Add it to the `routes` array in `test/e2e/routes.spec.ts`.
+
+```bash
+npm run build && npm run test:e2e   # run locally
+npm run test:e2e:ci                 # build + test in one step
+```
 
 ### Writing new tests
 
@@ -190,8 +203,9 @@ vi.stubGlobal('consentGranted', vi.fn());
 GitHub Actions workflow (`.github/workflows/deploy.yml`):
 - Triggers: push to `main`, daily schedule at 09:45 UTC, manual dispatch
 - **`test` job**: installs deps and runs `npm test` — build is blocked if tests fail
+- **`e2e` job**: builds site with `astro build`, installs Playwright Chromium, runs `npm run test:e2e` — runs in parallel with `build`
 - **`build` job**: `withastro/action@v2` (depends on `test`)
-- **`deploy` job**: `actions/deploy-pages@v4` → GitHub Pages (depends on `build`)
+- **`deploy` job**: `actions/deploy-pages@v4` → GitHub Pages (depends on both `build` AND `e2e`)
 
 ## Robots / Bot Blocking
 
