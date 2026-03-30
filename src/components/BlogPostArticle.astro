@@ -1,9 +1,10 @@
 ---
-import { Image } from 'astro:assets';
+import { Image } from "astro:assets";
+import { render } from "astro:content";
 
 interface Props {
-    post: any;
-    homepage: boolean;
+  post: any;
+  homepage: boolean;
 }
 
 import FormattedDate from "@/components/FormattedDate.astro";
@@ -11,92 +12,116 @@ import Link from "@/components/Link.astro";
 
 const { post, homepage } = Astro.props;
 const { title, description, postDate, tags, categories, image } = post.data;
-const { Content } = await post.render();
+const { Content } = await render(post);
 
-const pageUrl = encodeURIComponent(`${import.meta.env.SITE}/${post.slug}`)
-const tagList = encodeURIComponent(tags.map((t:string) => (' #'+t.replace('-',''))).join(' '));
+const pageUrl = encodeURIComponent(`${import.meta.env.SITE}/${post.id}`);
+const tagList = encodeURIComponent(
+  tags.map((t: string) => " #" + t.replace("-", "")).join(" "),
+);
 const postUrl = `https://bsky.app/intent/compose?text=${pageUrl}+${tagList}+%20%40snape.me`;
 const linkedInUrl = `https://www.linkedin.com/feed/?shareActive=true&text=${pageUrl}+${tagList}`;
-const mastodonText = encodeURIComponent(`${import.meta.env.SITE}/${post.slug} ${tags.map((t:string) => (' #'+t.replace('-',''))).join(' ')} @snape.me`);
-
+const mastodonText = encodeURIComponent(
+  `${import.meta.env.SITE}/${post.id} ${tags.map((t: string) => " #" + t.replace("-", "")).join(" ")} @snape.me`,
+);
 ---
+
 <article class="prose my-6">
-    <div class="md:col-span-3">
-        {image &&
-            <Image src={image.src} alt={image?.alt} />
+  <div class="md:col-span-3">
+    {image && <Image src={image.src} alt={image?.alt} />}
+    <div class="space-y-6">
+      <div>
+        {
+          homepage && (
+            <h2 class="text-2xl font-bold leading-8 tracking-tight">
+              <Link href={`/${post.id}`}>{title}</Link>
+            </h2>
+          )
         }
-        <div class="space-y-6">
-            <div>
-                {homepage &&          
-                <h2 class="text-2xl font-bold leading-8 tracking-tight">
-                    <Link href={`/${post.slug}`}>
-                        {title}
-                    </Link>
-                </h2>
-                }
-            </div>
-            <p><em>{description}</em></p>
-            <div class="prose">
-                <Content />
-            </div>
-            <div class="text-sm">
-                This entry was posted in
-                <em>
-                    {categories.map((cat:string) => (
-                        <a href={`/category/${cat}`}>{cat}</a><span>&nbsp</span>
-                    ))}
-                </em>
-                and tagged {tags.map((tag:string) => (
-                    <a href={`/tag/${tag}`}>#{tag}</a><span>&nbsp</span>
-                ))}
-                on <FormattedDate date={postDate}/>.<br/>
-                Discuss this on 
-                <a class="btn btn-xs btn-primary" target="_blank" href={postUrl}>Bluesky <i class="fa-brands fa-bluesky"></i></a>, 
-                <button class="btn btn-xs btn-primary mastodon-share-btn" data-text={mastodonText}>Mastodon <i class="fa-brands fa-mastodon"></i></button>, or 
-                <a class="btn btn-xs btn-primary" target="_blank" href={linkedInUrl}>LinkedIn <i class="fa-brands fa-linkedin"></i></a>
-            <div>
+      </div>
+      <p><em>{description}</em></p>
+      <div class="prose">
+        <Content />
+      </div>
+      <div class="text-sm">
+        This entry was posted in
+        <em>
+          {
+            categories.map((cat: string) => (
+              <>
+                <a href={`/category/${cat}`}>{cat}</a>
+                <span>&nbsp</span>
+              </>
+            ))
+          }
+        </em>
+        and tagged {
+          tags.map((tag: string) => (
+            <>
+              <a href={`/tag/${tag}`}>#{tag}</a>
+              <span>&nbsp</span>
+            </>
+          ))
+        }
+        on <FormattedDate date={postDate} />.<br />
+        Discuss this on
+        <a class="btn btn-xs btn-primary" target="_blank" href={postUrl}
+          >Bluesky <i class="fa-brands fa-bluesky"></i></a
+        >,
+        <button
+          class="btn btn-xs btn-primary mastodon-share-btn"
+          data-text={mastodonText}
+          >Mastodon <i class="fa-brands fa-mastodon"></i></button
+        >, or
+        <a class="btn btn-xs btn-primary" target="_blank" href={linkedInUrl}
+          >LinkedIn <i class="fa-brands fa-linkedin"></i></a
+        >
+        <div></div>
+      </div>
     </div>
-    </div>
-</article>
 
-<script is:inline>
-document.addEventListener('DOMContentLoaded', function() {
-    // Add event listener to all Mastodon share buttons
-    document.querySelectorAll('.mastodon-share-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const text = this.getAttribute('data-text');
+    <script is:inline>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Add event listener to all Mastodon share buttons
+        document.querySelectorAll(".mastodon-share-btn").forEach((button) => {
+          button.addEventListener("click", function () {
+            const text = this.getAttribute("data-text");
             shareToMastodon(text);
+          });
         });
-    });
-});
+      });
 
-function shareToMastodon(text) {
-    // Get stored instance or default to mastodon.world
-    let instance = localStorage.getItem('mastodonInstance') || 'mastodon.world';
-    
-    // Prompt user for their instance if it's the first time or if they want to change it
-    const userInstance = prompt(
-        `Enter your Mastodon instance (current: ${instance}):\n\nExamples:\n• mastodon.social\n• mastodon.world\n• fosstodon.org\n• mas.to\n\nOr press OK to use ${instance}`,
-        instance
-    );
-    
-    if (userInstance === null) {
-        return; // User cancelled
-    }
-    
-    // Clean and validate the instance
-    const cleanInstance = userInstance.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
-    
-    if (cleanInstance) {
-        // Store the instance for future use
-        localStorage.setItem('mastodonInstance', cleanInstance);
-        
-        // Build the share URL
-        const shareUrl = `https://${cleanInstance}/share?text=${text}`;
-        
-        // Open in new tab
-        window.open(shareUrl, '_blank');
-    }
-}
-</script>
+      function shareToMastodon(text) {
+        // Get stored instance or default to mastodon.world
+        let instance =
+          localStorage.getItem("mastodonInstance") || "mastodon.world";
 
+        // Prompt user for their instance if it's the first time or if they want to change it
+        const userInstance = prompt(
+          `Enter your Mastodon instance (current: ${instance}):\n\nExamples:\n• mastodon.social\n• mastodon.world\n• fosstodon.org\n• mas.to\n\nOr press OK to use ${instance}`,
+          instance,
+        );
+
+        if (userInstance === null) {
+          return; // User cancelled
+        }
+
+        // Clean and validate the instance
+        const cleanInstance = userInstance
+          .trim()
+          .replace(/^https?:\/\//, "")
+          .replace(/\/$/, "");
+
+        if (cleanInstance) {
+          // Store the instance for future use
+          localStorage.setItem("mastodonInstance", cleanInstance);
+
+          // Build the share URL
+          const shareUrl = `https://${cleanInstance}/share?text=${text}`;
+
+          // Open in new tab
+          window.open(shareUrl, "_blank");
+        }
+      }
+    </script>
+  </div>
+</article>

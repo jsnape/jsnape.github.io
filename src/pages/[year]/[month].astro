@@ -1,48 +1,66 @@
 ---
-import { ITEMS_PER_PAGE } from '@/consts';
+import { ITEMS_PER_PAGE } from "@/consts";
 import SidebarLayout from "@/layouts/SidebarLayout.astro";
 import { getCollection } from "astro:content";
-import type { CollectionEntry } from 'astro:content';
 import BlogPostArticle from "@components/BlogPostArticle.astro";
-import {excludeDrafts, sortBlogPosts} from "@/functions";
+import { excludeDrafts, sortBlogPosts } from "@/functions";
 import Pagination from "@philnash/astro-pagination";
 
 export async function getStaticPaths() {
-  const posts = await getCollection('posts', excludeDrafts);
-  
-  const dates = [...new Set(posts.map((p) => {
+  const posts = await getCollection("posts", excludeDrafts);
+
+  const dateStrings = [
+    ...new Set(
+      posts.map((p) => {
         const date = p.data.postDate;
         const year = date.getFullYear();
-        const month = date.getMonth(); // no need to add 1 here, because getMonth() is zero-based
-        return new Date(year, month, 1); // returns a date object representing the first day of the month
-    }))];
-    
-  return dates.map(d => {
-    const year = d.getFullYear();
-    const month = d.getMonth() < 10 ? '0' + (1 + d.getMonth()) : (1 + d.getMonth());
-    const monthPosts = posts.filter(p => 
-      p.data.postDate.getFullYear() == year && (p.data.postDate.getMonth() + 1) == month
+        const month = date.getMonth();
+        return `${year}-${month}`;
+      }),
+    ),
+  ];
+
+  return dateStrings.map((ds) => {
+    const [year, monthIdx] = ds.split("-").map(Number);
+    const month = monthIdx < 9 ? "0" + (1 + monthIdx) : String(1 + monthIdx);
+    const monthPosts = posts.filter(
+      (p) =>
+        p.data.postDate.getFullYear() == year &&
+        p.data.postDate.getMonth() + 1 == parseInt(month),
     );
     const sortedPosts = sortBlogPosts(monthPosts);
     const firstPagePosts = sortedPosts.slice(0, ITEMS_PER_PAGE);
     const totalPages = Math.ceil(sortedPosts.length / ITEMS_PER_PAGE);
-    
+
     return {
-      params: { year, month },
-      props: { 
+      params: { year: String(year), month },
+      props: {
         year,
         month,
         posts: firstPagePosts,
         currentPage: 1,
         totalPages,
-        allPosts: sortedPosts
-      }
+        allPosts: sortedPosts,
+      },
     };
   });
 }
 
 const { year, month, posts, currentPage, totalPages, allPosts } = Astro.props;
-const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 const monthName = monthNames[parseInt(String(month)) - 1];
 const pageTitle = "Monthly Archives: " + monthName + " " + year;
 
@@ -54,28 +72,46 @@ const page = {
   url: {
     current: `/${year}/${month}`,
     next: totalPages > 1 ? `/${year}/${month}/2` : undefined,
-    prev: undefined
+    prev: undefined,
   },
   currentPage,
   lastPage: totalPages,
   size: ITEMS_PER_PAGE,
-  total: allPosts.length
+  total: allPosts.length,
 } as any;
 ---
 
 <SidebarLayout pageTitle={pageTitle}>
-	{totalPages > 1 && (
-		<div class="pagination items-center flex mb-6">
-		<Pagination page={page} urlPattern={`/${year}/${month}/{}`} firstPageUrl={`/${year}/${month}`} />
-		</div>
-	)}
-	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
-		{!posts.length && 'No posts found.'}
-		{posts.map((post: CollectionEntry<"posts">) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
-	</ul>
-	{totalPages > 1 && (
-		<div class="pagination items-center flex">
-		<Pagination page={page} urlPattern={`/${year}/${month}/{}`} firstPageUrl={`/${year}/${month}`} />
-		</div>
-	)}
+  {
+    totalPages > 1 && (
+      <div class="pagination items-center flex mb-6">
+        <Pagination
+          page={page}
+          urlPattern={`/${year}/${month}/{}`}
+          firstPageUrl={`/${year}/${month}`}
+        />
+      </div>
+    )
+  }
+  <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+    {!posts.length && "No posts found."}
+    {
+      posts.map((post) => (
+        <li>
+          <BlogPostArticle post={post} homepage={true} />
+        </li>
+      ))
+    }
+  </ul>
+  {
+    totalPages > 1 && (
+      <div class="pagination items-center flex">
+        <Pagination
+          page={page}
+          urlPattern={`/${year}/${month}/{}`}
+          firstPageUrl={`/${year}/${month}`}
+        />
+      </div>
+    )
+  }
 </SidebarLayout>

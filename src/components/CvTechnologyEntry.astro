@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { render } from 'astro:content';
 
 interface Props {
     experience: any;
@@ -9,7 +10,7 @@ import Link from "@/components/Link.astro";
 
 const { experience  } = Astro.props;
 const { title, role, startDate, endDate, skills, technologies, companyLogo } = experience.data;
-const { Content } = await experience.render();
+const { Content } = await render(experience);
 
 const roleLabel = role ? `(${role})` : '';
 const startFormatted = `${startDate.toLocaleString('default', { month: 'short' })} ${startDate.getFullYear()}`;

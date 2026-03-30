@@ -51,8 +51,8 @@ export async function GET(context) {
       title: post.data.title,
       pubDate: post.data.postDate,
       description: post.data.description || post.data.title,
-      link: `/${post.slug}/`,
-      content: sanitizeHtml(appendPermalink(parser.render(post.body ?? ""), `${context.site}${post.slug}`), {
+      link: `/${post.id}/`,
+      content: sanitizeHtml(appendPermalink(parser.render(post.body ?? ""), `${context.site}${post.id}`), {
         allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'a']),
         allowedAttributes: {
           img: ["src", "alt"],
@@ -64,7 +64,7 @@ export async function GET(context) {
             return {
               tagName: 'a',
               attribs: {
-                href: `${context.site}${post.slug}`,
+                href: `${context.site}${post.id}`,
                 title: attribs.alt,
               },
               text: `${attribs.alt}: embedded images not supported yet. Click to view the post online.`

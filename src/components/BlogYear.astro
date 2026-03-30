@@ -3,9 +3,17 @@ import BlogListItem from "./BlogListItem.astro";
 import { getCollection } from "astro:content";
 
 const { year } = Astro.props;
-const posts = await getCollection("posts", ({data}) => data.postDate.getFullYear() === year);
+const posts = await getCollection(
+  "posts",
+  ({ data }) => data.postDate.getFullYear() === year,
+);
 ---
+
 <h2>{year}</h2>
-{posts.map((p) =>
-    <span><BlogListItem url={p.slug} title={p.data.title} /></span>  
-)}
+{
+  posts.map((p) => (
+    <span>
+      <BlogListItem url={p.id} title={p.data.title} />
+    </span>
+  ))
+}

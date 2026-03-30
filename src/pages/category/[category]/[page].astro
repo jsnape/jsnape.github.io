@@ -1,50 +1,70 @@
 ---
-import { ITEMS_PER_PAGE } from '@/consts';
+import { ITEMS_PER_PAGE } from "@/consts";
 import SidebarLayout from "@/layouts/SidebarLayout.astro";
 import { getCollection } from "astro:content";
-import type { CollectionEntry } from 'astro:content';
+import type { CollectionEntry } from "astro:content";
 import BlogPostArticle from "@components/BlogPostArticle.astro";
-import {excludeDrafts, sortBlogPosts} from "@/functions";
+import { excludeDrafts, sortBlogPosts } from "@/functions";
 import Pagination from "@philnash/astro-pagination";
-import type { Page } from 'astro';
+import type { Page } from "astro";
 
 export async function getStaticPaths({ paginate }: any) {
-  const posts = await getCollection('posts', excludeDrafts);
+  const posts = await getCollection("posts", excludeDrafts);
   const categories = [...new Set(posts.flatMap((p) => p.data.categories))];
-  
-  return categories.flatMap(category => {
-    const categoryPosts = posts.filter(p => p.data.categories.includes(category));
-    
+
+  return categories.flatMap((category) => {
+    const categoryPosts = posts.filter((p) =>
+      p.data.categories.includes(category),
+    );
+
     return paginate(sortBlogPosts(categoryPosts), {
       params: { category },
-      pageSize: ITEMS_PER_PAGE
-    });
+      pageSize: ITEMS_PER_PAGE,
+    }).filter((p: any) => p.props.page.currentPage !== 1);
   });
 }
 
 type Props = {
-	page: Page<CollectionEntry<"posts">>;
+  page: Page<CollectionEntry<"posts">>;
 };
 
 const { page } = Astro.props;
 const { category } = Astro.params;
 
-const pageTitle = "Category Archives: " + category.replace(/-/g, ' ');
+const pageTitle = "Category Archives: " + category.replace(/-/g, " ");
 ---
 
 <SidebarLayout pageTitle={pageTitle}>
-	{page.lastPage > 1 && (
-		<div class="pagination items-center flex mb-6">
-		<Pagination page={page} urlPattern={`/category/${category}/{}`} firstPageUrl={`/category/${category}`} />
-		</div>
-	)}
-	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
-		{!page.data.length && 'No posts found.'}
-		{page.data.map((post) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
-	</ul>
-	{page.lastPage > 1 && (
-		<div class="pagination items-center flex">
-		<Pagination page={page} urlPattern={`/category/${category}/{}`} firstPageUrl={`/category/${category}`} />
-		</div>
-	)}
+  {
+    page.lastPage > 1 && (
+      <div class="pagination items-center flex mb-6">
+        <Pagination
+          page={page}
+          urlPattern={`/category/${category}/{}`}
+          firstPageUrl={`/category/${category}`}
+        />
+      </div>
+    )
+  }
+  <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+    {!page.data.length && "No posts found."}
+    {
+      page.data.map((post) => (
+        <li>
+          <BlogPostArticle post={post} homepage={true} />
+        </li>
+      ))
+    }
+  </ul>
+  {
+    page.lastPage > 1 && (
+      <div class="pagination items-center flex">
+        <Pagination
+          page={page}
+          urlPattern={`/category/${category}/{}`}
+          firstPageUrl={`/category/${category}`}
+        />
+      </div>
+    )
+  }
 </SidebarLayout>

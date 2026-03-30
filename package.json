@@ -14,14 +14,14 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
-    "@astrojs/mdx": "^4.3.14",
+    "@astrojs/mdx": "^5.0.3",
     "@astrojs/react": "^5.0.2",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
-    "@astrojs/svelte": "^7.2.5",
-    "@astrojs/tailwind": "^5.1.5",
+    "@astrojs/svelte": "^8.0.4",
+    "@astrojs/tailwind": "^6.0.2",
     "@philnash/astro-pagination": "^0.6.0",
-    "astro": "^5.18.1",
+    "astro": "^6.1.2",
     "astro-robots-txt": "^1.0.0",
     "markdown-it": "^14.1.1",
     "sanitize-html": "^2.17.2",
@@ -30,7 +30,7 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@astrojs/partytown": "^2.1.4",
+    "@astrojs/partytown": "^2.1.6",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.2.2",
     "daisyui": "^5.5.19"

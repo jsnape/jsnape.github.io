@@ -1,17 +1,19 @@
 ---
 import BlogListItem from "./BlogListItem.astro";
-import { RECENT_POSTS_COUNT } from '@/consts';
+import { RECENT_POSTS_COUNT } from "@/consts";
 import { getCollection } from "astro:content";
-import {excludeDrafts, sortBlogPosts} from "@/functions";
+import { excludeDrafts, sortBlogPosts } from "@/functions";
 
-const posts = await
-	getCollection('posts', excludeDrafts)
-	.then(sortBlogPosts);
-
+const posts = await getCollection("posts", excludeDrafts).then(sortBlogPosts);
 ---
+
 <div class="space-x-6 my-5 uppercase">Recent Posts</div>
 <ul>
-  {posts.slice(0, RECENT_POSTS_COUNT).map((p) =>
-    <span><BlogListItem url={`/${p.slug}`} title={p.data.title} /></span>  
-)}
+  {
+    posts.slice(0, RECENT_POSTS_COUNT).map((p) => (
+      <span>
+        <BlogListItem url={`/${p.id}`} title={p.data.title} />
+      </span>
+    ))
+  }
 </ul>

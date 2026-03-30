@@ -1,31 +1,34 @@
 ---
-import { ITEMS_PER_PAGE } from '@/consts';
+import { ITEMS_PER_PAGE } from "@/consts";
 import SidebarLayout from "@/layouts/SidebarLayout.astro";
 import { getCollection } from "astro:content";
-import type { CollectionEntry } from 'astro:content';
 import BlogPostArticle from "@components/BlogPostArticle.astro";
-import {excludeDrafts, sortBlogPosts} from "@/functions";
+import { excludeDrafts, sortBlogPosts } from "@/functions";
 import Pagination from "@philnash/astro-pagination";
 
 export async function getStaticPaths() {
-  const posts = await getCollection('posts', excludeDrafts);
-  const years = [...new Set(posts.flatMap((p) => p.data.postDate.getFullYear()))];
-  
-  return years.map(year => {
-    const yearPosts = posts.filter(p => p.data.postDate.getFullYear() == year);
+  const posts = await getCollection("posts", excludeDrafts);
+  const years = [
+    ...new Set(posts.flatMap((p) => p.data.postDate.getFullYear())),
+  ];
+
+  return years.map((year) => {
+    const yearPosts = posts.filter(
+      (p) => p.data.postDate.getFullYear() == year,
+    );
     const sortedPosts = sortBlogPosts(yearPosts);
     const firstPagePosts = sortedPosts.slice(0, ITEMS_PER_PAGE);
     const totalPages = Math.ceil(sortedPosts.length / ITEMS_PER_PAGE);
-    
+
     return {
-      params: { year },
-      props: { 
+      params: { year: String(year) },
+      props: {
         year,
         posts: firstPagePosts,
         currentPage: 1,
         totalPages,
-        allPosts: sortedPosts
-      }
+        allPosts: sortedPosts,
+      },
     };
   });
 }
@@ -41,28 +44,46 @@ const page = {
   url: {
     current: `/${year}`,
     next: totalPages > 1 ? `/${year}/2` : undefined,
-    prev: undefined
+    prev: undefined,
   },
   currentPage,
   lastPage: totalPages,
   size: ITEMS_PER_PAGE,
-  total: allPosts.length
+  total: allPosts.length,
 } as any;
 ---
 
 <SidebarLayout pageTitle={pageTitle}>
-	{totalPages > 1 && (
-		<div class="pagination items-center flex mb-6">
-		<Pagination page={page} urlPattern={`/${year}/{}`} firstPageUrl={`/${year}`} />
-		</div>
-	)}
-	<ul class="divide-y divide-gray-200 dark:divide-gray-700">
-		{!posts.length && 'No posts found.'}
-		{posts.map((post: CollectionEntry<"posts">) => <li><BlogPostArticle post={post} homepage={true}/></li>)}
-	</ul>
-	{totalPages > 1 && (
-		<div class="pagination items-center flex">
-		<Pagination page={page} urlPattern={`/${year}/{}`} firstPageUrl={`/${year}`} />
-		</div>
-	)}
+  {
+    totalPages > 1 && (
+      <div class="pagination items-center flex mb-6">
+        <Pagination
+          page={page}
+          urlPattern={`/${year}/{}`}
+          firstPageUrl={`/${year}`}
+        />
+      </div>
+    )
+  }
+  <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+    {!posts.length && "No posts found."}
+    {
+      posts.map((post) => (
+        <li>
+          <BlogPostArticle post={post} homepage={true} />
+        </li>
+      ))
+    }
+  </ul>
+  {
+    totalPages > 1 && (
+      <div class="pagination items-center flex">
+        <Pagination
+          page={page}
+          urlPattern={`/${year}/{}`}
+          firstPageUrl={`/${year}`}
+        />
+      </div>
+    )
+  }
 </SidebarLayout>
