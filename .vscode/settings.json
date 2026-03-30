@@ -1,22 +1,25 @@
 {
-    "cSpell.words": [
-      "Aggreko",
-      "ALMM",
-      "astro",
-      "astrojs",
-      "Bluesky",
-      "COREP",
-      "Kanban",
-      "Kusto",
-      "Luca",
-      "OLAP",
-      "OLTP",
-      "partytown",
-      "philnash",
-      "Specflow",
-      "Volutio",
-      "Vrede",
-      "Winterthur",
-      "Xchanging"
-    ]
+  "cSpell.words": [
+    "Aggreko",
+    "ALMM",
+    "astro",
+    "astrojs",
+    "Bluesky",
+    "COREP",
+    "Kanban",
+    "Kusto",
+    "Luca",
+    "OLAP",
+    "OLTP",
+    "partytown",
+    "philnash",
+    "Specflow",
+    "Volutio",
+    "Vrede",
+    "Winterthur",
+    "Xchanging"
+  ],
+  "chat.tools.terminal.autoApprove": {
+    "npm ls": true
+  }
 }
