@@ -9,6 +9,7 @@ export default defineConfig({
         globals: true,
         setupFiles: ['./test/setup.ts'],
         restoreMocks: true,
+        exclude: ['**/node_modules/**', '**/test/e2e/**'],
     },
     resolve: {
         conditions: ['browser'],
