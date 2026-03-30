@@ -2,6 +2,9 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, fireEvent, screen, waitFor } from '@testing-library/svelte';
 import CookieConsent from '@components/CookieConsent.svelte';
 
+// Cast to any to work around Svelte 5 type incompatibility with @testing-library/svelte
+const CookieConsentComponent = CookieConsent as any;
+
 beforeEach(() => {
     // Provide the globals the component declares with `declare function`
     vi.stubGlobal('getCookieConsent', vi.fn().mockReturnValue('unk'));
@@ -17,7 +20,7 @@ afterEach(() => {
 describe('CookieConsent', () => {
     it('shows the banner when consent is unknown after mount', async () => {
         (globalThis as any).getCookieConsent = vi.fn().mockReturnValue('unk');
-        render(CookieConsent);
+        render(CookieConsentComponent);
 
         await waitFor(() => {
             const banner = document.getElementById('cookie-banner');
@@ -28,7 +31,7 @@ describe('CookieConsent', () => {
 
     it('hides the banner when consent is already granted', async () => {
         (globalThis as any).getCookieConsent = vi.fn().mockReturnValue('granted');
-        render(CookieConsent);
+        render(CookieConsentComponent);
 
         await waitFor(() => {
             const banner = document.getElementById('cookie-banner');
@@ -38,7 +41,7 @@ describe('CookieConsent', () => {
 
     it('hides the banner when consent is already denied', async () => {
         (globalThis as any).getCookieConsent = vi.fn().mockReturnValue('denied');
-        render(CookieConsent);
+        render(CookieConsentComponent);
 
         await waitFor(() => {
             const banner = document.getElementById('cookie-banner');
@@ -47,7 +50,7 @@ describe('CookieConsent', () => {
     });
 
     it('clicking Accept writes a cookie-consent=granted cookie', async () => {
-        render(CookieConsent);
+        render(CookieConsentComponent);
         await waitFor(() => expect(document.getElementById('cookie-banner')).toBeInTheDocument());
 
         fireEvent.click(screen.getByRole('button', { name: /accept/i }));
@@ -58,7 +61,7 @@ describe('CookieConsent', () => {
     });
 
     it('clicking Accept calls consentGranted()', async () => {
-        render(CookieConsent);
+        render(CookieConsentComponent);
         await waitFor(() => expect(document.getElementById('cookie-banner')).toBeInTheDocument());
 
         fireEvent.click(screen.getByRole('button', { name: /accept/i }));
@@ -69,7 +72,7 @@ describe('CookieConsent', () => {
     });
 
     it('clicking Accept hides the banner', async () => {
-        render(CookieConsent);
+        render(CookieConsentComponent);
         await waitFor(() => expect(document.getElementById('cookie-banner')).toBeInTheDocument());
 
         fireEvent.click(screen.getByRole('button', { name: /accept/i }));
@@ -80,7 +83,7 @@ describe('CookieConsent', () => {
     });
 
     it('clicking Decline writes a cookie-consent=denied cookie', async () => {
-        render(CookieConsent);
+        render(CookieConsentComponent);
         await waitFor(() => expect(document.getElementById('cookie-banner')).toBeInTheDocument());
 
         fireEvent.click(screen.getByRole('button', { name: /decline/i }));
@@ -91,7 +94,7 @@ describe('CookieConsent', () => {
     });
 
     it('clicking Decline does NOT call consentGranted()', async () => {
-        render(CookieConsent);
+        render(CookieConsentComponent);
         await waitFor(() => expect(document.getElementById('cookie-banner')).toBeInTheDocument());
 
         fireEvent.click(screen.getByRole('button', { name: /decline/i }));

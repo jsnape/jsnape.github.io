@@ -104,17 +104,17 @@ describe('sortExperience', () => {
 
 describe('excludeDrafts', () => {
     it('(PROD) excludes a draft post', () => {
-        vi.stubEnv('PROD', 'true');
+        vi.stubEnv('PROD', true);
         expect(excludeDrafts(makePost({ draft: true }) as any)).toBe(false);
     });
 
     it('(PROD) includes a published post with a past date', () => {
-        vi.stubEnv('PROD', 'true');
+        vi.stubEnv('PROD', true);
         expect(excludeDrafts(makePost({ postDate: '2020-01-01', draft: false }) as any)).toBe(true);
     });
 
     it('(PROD) excludes a future-dated post', () => {
-        vi.stubEnv('PROD', 'true');
+        vi.stubEnv('PROD', true);
         const future = new Date();
         future.setFullYear(future.getFullYear() + 1);
         expect(excludeDrafts(makePost({ postDate: future.toISOString() }) as any)).toBe(false);
@@ -136,22 +136,22 @@ describe('excludeDrafts', () => {
 
 describe('excludeInstagram', () => {
     it('(PROD) excludes a post tagged instagram', () => {
-        vi.stubEnv('PROD', 'true');
+        vi.stubEnv('PROD', true);
         expect(excludeInstagram(makePost({ tags: ['instagram'] }) as any)).toBe(false);
     });
 
     it('(PROD) excludes a draft post', () => {
-        vi.stubEnv('PROD', 'true');
+        vi.stubEnv('PROD', true);
         expect(excludeInstagram(makePost({ draft: true }) as any)).toBe(false);
     });
 
     it('(PROD) includes a normal published post', () => {
-        vi.stubEnv('PROD', 'true');
+        vi.stubEnv('PROD', true);
         expect(excludeInstagram(makePost({ tags: ['tech'], draft: false }) as any)).toBe(true);
     });
 
     it('(DEV) still excludes instagram-tagged posts', () => {
-        vi.stubEnv('PROD', 'false');
+        vi.stubEnv('PROD', false);
         expect(excludeInstagram(makePost({ tags: ['instagram'] }) as any)).toBe(false);
     });
 
