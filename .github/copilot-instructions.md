@@ -30,7 +30,10 @@ src/
   content.config.ts  # Content collection schemas
   functions.ts    # Shared utility functions
 public/           # Static assets served as-is
-test/             # Test directory (currently empty)
+test/
+  unit/           # Unit tests for src/functions.ts and other pure logic
+  components/     # Svelte component tests (CookieConsent, Search)
+  setup.ts        # @testing-library/jest-dom matchers registration
 ```
 
 ## Path Aliases (tsconfig.json)
@@ -143,14 +146,52 @@ HOME_PAGE_TITLE = 'Recent Posts'
 npm run dev      # Start dev server (astro dev)
 npm run build    # Type-check then build (astro check && astro build)
 npm run preview  # Preview production build
+npm test         # Run all tests once (use before committing)
+npm run test:watch  # Run tests in watch mode during development
 ```
+
+## Testing
+
+**Framework**: [Vitest](https://vitest.dev/) + [@testing-library/svelte](https://testing-library.com/docs/svelte-testing-library/intro) + jsdom
+
+**Always run `npm test` before committing** to confirm nothing is broken.
+
+### Test structure
+
+| File | What it covers |
+|---|---|
+| `test/unit/functions.test.ts` | All 5 utility functions in `src/functions.ts` |
+| `test/components/CookieConsent.test.ts` | Banner visibility, accept/decline flows, cookie writing |
+| `test/components/Search.test.ts` | Render, Bing URL construction, query encoding, site prop |
+
+### Writing new tests
+
+- **Pure functions** → add to `test/unit/`
+- **Svelte components** → add to `test/components/`
+- Path aliases (`@components/*`, `@/*`, etc.) work in test files exactly as in source
+
+**Mocking `import.meta.env.PROD`** (used by `excludeDrafts` / `excludeInstagram`):
+```ts
+vi.stubEnv('PROD', 'true');   // simulate production build
+// DON'T use vi.stubEnv('PROD', 'false') — the string 'false' is truthy!
+// For dev-mode tests, just don't stub it; Vitest defaults to PROD = false
+```
+
+**Mocking Svelte component globals** (e.g. `getCookieConsent`, `consentGranted`):
+```ts
+vi.stubGlobal('getCookieConsent', vi.fn().mockReturnValue('unk'));
+vi.stubGlobal('consentGranted', vi.fn());
+```
+
+**Key config note**: `vitest.config.ts` sets `resolve.conditions: ['browser']` — required for Svelte 5 to use its client-side build instead of the server build in jsdom.
 
 ## CI/CD
 
 GitHub Actions workflow (`.github/workflows/deploy.yml`):
 - Triggers: push to `main`, daily schedule at 09:45 UTC, manual dispatch
-- Build: `withastro/action@v2`
-- Deploy: `actions/deploy-pages@v4` → GitHub Pages
+- **`test` job**: installs deps and runs `npm test` — build is blocked if tests fail
+- **`build` job**: `withastro/action@v2` (depends on `test`)
+- **`deploy` job**: `actions/deploy-pages@v4` → GitHub Pages (depends on `build`)
 
 ## Robots / Bot Blocking
 
