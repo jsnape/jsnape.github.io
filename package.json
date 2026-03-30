@@ -17,7 +17,7 @@
     "@astrojs/mdx": "^5.0.2",
     "@astrojs/react": "^5.0.0",
     "@astrojs/rss": "^4.0.18",
-    "@astrojs/svelte": "^7.2.5",
+    "@astrojs/svelte": "^8.0.4",
     "@astrojs/sitemap": "^3.7.1",
     "@astrojs/tailwind": "^6.0.2",
     "@philnash/astro-pagination": "^0.6.0",
