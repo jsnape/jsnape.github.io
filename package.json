@@ -22,7 +22,7 @@
     "@astrojs/react": "^5.0.4",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
-    "@astrojs/svelte": "^8.0.5",
+    "@astrojs/svelte": "^8.1.0",
     "@astrojs/tailwind": "^6.0.2",
     "@philnash/astro-pagination": "^0.6.0",
     "astro": "^6.2.1",
