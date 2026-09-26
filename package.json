@@ -41,7 +41,7 @@
     "@testing-library/svelte": "^5.4.2",
     "daisyui": "^5.7.9",
     "jsdom": "^30.0.1",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vitest": "^4.1.11"
   }
 }
