@@ -39,7 +39,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/svelte": "^5.4.2",
-    "daisyui": "^5.7.9",
+    "daisyui": "^5.7.47",
     "jsdom": "^30.0.1",
     "typescript": "^6.0.3",
     "vitest": "^5.0.1"
