@@ -25,10 +25,10 @@
     "@astrojs/svelte": "^9.0.1",
     "@astrojs/tailwind": "^6.0.2",
     "@philnash/astro-pagination": "^0.7.0",
-    "astro": "^7.3.2",
+    "astro": "^7.3.3",
     "astro-robots-txt": "^1.0.0",
-    "markdown-it": "^15.0.2",
-    "sanitize-html": "^2.18.0",
+    "markdown-it": "^15.0.3",
+    "sanitize-html": "^2.18.1",
     "svelte": "^5.57.3",
     "tailwindcss": "^4.3.1"
   },
@@ -42,6 +42,6 @@
     "daisyui": "^5.7.50",
     "jsdom": "^30.1.2",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.1"
+    "vitest": "^5.1.0"
   }
 }
