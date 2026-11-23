@@ -29,7 +29,7 @@
     "astro-robots-txt": "^1.0.0",
     "markdown-it": "^15.0.3",
     "sanitize-html": "^2.18.2",
-    "svelte": "^5.57.3",
+    "svelte": "^5.58.0",
     "tailwindcss": "^4.3.4"
   },
   "devDependencies": {
